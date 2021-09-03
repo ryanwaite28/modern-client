@@ -1,0 +1,85 @@
+ng generate application common --prefix=common --routing=true --skip-install=true --skip-package-json=true --style=scss
+
+ng generate component components/pages/user-page/user-home-page --project=travellrs  
+
+
+
+<!-- Phone -->
+  <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+    <div class="uk-card-body">
+
+      <form class="" [formGroup]="phoneForm" (ngSubmit)="send_sms_verification()">
+        <fieldset class="uk-fieldset">
+          <legend class="uk-legend">Phone</legend>
+          <br/>
+          
+          <div class="uk-margin">
+            <span class="label-info">
+              Verify your new phone number ({{ phoneForm.value.phone.length }}/{{ 10 }})
+            </span>
+            <input type="phone" class="uk-input"
+              placeholder="Phone"
+              formControlName="phone"
+            />
+          </div>
+        </fieldset>
+
+        <button type="submit"
+          class="uk-button uk-button-primary"
+          [disabled]="phone_is_verified || verification_requested_successfully || !phoneForm.valid || phoneForm.value.phone === you!.phone"
+        >
+          Submit
+        </button>
+      </form>
+
+      <br/>
+
+      <form class="" *ngIf="verification_requested_successfully" [formGroup]="phoneVerifyForm" (ngSubmit)="verify_sms_code()">
+        <div class="form-group">
+          <span class="label-info">
+            Enter verification code ({{ phoneVerifyForm.value.code.length }}/{{ 6 }})
+          </span>
+          <input type="text" class="uk-input"
+            placeholder="Code"
+            formControlName="code"
+          />
+        </div>
+        <br/>
+        <button type="submit" class="uk-button uk-button-primary"
+          [disabled]="phone_is_verified || !phoneVerifyForm.valid">Submit</button>
+      </form>
+    </div>
+  </div>
+  
+
+<!-- Wallpaper -->
+  <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+    <div class="uk-card-body">
+      <h3>Wallpaper</h3>
+      <form
+        #userWallpaperFormElm
+        [formGroup]="userWallpaperForm"
+        (ngSubmit)="onSubmitUserWallpaperForm(userWallpaperFormElm, wallpaperInput)"
+      >
+        <div class="">
+          <input
+            #wallpaperInput
+            type="file"
+            class=""
+            name="wallpaper"
+            formControlName="file"
+          />
+        </div>
+        <br/>
+        <div class="form-group">
+          <button
+            type="submit"
+            class="uk-button uk-button-primary"
+            [disabled]="userWallpaperForm.invalid || loading"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>

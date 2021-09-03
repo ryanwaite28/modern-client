@@ -20,16 +20,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'hotspot-client'`, () => {
+  it(`should have as title 'modern-client'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('hotspot-client');
+    expect(app.title).toEqual('modern-client');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('hotspot-client app is running!');
+    expect(compiled.querySelector('.content span').textContent).toContain('modern-client app is running!');
   });
 });

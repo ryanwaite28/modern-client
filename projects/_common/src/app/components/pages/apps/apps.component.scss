@@ -1,0 +1,12 @@
+.flex-content-center {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.app-box {
+  width: 425px;
+  max-width: 100%;
+  margin: 10px;
+  border: 1px solid #e5e5e5;
+}

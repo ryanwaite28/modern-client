@@ -4,6 +4,7 @@
     "codelyzer"
   ],
   "rules": {
+    "strictPropertyInitialization": false,
     "align": {
       "options": [
         "parameters",

@@ -1,0 +1,137 @@
+<div>
+  <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+    <div class="uk-card-body">
+      <p class="uk-text-large">Settings</p>
+    </div>
+  </div>
+
+  <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+    <div class="uk-card-body">
+      <form class="" [formGroup]="userInfoForm" (ngSubmit)="onSubmitUserInfoForm()">
+        <fieldset class="uk-fieldset">
+          <legend class="uk-legend">Basic Info</legend>
+          <br/>
+          
+          <div class="uk-child-width-expand@s" uk-grid>
+            <div class="">
+              <span class="label-info">
+                Username ({{ userInfoForm.value.username.length }}/{{ TEXT_FORM_LIMIT }})
+              </span>
+              <input class="uk-input" type="text" placeholder="Username" formControlName="username" >
+            </div>
+            <div class="">
+              <span class="label-info">
+                Display Name ({{ userInfoForm.value.displayname.length }}/{{ TEXT_FORM_LIMIT }})
+              </span>
+              <input class="uk-input" type="text" placeholder="Display Name" formControlName="displayname" >
+            </div>
+          </div>
+
+          <div class="uk-margin">
+            <span class="label-info">
+              Email ({{ userInfoForm.value.email.length }}/{{ TEXT_FORM_LIMIT }})
+            </span>
+            <input class="uk-input" type="email" placeholder="Email" formControlName="email" >
+          </div>
+
+          <div class="uk-margin">
+            <span class="label-info">
+              Bio ({{ userInfoForm.value.bio.length }}/{{ TEXT_FORM_LIMIT }})
+            </span>
+            <textarea type="text" class="uk-textarea" placeholder="Bio" rows="5" formControlName="bio"></textarea>
+          </div>
+
+          <!-- Map Container -->
+          
+          <div id="map-div"></div>
+          <div class="uk-margin">
+            <span class="label-info">
+              Location (City and State | Current Location: {{ you!.location }})
+            </span>
+            <input type="text" id="location-input" class="uk-input" placeholder="Enter a Location" />
+          </div>
+        </fieldset>
+  
+        <button
+          type="submit"
+          class="uk-button uk-button-primary"
+          [disabled]="!userInfoForm.valid || loading"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+    <div class="uk-card-body">
+      <form class="" [formGroup]="userPasswordForm" (ngSubmit)="onSubmitUserPasswordForm()">
+        <fieldset class="uk-fieldset">
+          <legend class="uk-legend">Password</legend>
+          <br/>
+          
+          <div class="uk-margin">
+            <span class="label-info">
+              Old Password ({{ userPasswordForm.value.oldPassword.length }}/{{ TEXT_FORM_LIMIT }})
+            </span>
+            <input class="uk-input" type="password" placeholder="Old Password" formControlName="oldPassword" >
+          </div>
+          <div class="uk-margin">
+            <span class="label-info">
+              Password ({{ userPasswordForm.value.password.length }}/{{ TEXT_FORM_LIMIT }})
+            </span>
+            <input class="uk-input" type="password" placeholder="Password" formControlName="password" >
+          </div>
+          <div class="uk-margin">
+            <span class="label-info">
+              Confirm Password ({{ userPasswordForm.value.confirmPassword.length }}/{{ TEXT_FORM_LIMIT }})
+            </span>
+            <input class="uk-input" type="password" placeholder="Confirm Password" formControlName="confirmPassword" >
+          </div>
+        </fieldset>
+  
+        <button
+          type="submit"
+          class="uk-button uk-button-primary"
+          [disabled]="!userPasswordForm.valid || loading"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+
+  
+
+  <!-- Icon -->
+  <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+    <div class="uk-card-body">
+      <h3>Icon</h3>
+      <form
+        #userIconFormElm
+        [formGroup]="userIconForm"
+        (ngSubmit)="onSubmitUserIconForm(userIconFormElm, iconInput)"
+      >
+        <div class="">
+          <input
+            #iconInput
+            type="file"
+            class=""
+            name="icon"
+            formControlName="file"
+          />
+        </div>
+        <br/>
+        <div class="form-group">
+          <button
+            type="submit"
+            class="uk-button uk-button-primary"
+            [disabled]="userIconForm.invalid || loading"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

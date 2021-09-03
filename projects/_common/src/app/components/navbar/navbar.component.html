@@ -1,0 +1,20 @@
+<nav class="uk-navbar-container uk-margin" uk-navbar [style.backgroundColor]="bgColor">
+  <div class="uk-navbar-left">
+    <ng-container [ngSwitch]="!!appMainPageLink">
+      <a class="uk-navbar-item uk-logo" *ngSwitchCase="true" [routerLink]="appMainPageLink">{{ appName }}</a>
+      <a class="uk-navbar-item uk-logo" *ngSwitchCase="false">{{ appName }}</a>
+    </ng-container>
+
+    <ul class="uk-navbar-nav">
+      <ng-container *ngFor="let link of appLinks">
+        <li *ngIf="!link.requiresAuth || link.requiresAuth && !!you" [ngClass]="link.class">
+          <a [attr.title]="link.title" [routerLink]="link.value">{{ link.name }}</a>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+
+  <div class="uk-navbar-right">
+    <common-navbar-partial [you]="you"></common-navbar-partial>
+  </div>
+</nav>

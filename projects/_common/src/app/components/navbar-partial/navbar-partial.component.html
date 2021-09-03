@@ -1,0 +1,22 @@
+<ul class="uk-navbar-nav">
+  <li>
+    <a href="#">Modern ({{ !!you ? "Signed In" : "Signed Out" }})</a>
+    <div class="uk-navbar-dropdown">
+      <ul class="uk-nav uk-navbar-dropdown-nav">
+        <ng-container [ngSwitch]="!!you">
+          <ng-container *ngSwitchCase="true">
+            <li><a [routerLink]="['/', 'modern', 'users', you!.id]">Home</a></li>
+            <li><a [routerLink]="['/', 'modern', 'users', you!.id, 'settings']">Settings</a></li>
+            <li class="uk-nav-divider"></li>
+            <li><a (click)="onSignout()">Sign Out</a></li>
+          </ng-container>
+  
+          <ng-container *ngSwitchCase="false">
+            <li><a [routerLink]="['/', 'modern', 'signup']">Sign Up</a></li>
+            <li><a [routerLink]="['/', 'modern', 'signin']">Sign In</a></li>
+          </ng-container>
+        </ng-container>
+      </ul>
+    </div>
+  </li>
+</ul>

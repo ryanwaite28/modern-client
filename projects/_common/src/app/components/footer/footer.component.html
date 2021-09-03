@@ -1,0 +1,13 @@
+<footer [style.backgroundColor]="bgColor">
+  <h3>{{ appName }}</h3>
+  <p>Copyright &reg; {{ year }}<br/>All Rights Reserved</p>
+
+  <div class="uk-navbar-left">
+    <ul class="uk-navbar-nav">
+      <li><a [routerLink]="['/', 'modern', 'welcome']">Home</a></li>
+      <li><a [routerLink]="['/', 'modern', 'apps']">Apps</a></li>
+      <li><a [routerLink]="['/', 'modern', 'about']">About</a></li>
+      <li><a [routerLink]="['/', 'modern', 'contact']">Contact Us</a></li>
+    </ul>
+  </div>
+</footer>

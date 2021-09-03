@@ -1,0 +1,12 @@
+<div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+  <div *ngIf="user" class="uk-card-body">
+    <p class="uk-text-large">Home</p>
+    <hr />
+
+    <p class="uk-text-default">Location</p>
+    <p class="uk-text-small">
+      City: {{ user.city }}<br/>
+      State: {{ user.state }}
+    </p>
+  </div>
+</div>
