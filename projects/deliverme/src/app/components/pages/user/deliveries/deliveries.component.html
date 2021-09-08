@@ -1,1 +1,25 @@
-<p>deliveries works!</p>
+<div>
+  <div *ngIf="!deliveries.length" class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+    <div class="uk-card-body">
+      <p class="uk-text-large">None</p>
+    </div>
+  </div>
+
+  <div *ngFor="let delivery of deliveries" class="margin-bottom-20">
+    <deliverme-delivery-card
+      [delivery]="delivery"
+      [you]="you"
+      (deliveryDelete)="onDeleteDelivery(delivery)"
+    ></deliverme-delivery-card>
+  </div>
+
+  <button
+    *ngIf="!end_reached"
+    type="submit"
+    class="uk-button uk-button-primary"
+    [disabled]="loading"
+    (click)="getDeliveries()"
+  >
+    Load More
+  </button>
+</div>

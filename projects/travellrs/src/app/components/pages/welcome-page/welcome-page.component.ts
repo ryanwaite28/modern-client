@@ -4,6 +4,11 @@ import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps
 import { UserService } from 'projects/_common/src/app/services/user.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
 import { Subscription } from 'rxjs/internal/Subscription';
+// import * as world_wallpaper from '../../../../assets/img/world-wallpaper.png';
+
+declare var $: any;
+
+
 
 @Component({
   selector: 'travellrs-welcome-page',
@@ -19,6 +24,8 @@ export class TravellrsWelcomePageComponent implements OnInit {
   locationResults: any;
   autoCompleteData: any;
 
+  // wallpaper = world_wallpaper;
+
   constructor(
     private googleService: GoogleMapsService,
     private userStore: UserStoreService,
@@ -29,9 +36,18 @@ export class TravellrsWelcomePageComponent implements OnInit {
     this.userStore.getChangesObs().subscribe(you => {
       this.you = you;
     });
+
+    $(document).ready(function() {
+      $('.parallax-window').parallax({ imageSrc: `./assets/img/world-wallpaper.png` });
+      $('.parallax-mirror').addClass('sliding').css({ 'z-index': 'unset' });
+      // $('.parallax-slider').wrap('<marquee></marquee>');
+    });
   }
 
   ngOnDestroy() {
+    Array.from(document.querySelectorAll('.parallax-mirror')).forEach((element) => {
+      element.parentElement?.removeChild(element);
+    });
     for (const subscription of this.subscriptionsMap.values()) {
       subscription.unsubscribe();
     }

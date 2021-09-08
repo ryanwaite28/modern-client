@@ -15,9 +15,14 @@ export class GoogleMapsService {
     route: 'long_name',
     locality: 'long_name',
     administrative_area_level_1: 'short_name',
+    administrative_area_level_2: 'short_name',
     country: 'long_name',
     postal_code: 'short_name'
   };
+
+  get mapsIsReady(): boolean {
+    return !!this.google;
+  }
 
   constructor(
     private clientService: ClientService
@@ -142,12 +147,14 @@ export class GoogleMapsService {
       // Get each component of the address from the place details
       // and fill the corresponding field on the form.
       for (var i = 0; i < place.address_components.length; i++) {
-        var addressType = place.address_components[i].types[0];
-        if (this.componentForm[addressType]) {
-          var val = place.address_components[i][this.componentForm[addressType]];
-          placeData[this.switchName(addressType)] = val;
-          var elm = document.getElementById(addressType);
-          if (elm) { (<any> elm).value = val; };
+        // var addressType = place.address_components[i].types[0];
+        for (const t of place.address_components[i].types) {
+          if (this.componentForm[t]) {
+            var val = place.address_components[i][this.componentForm[t]];
+            placeData[this.switchName(t)] = val;
+            var elm = document.getElementById(t);
+            if (elm) { (<any> elm).value = val; };
+          }
         }
       }
       if (!placeData['city']) {
@@ -187,12 +194,14 @@ export class GoogleMapsService {
     return place_changes;
   }
 
-  private switchName(name: string) {
+  switchName(name: string) {
     switch(name) {
       case 'locality':
         return 'city';
       case 'administrative_area_level_1':
         return 'state';
+      case 'administrative_area_level_1':
+          return 'county';
       case 'country':
         return 'country';
       case 'postal_code':
@@ -201,5 +210,116 @@ export class GoogleMapsService {
       default:
         return name;
     }
+  }
+
+  getCurrentLocation() {
+    // https://developers.google.com/web/fundamentals/native-hardware/user-location
+    return new Observable((observer) => {
+      // check for Geolocation support
+      if (navigator.geolocation) {
+        console.log('Geolocation is supported!');
+      }
+      else {
+        const errMsg = 'Geolocation is not supported for this Browser/OS.';
+        console.log(errMsg);
+        observer.error({
+          message: errMsg
+        });
+        observer.complete();
+        return;
+      }
+
+      let nudgeTimeoutId = setTimeout(() => {}, 5000);
+
+      const geoSuccess = function(position: any) {
+        // We have the location, don't display banner
+        clearTimeout(nudgeTimeoutId);
+        console.log(position);
+        observer.next(position);
+        observer.complete();
+      };
+      const geoError = function(error: any) {
+        console.log(error);
+
+        switch(error.code) {
+          case error.TIMEOUT: {
+            // The user didn't accept the callout
+            observer.error({
+              message: `Geolocation error`,
+              error
+            });
+            break;
+          }
+        }
+
+        observer.complete();
+      };
+    
+      navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
+    });
+  }
+
+  getLocationViaCoordinates(lat: number, lng: number) {
+    // https://developers.google.com/maps/documentation/javascript/geocoding#ReverseGeocoding
+    return new Observable((observer) => {
+      const geocoder = new this.google.maps.Geocoder();
+      geocoder.geocode({ location: { lat, lng } }).then((response: any) => {
+        // console.log(response);
+        const place = response.results[0];
+        if (place) {
+          const placeData: any = {};
+          
+          // Get each component of the address from the place details
+          // and fill the corresponding field on the form.
+          for (var i = 0; i < place.address_components.length; i++) {
+            var addressType = place.address_components[i].types[0];
+            if (this.componentForm[addressType]) {
+              var val = place.address_components[i][this.componentForm[addressType]];
+              placeData[this.switchName(addressType)] = val;
+            }
+          }
+          if(!placeData['city']) {
+            placeData['city'] = '';
+          }
+          if(!placeData['state']) {
+            placeData['state'] = '';
+          }
+          
+          const { city, country, zipcode, route, state, street_number } = placeData;
+          const location = `${place.name ? (place.name + ' - ') : ''}${street_number ? (street_number + ' ') : ''}${route ? (route + ', ') : ''}${city ? (city + ', ') : ''}${state || ''}${zipcode ? (' ' + zipcode + ', ') : ', '}${country ? (country + ' ') : ''}`.trim().replace(/[\s]{2,}/, ' ');
+          
+          placeData.location = location;
+          placeData.address = place.formatted_address;
+          placeData.lat = place.geometry.location.lat();
+          placeData.lng = place.geometry.location.lng();
+          placeData.place_id = place.place_id;
+          
+          const emitData = {
+            place,
+            placeData
+          };
+          // console.log(emitData);
+
+          observer.next(emitData);
+          observer.complete();
+        } else {
+          const errMsg = "No results found";
+          console.log(errMsg);
+          observer.error({
+            message: errMsg
+          });
+          observer.complete();
+          return;
+        }
+      }).catch((e: any) => {
+        const errMsg = "Geocoder failed due to: " + e;
+        console.log(errMsg);
+        observer.error({
+          message: errMsg
+        });
+        observer.complete();
+        return;
+      });
+    });
   }
 }

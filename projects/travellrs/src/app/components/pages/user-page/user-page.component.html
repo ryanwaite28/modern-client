@@ -1,1 +1,11 @@
-<p>user-page works!</p>
+<div>
+  <div class="uk-container row-pad-1">
+    <div class="margin-bottom-20">
+      <common-user-page-card
+        [user]="user"
+      ></common-user-page-card>
+    </div>
+
+    <router-outlet></router-outlet>
+  </div>
+</div>

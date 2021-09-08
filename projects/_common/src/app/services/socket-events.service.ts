@@ -16,9 +16,12 @@ export class SocketEventsService {
   private you: IUser | null = null;
   private socket: any;
 
-  private connect: any;
-  private event: any;
-  private disconnect: any;
+  private connect_event: any;
+  private socket_id_event: any;
+  private user_event: any;
+  private disconnect_event: any;
+
+  private socket_id?: string;
 
   private userStoreSubscription: Subscription;
 
@@ -61,31 +64,37 @@ export class SocketEventsService {
 
   private startListener() {
     const socket = io(this.clientService.DOMAIN);
+    this.socket = socket;
     
-    const connect = socket.on('connect', (event: any) => {
+    const connect_event = socket.on('connect', (event: any) => {
       console.log(`socket connected`, event);
+      socket.emit(`SOCKET_TRACK`, { user_id: this.you!.id });
     });
-    const disconnect = socket.on('disconnect', (event: any) => {
+    const socket_id_event = socket.on('socket_id', (event: any) => {
+      console.log(`socket_id:`, event);
+      this.socket_id = event;
+    });
+    const disconnect_event = socket.on('disconnect', (event: any) => {
       console.log(`socket disconnected`, event);
     });
-
-    const event = socket.on(`FOR-USER:${this.you!.id}`, (event: any) => {
+    const user_event = socket.on(`FOR-USER:${this.you!.id}`, (event: any) => {
       this.handleEvent(event);
     });
     
-
-    this.socket = socket;
-    this.connect = connect;
-    this.event = event;
-    this.disconnect = disconnect;
+    this.socket_id_event = socket_id_event;
+    this.connect_event = connect_event;
+    this.user_event = user_event;
+    this.disconnect_event = disconnect_event;
 
     this.listenToConversations();
   }
 
   private stopListener() {
-    this.connect.disconnect();
-    this.event.disconnect();
-    this.disconnect.disconnect();
+    this.connect_event.disconnect();
+    this.socket_id_event.disconnect();
+    this.connect_event.disconnect();
+    this.user_event.disconnect();
+    this.disconnect_event.disconnect();
     this.youConversationsSocketListeners = {};
   }
 

@@ -1,1 +1,29 @@
-<p>user-travels-page works!</p>
+<div>
+  <div class="margin-bottom-20">
+    <div class="uk-width-expand@m">
+      <div id="map-div" #mapsDiv></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="uk-child-width-1-2@s uk-child-width-1-2@m uk-text-center" uk-grid>
+      <div class="" *ngFor="let travel of travels">
+        <travellrs-travel-card
+          [travel]="travel"
+        ></travellrs-travel-card>
+      </div>
+    </div>
+  </div>
+
+  <div class="" *ngIf="!end_reached">
+    <button
+      (click)="getTravels()"
+      title="Load more"
+      class="btn btn-sm btn-success"
+      [disabled]="loading"
+    >
+      <i class="fas fa-sync"></i>
+      Load More
+    </button>
+  </div>
+</div>

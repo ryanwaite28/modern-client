@@ -1,0 +1,25 @@
+<div *ngIf="user" class="uk-card uk-card-default border-grey-1">
+  <div class="uk-card-header">
+    <div class="uk-grid-small uk-flex-middle" uk-grid>
+      <div class="uk-width-auto">
+        <img class="uk-border-circle" width="40" height="40" 
+          [src]="user.icon_link || './assets/img/anon.png'" 
+          [alt]="user.displayname"
+        />
+      </div>
+      <div class="uk-width-expand">
+        <h3 class="uk-card-title uk-margin-remove-bottom">{{ user.displayname }}</h3>
+        <p class="uk-text-meta uk-margin-remove-top">
+          @{{ user.username }}<br/>
+          Member Since: {{ user.created_at | date : 'MMM d, y - h:mm a' }}
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="uk-card-body">
+    <p>
+      Bio:<br/>
+      {{ user.bio }}
+    </p>
+  </div>
+</div>

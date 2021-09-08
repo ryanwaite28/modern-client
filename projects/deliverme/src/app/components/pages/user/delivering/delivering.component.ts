@@ -1,15 +1,252 @@
-import { Component, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { DeliveryService } from 'projects/deliverme/src/app/services/delivery.service';
+import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
+import { AlertService } from 'projects/_common/src/app/services/alert.service';
+import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
+import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
+import { flatMap } from 'rxjs/operators';
+
+const searchCriterias = [
+  { label: 'From City', value: 'from-city' },
+  { label: 'To City', value: 'to-city' },
+
+  { label: 'From State', value: 'from-state' },
+  { label: 'To State', value: 'to-state' },
+
+  { label: 'From City in State', value: 'from-city-state' },
+  { label: 'To City in State', value: 'to-city-state' },
+
+  // { label: 'County in State', value: 'county-state' },
+];
 
 @Component({
   selector: 'deliverme-delivering',
   templateUrl: './delivering.component.html',
   styleUrls: ['./delivering.component.scss']
 })
-export class DeliverMeUserDeliveringFragmentComponent implements OnInit {
+export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestroy {
+  you: IUser | null = null;
+  current_delivering: any;
+  potential_delivering: any;
 
-  constructor() { }
+  past_deliverings: any[] = [];
+  end_reached: boolean = true;
+  loading: boolean = false;
+
+  searchCriteriaCtrl = new FormControl(searchCriterias[2].value, []);
+  searchCriterias = searchCriterias;
+
+  constructor(
+    private userStore: UserStoreService,
+    private alertService: AlertService,
+    private deliveryService: DeliveryService,
+    private googleMapsService: GoogleMapsService,
+    private changeDetectorRef: ChangeDetectorRef,
+  ) { }
 
   ngOnInit(): void {
+    this.userStore.getChangesObs().subscribe((you) => {
+      this.you = you;
+      if (you) {
+        this.getCurrentDelivering();
+        this.getDeliverings();
+      }
+    });
   }
 
+  ngOnDestroy() {
+  }
+
+  onCurrentDeliveryCompleted() {
+    this.past_deliverings.push(this.current_delivering);
+    this.current_delivering = undefined;
+  }
+
+  getCurrentDelivering() {
+    this.deliveryService.getUserDelivering(this.you!.id).subscribe({
+      next: (response) => {
+        this.current_delivering = response.data;
+      },
+      error: (error: HttpErrorResponse) => {
+        this.loading = false;
+        this.changeDetectorRef.detectChanges();
+      },
+    });
+  }
+
+  getDeliverings() {
+    const min_id =
+      this.past_deliverings.length &&
+      this.past_deliverings[this.past_deliverings.length - 1].id;
+
+    this.loading = true;
+    this.deliveryService.getUserPastDeliverings(this.you!.id, min_id).subscribe({
+      next: (response) => {
+        for (const delivery of response.data) {
+          this.past_deliverings.push(delivery);
+        }
+        this.end_reached = response.data.length < 5;
+        this.loading = false;
+        this.changeDetectorRef.detectChanges();
+      },
+      error: (error: HttpErrorResponse) => {
+        this.loading = false;
+        this.changeDetectorRef.detectChanges();
+      },
+    });
+  }
+
+  findDelivery() {
+    this.loading = true;
+    this.googleMapsService.getCurrentLocation()
+      .pipe(flatMap((position: any, index: number) => {
+        return this.googleMapsService.getLocationViaCoordinates(
+          position.coords.latitude,
+          position.coords.longitude
+        );
+      }))
+      .pipe(flatMap((data: any, index: number) => {
+        const criteria = this.searchCriteriaCtrl.value;
+        const postData: any = {
+          criteria
+        };
+
+        switch (criteria) {
+          case searchCriterias[0].value:
+          case searchCriterias[1].value: {
+            // city
+            postData.city = data.placeData.city;
+            break;
+          }
+          case searchCriterias[2].value: 
+          case searchCriterias[3].value: {
+            // state
+            postData.state = data.placeData.state;
+            break;
+          }
+          case searchCriterias[4].value: 
+          case searchCriterias[5].value: {
+            // city-state
+            postData.city = data.placeData.city;
+            postData.state = data.placeData.state;
+            break;
+          }
+        }
+
+        return this.deliveryService.findAvailableDelivery<any>(postData);
+      }))
+      .subscribe({
+        next: (response) => {
+          console.log(response);
+          this.potential_delivering = response.data;
+          this.loading = false;
+        },
+        error: (error: any) => {
+          this.loading = false;
+          
+        },
+        complete: () => {
+          this.loading = false;
+        },
+      });
+  }
+
+  assignDelivery() {
+    const ask = window.confirm(`Are you sure you want to take this delivery?`);
+    if (!ask) {
+      return;
+    }
+    this.loading = true;
+    this.deliveryService.assignDelivery<any>(this.you!.id, this.potential_delivering.id).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.alertService.handleResponseSuccessGeneric(response);
+        this.current_delivering = response.data;
+        this.potential_delivering = undefined;
+        this.loading = false;
+      },
+      error: (error: any) => {
+        this.loading = false;
+        this.alertService.handleResponseErrorGeneric(error);
+      },
+      complete: () => {
+        this.loading = false;
+      },
+    });
+  }
+
+  unassignDelivery() {
+    const ask = window.confirm(`Are you sure you want to cancel this delivery?`);
+    if (!ask) {
+      return;
+    }
+    this.loading = true;
+    this.deliveryService.unassignDelivery<any>(this.you!.id, this.current_delivering.id).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.alertService.handleResponseSuccessGeneric(response);
+        this.current_delivering = null;
+        this.loading = false;
+      },
+      error: (error: any) => {
+        this.loading = false;
+        this.alertService.handleResponseErrorGeneric(error);
+      },
+      complete: () => {
+        this.loading = false;
+      },
+    });
+  }
+
+  addTrackingUpdate() {
+
+  }
+
+  markDeliveryAsPickedUp() {
+    const ask = window.confirm(`Have you picked up this delivery?`);
+    if (!ask) {
+      return;
+    }
+    this.loading = true;
+    this.deliveryService.markDeliveryAsPickedUp<any>(this.you!.id, this.current_delivering.id).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.alertService.handleResponseSuccessGeneric(response);
+        this.current_delivering = response.data;
+        this.loading = false;
+      },
+      error: (error: any) => {
+        this.loading = false;
+        this.alertService.handleResponseErrorGeneric(error);
+      },
+      complete: () => {
+        this.loading = false;
+      },
+    });
+  }
+
+  markDeliveryAsDroppedOff() {
+    const ask = window.confirm(`Have you dropped off this delivery?`);
+    if (!ask) {
+      return;
+    }
+    this.loading = true;
+    this.deliveryService.markDeliveryAsDroppedOff<any>(this.you!.id, this.current_delivering.id).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.alertService.handleResponseSuccessGeneric(response);
+        this.current_delivering = response.data;
+        this.loading = false;
+      },
+      error: (error: any) => {
+        this.loading = false;
+        this.alertService.handleResponseErrorGeneric(error);
+      },
+      complete: () => {
+        this.loading = false;
+      },
+    });
+  }
 }

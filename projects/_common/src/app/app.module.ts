@@ -22,6 +22,8 @@ import { CommonUserPageComponent } from './components/pages/user/user-page.compo
 import { CommonAlertsFragmentComponent } from './components/alerts-fragment/alerts-fragment.component';
 import { AlertService } from './services/alert.service';
 import { CommonModule } from '@angular/common';
+import { CommonUserPageCardComponent } from './components/user-page-card/user-page-card.component';
+import { TimeAgoPipe } from './pipes/time-ago.pipe';
 
 @NgModule({
   declarations: [
@@ -39,21 +41,33 @@ import { CommonModule } from '@angular/common';
     CommonAboutComponent,
     CommonAppsComponent,
     CommonAlertsFragmentComponent,
+    CommonUserPageCardComponent,
+
+    TimeAgoPipe,
   ],
   imports: [
     BrowserModule,
     CommonModule,
-    CommonAppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
+
+    CommonAppRoutingModule,
   ],
   exports: [
+    BrowserModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+
     CommonAppRoutingModule,
     
     CommonNavbarPartialComponent,
     CommonNavbarComponent,
     CommonFooterComponent,
     CommonAlertsFragmentComponent,
+    CommonUserPageCardComponent,
+
+    TimeAgoPipe,
   ],
   providers: [
     HttpClientModule,

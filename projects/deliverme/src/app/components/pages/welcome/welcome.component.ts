@@ -38,41 +38,5 @@ export class DeliverMeWelcomeComponent implements OnInit {
   }
 
   ngAfterViewInit() {
-    this.locationInput = <HTMLInputElement> window.document.getElementById('location-input');
-    const googleIsReadySub = this.googleService.isReady().subscribe(
-      (google) => {
-        if (google) {
-          this.initGoogle(google);
-        }
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-    this.subscriptionsMap.set('googleIsReadySub', googleIsReadySub);
-  }
-
-  initGoogle(google: any) {
-    if (!this.locationInput) {
-      throw new ReferenceError(`location-input is not defined...`);
-    }
-
-    const place_changes_sub = this.googleService.makeTextInputIntoLocationAutoComplete(this.locationInput).subscribe({
-      next: (results) => {
-        this.locationResults = results;
-        console.log(this);
-      }
-    });
-    this.subscriptionsMap.set('place_changes_sub', place_changes_sub);
-  }
-
-  searchDeliveries() {
-    const canSearch = this.locationResults && !!this.locationInput!.value;
-    if (!canSearch) {
-      console.log(`cannot search...`);
-      return;
-    }
-
-    
   }
 }

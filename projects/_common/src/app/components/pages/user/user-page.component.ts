@@ -34,9 +34,6 @@ export class CommonUserPageComponent implements OnInit {
   ngOnInit() {
     this.userStore.getChangesObs().subscribe(you => {
       this.you = you;
-      if (this.isYou) {
-        this.user = you;
-      }
     });
 
     this.route.data.subscribe((data) => {

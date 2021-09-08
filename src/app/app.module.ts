@@ -12,6 +12,8 @@ import { ClientService } from 'projects/_common/src/app/services/client.service'
 import { UserService } from 'projects/_common/src/app/services/user.service';
 import { CommonModule } from '@angular/common';
 import { XsrfTokenInterceptor } from 'projects/_common/src/app/http-interceptors/xsrf-token.http-interceptor';
+import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
+import { take } from 'rxjs/operators';
 
 @NgModule({
   declarations: [
@@ -44,8 +46,13 @@ import { XsrfTokenInterceptor } from 'projects/_common/src/app/http-interceptors
       deps: [
         UserService,
         ClientService,
+        GoogleMapsService,
       ],
-      useFactory: (userService: UserService, clientService: ClientService) => {
+      useFactory: (
+        userService: UserService,
+        clientService: ClientService,
+        googleMapsService: GoogleMapsService,
+      ) => {
         return () => {
           const getUserPromise = new Promise((resolve, reject) => {
             userService.checkUserSession().subscribe({
@@ -73,9 +80,28 @@ import { XsrfTokenInterceptor } from 'projects/_common/src/app/http-interceptors
             });
           });
 
+          const getGoogleMapsPromise = new Promise((resolve, reject) => {
+            googleMapsService.isReady().pipe(take(3)).subscribe({
+              next: (google) => {
+                if (googleMapsService.mapsIsReady) {
+                  console.log('APP_INITIALIZER (google maps) - admit one', google, googleMapsService);
+                  resolve(true);
+                }
+              },
+              error: (error: any) => {
+                console.log('APP_INITIALIZER (google maps) - error', error, googleMapsService);
+                resolve(true);
+              },
+              complete: () => {
+                
+              },
+            });
+          });
+
           return Promise.all([
             getUserPromise,
             getXsrfTokenPromise,
+            getGoogleMapsPromise,
           ]);
         }
       }

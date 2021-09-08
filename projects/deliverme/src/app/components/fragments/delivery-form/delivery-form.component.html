@@ -1,0 +1,192 @@
+<div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+  <div class="uk-card-body">
+    <p class="uk-text-large">{{ isEditing ? 'Editing' : 'Create a Delivery' }}</p>
+
+    <div>
+      <form
+        #newDeliveryFormElm
+        [formGroup]="newDeliveryForm!"
+        (ngSubmit)="onSubmitNewDelivery(newDeliveryFormElm, iconInput)"
+      >
+        <fieldset class="uk-fieldset">
+          <div class="uk-margin">
+            <span class="label-info">
+              Title ({{ newDeliveryForm!.value.title.length }}/255)
+            </span>
+            <input class="uk-input" type="text" placeholder="Enter Delivery Title" formControlName="title" >
+          </div>
+
+          <div class="uk-margin">
+            <span class="label-info">
+              Description ({{ newDeliveryForm!.value.description.length }}/500)
+            </span>
+            <textarea type="text" class="uk-textarea" placeholder="Enter Delivery Description" rows="5" formControlName="description"></textarea>
+          </div>
+
+          <div class="uk-margin">
+            <span class="label-info">
+              Image
+            </span>
+            <br/>
+            <input
+              #iconInput
+              type="file"
+              class=""
+              name="delivery_image"
+              formControlName="file"
+            />
+          </div>
+
+          <div class="uk-margin">
+            <span class="label-info">
+              Size
+            </span>
+            <select class="uk-select" formControlName="size">
+              <option *ngFor="let size of sizes" [value]="size">{{ size }}</option>
+            </select>
+          </div>
+
+          <div class="uk-margin">
+            <span class="label-info">
+              Weight <span><small>(lbs)</small></span>
+            </span>
+            <input class="uk-input" type="number" placeholder="Enter Delivery Weight (lbs)" formControlName="weight" />
+          </div>
+
+          <div class="uk-margin">
+            <span class="label-info">
+              Payout <span><small>how much you are paying for the delivery (minimum = $10)</small></span>
+            </span>
+            <input class="uk-input" type="number" placeholder="Enter Delivery Payout" formControlName="payout" />
+          </div>
+
+          <div class="uk-margin">
+            <span class="label-info">
+              Penalty <span><small>how much you should be reimbursed in possible dispute</small></span>
+            </span>
+            <input class="uk-input" type="number" placeholder="Enter Delivery Penalty" formControlName="penalty" />
+          </div>
+
+          <!-- <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+            <label>
+              <input formControlName="auto_accept_anyone" class="uk-checkbox" type="checkbox">
+              Auto-Accept Anyone 
+            </label>
+            <label>
+              <input formControlName="urgent" class="uk-checkbox" type="checkbox">
+              Urgent 
+            </label>
+          </div> -->
+
+          <div class="margin-top-50"></div>
+
+          <span class="uk-text-medium">
+            <strong>From</strong>
+          </span>
+          <div class="uk-margin">
+            <span class="label-info">
+              From Location 
+            </span>
+            <input #fromLocationInput type="text" class="uk-input" placeholder="Enter From Location" />
+          </div>
+          <div class="uk-margin">
+            <span class="label-info">
+              Pickup From
+            </span>
+            <input class="uk-input" type="text" placeholder="Person to pickup from" formControlName="from_person" >
+          </div>
+          <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+            <label>
+              <input formControlName="from_person_id_required" class="uk-checkbox" type="checkbox">
+              ID Required 
+            </label>
+            <label>
+              <input formControlName="from_person_sig_required" class="uk-checkbox" type="checkbox">
+              Signature Required 
+            </label>
+          </div>
+          <div class="uk-margin">
+            <span class="label-info">
+              Phone <small>contact number for carrier to reach pickup person (optional)</small>
+            </span>
+            <input
+              class="uk-input"
+              type="text"
+              placeholder="Enter Delivery From Person Phone"
+              formControlName="from_person_phone" 
+            />
+          </div>
+          <div class="uk-margin">
+            <span class="label-info">
+              Email <small>contact email for carrier to reach pickup person (optional)</small>
+            </span>
+            <input
+              class="uk-input"
+              type="text"
+              placeholder="Enter Delivery From Person Email"
+              formControlName="from_person_email" 
+            />
+          </div>
+
+          <div class="margin-top-25"></div>
+
+          <span class="uk-text-medium">
+            <strong>To</strong>
+          </span>
+          <div class="uk-margin">
+            <span class="label-info">
+              To Location 
+            </span>
+            <input #toLocationInput type="text" class="uk-input" placeholder="Enter To Location" />
+          </div>
+          <div class="uk-margin">
+            <span class="label-info">
+              Dropoff To
+            </span>
+            <input class="uk-input" type="text" placeholder="Person to dropoff to" formControlName="to_person" >
+          </div>
+          <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+            <label>
+              <input formControlName="to_person_id_required" class="uk-checkbox" type="checkbox">
+              ID Required 
+            </label>
+            <label>
+              <input formControlName="to_person_sig_required" class="uk-checkbox" type="checkbox">
+              Signature Required 
+            </label>
+          </div>
+          <div class="uk-margin">
+            <span class="label-info">
+              Phone <small>contact number for carrier to reach pickup person (optional)</small>
+            </span>
+            <input
+              class="uk-input"
+              type="text"
+              placeholder="Enter Delivery To Person Phone"
+              formControlName="to_person_phone" 
+            />
+          </div>
+          <div class="uk-margin">
+            <span class="label-info">
+              Email <small>contact email for carrier to reach pickup person (optional)</small>
+            </span>
+            <input
+              class="uk-input"
+              type="text"
+              placeholder="Enter Delivery To Person Email"
+              formControlName="to_person_email" 
+            />
+          </div>
+        </fieldset>
+
+        <button
+          type="submit"
+          class="uk-button uk-button-primary"
+          [disabled]="newDeliveryForm!.invalid || loading"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

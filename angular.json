@@ -35,8 +35,12 @@
             ],
             "styles": [
               "src/styles.scss",
+              "local/css/emerald.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+
               "projects/deliverme/src/styles.scss",
+              "projects/travellrs/src/styles.scss",
+
               "node_modules/uikit/dist/css/uikit.min.css"
             ],
             "scripts": [
@@ -1903,7 +1907,7 @@
               "projects/_common/src/assets"
             ],
             "styles": [
-              "projects/_common/src/styles.scss"
+              "projects/_common/src/styles.scss" 
             ],
             "scripts": []
           },
@@ -2026,6 +2030,7 @@
               "projects/deliverme/src/assets"
             ],
             "styles": [
+              "src/styles.scss",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "projects/deliverme/src/styles.scss",
               "./node_modules/uikit/dist/css/uikit.min.css"

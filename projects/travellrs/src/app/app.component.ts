@@ -36,19 +36,26 @@ export class AppComponent implements OnInit {
           //   requiresAuth: false
           // },
           {
-            name: 'Travels',
-            value: ['/', 'modern', 'apps', 'travellrs', 'users', you!.id, 'deliveries'],
-            title: 'Travellrs User Deliveries Page',
+            name: 'Home',
+            value: ['/', 'modern', 'apps', 'travellrs', 'users', you!.id, 'home'],
+            title: 'Travellrs User Home Page',
             class: '',
             requiresAuth: true
           },
           {
-            name: 'Settings',
-            value: ['/', 'modern', 'apps', 'travellrs', 'users', you!.id, 'settings'],
-            title: 'Travellrs Settings Page',
+            name: 'Travels',
+            value: ['/', 'modern', 'apps', 'travellrs', 'users', you!.id, 'travels'],
+            title: 'Travellrs User Travels Page',
             class: '',
-            requiresAuth: true
-          }
+            requiresAuth: false
+          },
+          // {
+          //   name: 'Settings',
+          //   value: ['/', 'modern', 'apps', 'travellrs', 'users', you!.id, 'settings'],
+          //   title: 'Travellrs Settings Page',
+          //   class: '',
+          //   requiresAuth: true
+          // }
         ];
       }
     });

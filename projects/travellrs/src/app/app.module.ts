@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { CommonAppModule } from 'projects/_common/src/app/app.module';
 
 import { TravellrsAppRoutingModule } from './app-routing.module';
@@ -12,6 +12,8 @@ import { TravellrsUserPageComponent } from './components/pages/user-page/user-pa
 import { TravellrsUserHomePageComponent } from './components/pages/user-page/user-home-page/user-home-page.component';
 import { TravellrsUserSettingsPageComponent } from './components/pages/user-page/user-settings-page/user-settings-page.component';
 import { TravellrsUserTravelsPageComponent } from './components/pages/user-page/user-travels-page/user-travels-page.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TravelCardComponent } from './components/fragments/travel-card/travel-card.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,8 @@ import { TravellrsUserTravelsPageComponent } from './components/pages/user-page/
     TravellrsUserPageComponent,
     TravellrsUserHomePageComponent,
     TravellrsUserSettingsPageComponent,
-    TravellrsUserTravelsPageComponent
+    TravellrsUserTravelsPageComponent,
+    TravelCardComponent,
   ],
   imports: [
     BrowserModule,
@@ -32,7 +35,9 @@ import { TravellrsUserTravelsPageComponent } from './components/pages/user-page/
   ],
   exports: [
   ],
-  providers: [],
+  providers: [
+    DatePipe,
+  ],
   bootstrap: [AppComponent]
 })
 export class TravellrsAppModule { }

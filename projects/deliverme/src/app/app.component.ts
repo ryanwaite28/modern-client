@@ -36,6 +36,13 @@ export class AppComponent implements OnInit {
           //   requiresAuth: false
           // },
           {
+            name: 'Create Delivery',
+            value: ['/', 'modern', 'apps', 'deliverme', 'users', you!.id, 'create-delivery'],
+            title: 'DeliverMe User Create Delivery Page',
+            class: '',
+            requiresAuth: true
+          },
+          {
             name: 'Deliveries',
             value: ['/', 'modern', 'apps', 'deliverme', 'users', you!.id, 'deliveries'],
             title: 'DeliverMe User Deliveries Page',

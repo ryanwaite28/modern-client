@@ -17,20 +17,43 @@ export enum StoreKeys {
 }
 
 export enum USER_RECORDS {
+  // common
   FIELDS = 'fields',
   CONNECTIONS = 'connections',
   CONNECTION_REQUESTS = 'connection-requests',
-  CLIQUES = 'cliques',
-  POSTS = 'posts',
-  RECIPES = 'recipes',
-  CLIQUE_INTERESTS = 'clique-interests',
-  CLIQUE_MEMBERSHIPS = 'clique-memberships',
-  CLIQUE_MEMBERSHIP_REQUESTS = 'member-requests',
   RESOURCES = 'resources',
   RESOURCE_INTERESTS = 'resource-interests',
   NOTIFICATIONS = 'notifications',
   FOLLOWERS = 'followers',
   FOLLOWINGS = 'followings',
+  
+  //hotspot
+  POSTS = 'posts',
+  CLIQUES = 'cliques',
+  CLIQUE_INTERESTS = 'clique-interests',
+  CLIQUE_MEMBERSHIPS = 'clique-memberships',
+  CLIQUE_MEMBERSHIP_REQUESTS = 'member-requests',
+  
+  
+  // deliverme
+  DELIVERIES = 'deliveries',
+  DELIVERINGS = 'deliverings',
+  
+  //travellrs
+  MARKERS = 'markers',
+  
+  // world news
+  
+  // chef city
+  RECIPES = 'recipes',
+}
+
+export enum MODERN_APPS {
+  COMMON = 'common',
+  HOTSPOT = 'hotspot',
+  DELIVERME = 'deliverme',
+  TRAVELLRS = 'travellrs',
+  WORLDNEWS = 'worldnews',
 }
 
 export enum REACTIONS {

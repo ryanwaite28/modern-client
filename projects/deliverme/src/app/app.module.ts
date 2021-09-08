@@ -12,6 +12,12 @@ import { AboutComponent } from './components/pages/about/about.component';
 import { DeliverMeUserPageComponent } from './components/pages/user/user-page.component';
 import { DeliverMeUserDeliveriesFragmentComponent } from './components/pages/user/deliveries/deliveries.component';
 import { DeliverMeUserDeliveringFragmentComponent } from './components/pages/user/delivering/delivering.component';
+import { DeliveryFormComponent } from './components/fragments/delivery-form/delivery-form.component';
+import { DeliveryCardComponent } from './components/fragments/delivery-card/delivery-card.component';
+import { DeliverMeUserCreateDeliveryFragmentComponent } from './components/pages/user/create-delivery/create-delivery.component';
+
+
+
 
 @NgModule({
   declarations: [
@@ -23,6 +29,9 @@ import { DeliverMeUserDeliveringFragmentComponent } from './components/pages/use
     DeliverMeUserSettingsFragmentComponent,
     DeliverMeUserDeliveriesFragmentComponent,
     DeliverMeUserDeliveringFragmentComponent,
+    DeliveryFormComponent,
+    DeliveryCardComponent,
+    DeliverMeUserCreateDeliveryFragmentComponent,
   ],
   imports: [
     BrowserModule,

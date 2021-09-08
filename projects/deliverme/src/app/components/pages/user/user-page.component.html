@@ -1,10 +1,15 @@
 <div>
   <div class="uk-container row-pad-1">
-    <div class="">
-      admit one
-      
-    </div>
+    <div class="uk-child-width-expand@s" uk-grid>
+      <div class="uk-width-2-5@m">
+        <common-user-page-card
+          [user]="user"
+        ></common-user-page-card>
+      </div>
 
-    <router-outlet></router-outlet>
+      <div class="uk-width-expand@m">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,1 +1,60 @@
-<p>user-home-page works!</p>
+<div class="uk-child-width-expand@s" uk-grid>
+  <div class="uk-width-2-5@m">
+    <div class="uk-card uk-card-default border-grey-1">
+      <div class="uk-card-body">
+        <h1></h1>
+        <p>{{ selectedPlace || 'No place selected...' }}</p>
+
+        <div *ngIf="selectedPlace">
+          <form #newMarkerFormElm [formGroup]="newMarkerForm" (ngSubmit)="onSubmitNewMarker(newMarkerFormElm, iconInput)">
+            <div class="uk-margin">
+              <span class="label-info">
+                Caption 
+                <!-- ({{ newMarkerForm.value.caption.length }}/{{ TEXT_FORM_LIMIT }}) -->
+              </span>
+              <textarea
+                type="text"
+                class="uk-textarea"
+                placeholder="Enter a caption"
+                rows="5"
+                name="marker_caption"
+                formControlName="caption"
+              ></textarea>
+            </div>
+
+            <div class="uk-margin">
+              <span class="label-info">
+                Date & Time Traveled
+              </span>
+              <br/>
+              <input type="date" formControlName="date_traveled" />
+              <input type="time" formControlName="time_traveled" />
+            </div>
+  
+            <div class="margin-bottom-20">
+              <input
+                #iconInput
+                type="file"
+                class=""
+                name="marker_icon"
+                formControlName="file"
+              />
+            </div>
+
+            <button
+              type="submit"
+              class="uk-button uk-button-primary"
+              [disabled]="!newMarkerForm.valid || loading"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="uk-width-expand@m">
+    <input #pacInput type="text" id="pac-input" placeholder="Enter a Location" />
+    <div id="map-div" #mapsDiv></div>
+  </div>
+</div>

@@ -1,0 +1,16 @@
+<div class="uk-card uk-card-default">
+  <div class="uk-card-media-top" *ngIf="travel.image_link">
+    <img [src]="travel.image_link" alt="">
+  </div>
+  <div class="uk-card-body">
+    <h3 class="uk-card-title">{{ travel.caption }}</h3>
+    <p>
+      Location: {{ travel.location }}<br/>
+      Posted At: {{ travel.created_at | date : 'MMM d, y - h:mm a' }}
+      <span *ngIf="travel.date_traveled">
+        <br/>
+        Date Traveled: {{ travel.date_traveled | date : 'MMM d, y - h:mm a' }}
+      </span>
+    </p>
+  </div>
+</div>

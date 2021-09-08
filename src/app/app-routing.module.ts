@@ -5,7 +5,7 @@ const routes: Routes = [
   /**
    * Unknown/Invalid Route Redirect
    */
-  //  { path: '**', redirectTo: 'modern/welcome' }
+   { path: '**', redirectTo: 'modern/welcome' }
 ];
 
 @NgModule({

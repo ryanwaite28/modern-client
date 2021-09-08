@@ -8,6 +8,10 @@
 
 /* Class */
 
+.uk-button {
+  margin: auto;
+}
+
 .alerts-box {
   position: fixed;
   display: block;
@@ -246,6 +250,12 @@ section.content-box {
 .row-pad-1 {
   padding: 50px 0px;
 }
+.row-pad-2 {
+  padding: 100px 0px;
+}
+.row-pad-3 {
+  padding: 150px 0px;
+}
 
 .blur-1 {
 	-webkit-filter: blur(4px);
@@ -335,6 +345,15 @@ textarea.ng-touched.ng-invalid {
 .margin-left-20 {
   margin-left: 20px;
 }
+.margin-left-25 {
+  margin-left: 25px;
+}
+.margin-left-50 {
+  margin-left: 50px;
+}
+.margin-left-100 {
+  margin-left: 100px;
+}
 
 .margin-right-5 {
   margin-right: 5px;
@@ -347,6 +366,15 @@ textarea.ng-touched.ng-invalid {
 }
 .margin-right-20 {
   margin-right: 20px;
+}
+.margin-right-25 {
+  margin-right: 25px;
+}
+.margin-right-50 {
+  margin-right: 50px;
+}
+.margin-right-100 {
+  margin-right: 100px;
 }
 
 .margin-top-5 {
@@ -361,6 +389,15 @@ textarea.ng-touched.ng-invalid {
 .margin-top-20 {
   margin-top: 20px;
 }
+.margin-top-25 {
+  margin-top: 25px;
+}
+.margin-top-50 {
+  margin-top: 50px;
+}
+.margin-top-100 {
+  margin-top: 100px;
+}
 
 .margin-bottom-5 {
   margin-bottom: 5px;
@@ -373,6 +410,15 @@ textarea.ng-touched.ng-invalid {
 }
 .margin-bottom-20 {
   margin-bottom: 20px;
+}
+.margin-bottom-25 {
+  margin-bottom: 25px;
+}
+.margin-bottom-50 {
+  margin-bottom: 50px;
+}
+.margin-bottom-100 {
+  margin-bottom: 100px;
 }
 
 /* Animations */

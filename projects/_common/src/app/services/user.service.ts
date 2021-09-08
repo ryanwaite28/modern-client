@@ -26,7 +26,7 @@ import {
 import { UserStoreService } from '../stores/user-store.service';
 import { INotification } from '../interfaces/notification.interface';
 import { IUserField } from '../interfaces/user-field.interface';
-import { USER_RECORDS } from '../enums/all.enums';
+import { MODERN_APPS, USER_RECORDS } from '../enums/all.enums';
 import { HttpStatusCode } from '../enums/http-codes.enum';
 
 @Injectable({
@@ -222,13 +222,20 @@ export class UserService extends ClientService {
 
   // generic
 
-  get_user_records<T>(id: number, minId: number, path: USER_RECORDS, get_all: boolean = false, is_public: boolean = true) {
+  get_user_records<T>(
+    user_id: number,
+    app: MODERN_APPS,
+    path: USER_RECORDS,
+    min_id?: number,
+    get_all: boolean = false,
+    is_public: boolean = true
+  ) {
     const partial_prefix = is_public ? '/get-' : '/';
     const endpoint = get_all
-      ? '/common/users/' + id + `${partial_prefix}` + path + '/all'
-      : minId
-        ? '/common/users/' + id + `${partial_prefix}` + path + '/' + minId
-        : '/common/users/' + id + `${partial_prefix}` + path;
+      ? '/' + app + '/users/' + user_id + partial_prefix + path + '/all'
+      : min_id
+        ? '/' + app + '/users/' + user_id + `${partial_prefix}` + path + '/' + min_id
+        : '/' + app + '/users/' + user_id + `${partial_prefix}` + path;
     return this.sendRequest<GetRecordResponse<T[]>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
