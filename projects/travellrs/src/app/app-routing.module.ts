@@ -28,7 +28,7 @@ const routes: Routes = [
         data: { authParamsProp: 'user_id' },
         children: [
           { path: '', pathMatch: 'full', redirectTo: 'home' },
-          { path: 'home', component: TravellrsUserHomePageComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
+          { path: 'home', component: TravellrsUserHomePageComponent, canActivate: [], data: { authParamsProp: 'user_id' } },
           { path: 'travels', component: TravellrsUserTravelsPageComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
           // { path: 'settings', component: TravellrsUserSettingsPageComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
         ]
