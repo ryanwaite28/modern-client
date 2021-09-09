@@ -32,7 +32,7 @@ export class ClientService {
     if (this.xsrf_token) {
       return of(this.xsrf_token);
     }
-    return this.sendRequest<any>(`/common/utils/get-xsrf-token`, 'GET')
+    return this.sendRequest<any>(`/common/utils/get-xsrf-token-pair`, 'GET')
       .pipe(
         map((response) => {
           this.xsrf_token = response.xsrf_token;
