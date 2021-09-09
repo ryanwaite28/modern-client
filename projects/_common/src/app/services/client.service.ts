@@ -56,7 +56,7 @@ export class ClientService {
   ): Observable<T> {
     const api_url = this.API_PREFIX + route;
     const jwt = window.localStorage.getItem('rmw-modern-apps-jwt') || '';
-    const httpOptions: any = {
+    const httpOptions = {
       withCredentials: true,
       reportProgress: report_progress,
       headers: customHeaders || new HttpHeaders({
@@ -65,10 +65,10 @@ export class ClientService {
       }),
     };
     if (data && data.constructor === Object) {
-      httpOptions.headers.set('Content-Type', 'application/json');
+      httpOptions.headers = httpOptions.headers.set('Content-Type', 'application/json');
     }
     if (this.xsrf_token) {
-      httpOptions.headers.set('x-xsrf-token', this.xsrf_token);
+      httpOptions.headers = httpOptions.headers.set('x-xsrf-token', this.xsrf_token);
     }
 
     let requestObservable: Observable<T>;
