@@ -47,7 +47,7 @@ export class ClientService {
       );
   }
 
-  sendRequest<T>(
+  sendRequest<T = any>(
     route: string,
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     data?: object | FormData | null,
