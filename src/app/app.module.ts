@@ -1,5 +1,5 @@
 import { APP_INITIALIZER, NgModule } from '@angular/core';
-import { HttpClientModule, HttpErrorResponse, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HttpClientXsrfModule, HttpErrorResponse, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -67,6 +67,10 @@ function APP_INITIALIZER_FACTORY(
     BrowserModule,
     CommonModule,
     HttpClientModule,
+    HttpClientXsrfModule.withOptions({
+      cookieName: `xsrf-token`,
+      headerName: `x-xsrf-token`,
+    }),
     
     /* apps */
     
