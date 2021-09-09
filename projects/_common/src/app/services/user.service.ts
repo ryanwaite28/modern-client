@@ -269,6 +269,30 @@ export class UserService {
     );
   }
 
+  //
+
+  getUserNotificationsAll<T = any>(user_id: number) {
+    return this.get_user_records<T>(
+      user_id,
+      MODERN_APPS.COMMON,
+      USER_RECORDS.NOTIFICATIONS,
+      undefined,
+      true,
+      false
+    );
+  }
+
+  getUserNotifications<T = any>(user_id: number, min_id?: number) {
+    return this.get_user_records<T>(
+      user_id,
+      MODERN_APPS.COMMON,
+      USER_RECORDS.NOTIFICATIONS,
+      min_id,
+      false,
+      false
+    );
+  }
+
   /** POST */
 
   sign_up(data: PlainObject) {

@@ -7,6 +7,7 @@
           <ng-container *ngSwitchCase="true">
             <li><a [routerLink]="['/', 'modern', 'users', you!.id]">Home</a></li>
             <li><a [routerLink]="['/', 'modern', 'users', you!.id, 'settings']">Settings</a></li>
+            <li><a [routerLink]="['/', 'modern', 'users', you!.id, 'notifications']">Notifications</a></li>
             <li class="uk-nav-divider"></li>
             <li><a (click)="onSignout()">Sign Out</a></li>
           </ng-container>

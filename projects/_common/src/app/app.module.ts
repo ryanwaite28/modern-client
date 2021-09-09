@@ -24,6 +24,7 @@ import { AlertService } from './services/alert.service';
 import { CommonModule } from '@angular/common';
 import { CommonUserPageCardComponent } from './components/user-page-card/user-page-card.component';
 import { TimeAgoPipe } from './pipes/time-ago.pipe';
+import { CommonUserNotificationsFragmentComponent } from './components/pages/user/notifications/notifications.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,8 @@ import { TimeAgoPipe } from './pipes/time-ago.pipe';
     CommonUserPageCardComponent,
 
     TimeAgoPipe,
+
+    CommonUserNotificationsFragmentComponent,
   ],
   imports: [
     BrowserModule,

@@ -6,6 +6,7 @@ import { CommonContactComponent } from './components/pages/contact/contact.compo
 import { CommonUserSigninComponent } from './components/pages/signin/signin.component';
 import { CommonUserSignupComponent } from './components/pages/signup/signup.component';
 import { CommonUserHomeFragmentComponent } from './components/pages/user/home/home.component';
+import { CommonUserNotificationsFragmentComponent } from './components/pages/user/notifications/notifications.component';
 import { CommonUserSettingsFragmentComponent } from './components/pages/user/settings/settings.component';
 import { CommonUserPageComponent } from './components/pages/user/user-page.component';
 import { CommonWelcomeComponent } from './components/pages/welcome/welcome.component';
@@ -34,6 +35,7 @@ const routes: Routes = [
       
       { path: 'home', component: CommonUserHomeFragmentComponent },
       { path: 'settings', component: CommonUserSettingsFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
+      { path: 'notifications', component: CommonUserNotificationsFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
       
       // { path: 'info', component: InfoFragmentComponent },
       // { path: 'posts', component: UserPostsFragmentComponent },

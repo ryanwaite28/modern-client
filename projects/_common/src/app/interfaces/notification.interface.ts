@@ -2,12 +2,13 @@ import { IUser } from './user.interface';
 
 export interface INotification {
   id: number;
-  createdAt: string;
-  updatedAt: string;
+  created_at: string;
+  updated_at: string;
   //
   from_id: number;
   to_id: number;
   action: string;
+  micro_app: string;
   target_type: string;
   target_id: number;
   message: string;

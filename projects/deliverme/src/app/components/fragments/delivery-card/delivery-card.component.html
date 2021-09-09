@@ -16,7 +16,7 @@
   <div class="uk-card-body">
     <h3 class="uk-card-title">{{ delivery.title }}</h3>
     <p>{{ delivery.description }}</p>
-    <div *ngIf="delivery.completed" uk-alert>Completed!</div>
+    <div class="border-lightgrey-1" *ngIf="delivery.completed" uk-alert>Completed!</div>
     <hr/>
 
     <p>
@@ -94,7 +94,7 @@
         {{
           !delivery.datetime_picked_up 
           ? 'no' 
-          : 'yes, at: ' + (delivery.datetime_picked_up | date : 'MMM d, y - h:mm a') 
+          : 'yes, at: ' + (delivery.datetime_picked_up | date : 'MMM d, y - h:mm a') + ' (' + (delivery.datetime_picked_up | timeAgo) + ')'
         }}
       </small>
       <br/>
@@ -103,7 +103,7 @@
         {{
           !delivery.datetime_delivered 
           ? 'no' 
-          : 'yes, at: ' + (delivery.datetime_delivered | date : 'MMM d, y - h:mm a') 
+          : 'yes, at: ' + (delivery.datetime_delivered | date : 'MMM d, y - h:mm a') + ' (' + (delivery.datetime_delivered | timeAgo) + ')'
         }}
       </small>
       <br/>
@@ -118,7 +118,6 @@
       <small>Venmo: {{ delivery.carrier.deliverme_settings.venmo_id }}</small><br>
       <small>PayPal: {{ delivery.carrier.deliverme_settings.paypal_me }}</small><br>
       <small>Google Pay: {{ delivery.carrier.deliverme_settings.google_pay }}</small><br>
-      <br/>
     </p>
 
     <div>
