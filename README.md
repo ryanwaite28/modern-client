@@ -1,6 +1,10 @@
 # HotspotClient
 
+Deployed on heroku at - <a href="https://rmw-modern-client.herokuapp.com/">https://rmw-modern-client.herokuapp.com/</a>
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.0.
+
+Just a bunch of micro-apps. See the Node.JS ExpressJS code at - <a href="https://github.com/ryanwaite28/modern-server">https://github.com/ryanwaite28/modern-server</a>
 
 ## Development server
 
