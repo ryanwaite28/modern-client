@@ -81,20 +81,22 @@ import { take } from 'rxjs/operators';
           });
 
           const getGoogleMapsPromise = new Promise((resolve, reject) => {
-            googleMapsService.isReady().pipe(take(3)).subscribe({
-              next: (google) => {
-                if (googleMapsService.mapsIsReady) {
-                  console.log('APP_INITIALIZER (google maps) - admit one', google, googleMapsService);
+            getXsrfTokenPromise.then(() => {
+              googleMapsService.isReady().pipe(take(3)).subscribe({
+                next: (google) => {
+                  if (googleMapsService.mapsIsReady) {
+                    console.log('APP_INITIALIZER (google maps) - admit one', google, googleMapsService);
+                    resolve(true);
+                  }
+                },
+                error: (error: any) => {
+                  console.log('APP_INITIALIZER (google maps) - error', error, googleMapsService);
                   resolve(true);
-                }
-              },
-              error: (error: any) => {
-                console.log('APP_INITIALIZER (google maps) - error', error, googleMapsService);
-                resolve(true);
-              },
-              complete: () => {
-                
-              },
+                },
+                complete: () => {
+                  
+                },
+              });
             });
           });
 
