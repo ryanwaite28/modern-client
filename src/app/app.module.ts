@@ -75,28 +75,31 @@ import { take } from 'rxjs/operators';
               },
               error: (error: HttpErrorResponse) => {
                 console.log('APP_INITIALIZER (xsrf token) - error', error);
-                return resolve(true);
+                return resolve(false);
               }
             });
           });
 
           const getGoogleMapsPromise = new Promise((resolve, reject) => {
-            getXsrfTokenPromise.then(() => {
-              googleMapsService.isReady().pipe(take(3)).subscribe({
-                next: (google) => {
-                  if (googleMapsService.mapsIsReady) {
-                    console.log('APP_INITIALIZER (google maps) - admit one', google, googleMapsService);
+            getXsrfTokenPromise.then((result) => {
+              console.log({ xsrfCallResult: result });
+              setTimeout(() => {
+                googleMapsService.isReady().pipe(take(1)).subscribe({
+                  next: (google) => {
+                    if (googleMapsService.mapsIsReady) {
+                      console.log('APP_INITIALIZER (google maps) - admit one', google, googleMapsService);
+                      resolve(true);
+                    }
+                  },
+                  error: (error: any) => {
+                    console.log('APP_INITIALIZER (google maps) - error', error, googleMapsService);
                     resolve(true);
-                  }
-                },
-                error: (error: any) => {
-                  console.log('APP_INITIALIZER (google maps) - error', error, googleMapsService);
-                  resolve(true);
-                },
-                complete: () => {
-                  
-                },
-              });
+                  },
+                  complete: () => {
+                    
+                  },
+                });
+              }, 500);
             });
           });
 
