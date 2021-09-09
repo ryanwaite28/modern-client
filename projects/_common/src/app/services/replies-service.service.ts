@@ -16,13 +16,11 @@ import { ClientService } from './client.service';
 @Injectable({
   providedIn: 'root'
 })
-export class RepliesService extends ClientService {
+export class RepliesService {
 
   constructor(
-    public http: HttpClient,
-  ) {
-    super(http);
-  }
+    private clientService: ClientService,
+  ) { }
 
   get_comment_replies(params: {
     parent_id: number,
@@ -37,7 +35,7 @@ export class RepliesService extends ClientService {
       : min_id
         ? '/' + model_type + '/' + parent_id + '/comments/' + comment_id + '/replies/' + min_id
         : '/' + model_type + '/' + parent_id + '/comments/' + comment_id + '/replies';
-    return this.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -51,7 +49,7 @@ export class RepliesService extends ClientService {
     model_type: USER_RECORDS;
   }) {
     const { parent_id, comment_id, reply_id, model_type } = params;
-    return this.sendRequest<GetRecordResponse<IReactionsCounts>>(`/${model_type}/${parent_id}/comments/${comment_id}/replies/${reply_id}/user-reactions/count`, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<IReactionsCounts>>(`/${model_type}/${parent_id}/comments/${comment_id}/replies/${reply_id}/user-reactions/count`, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -66,7 +64,7 @@ export class RepliesService extends ClientService {
     model_type: USER_RECORDS;
   }) {
     const { parent_id, comment_id, reply_id, user_id, model_type } = params;
-    return this.sendRequest<GetRecordResponse<any>>(`/${model_type}/${parent_id}/comments/${comment_id}/replies/${reply_id}/user-reaction/${user_id}`, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(`/${model_type}/${parent_id}/comments/${comment_id}/replies/${reply_id}/user-reaction/${user_id}`, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -80,7 +78,7 @@ export class RepliesService extends ClientService {
     model_type: USER_RECORDS;
   }) {
     const { parent_id, comment_id, data, model_type } = params;
-    return this.sendRequest<PostRecordResponse<any>>(`/${model_type}/${parent_id}/comments/${comment_id}/replies`, `POST`, data).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<any>>(`/${model_type}/${parent_id}/comments/${comment_id}/replies`, `POST`, data).pipe(
       map((response) => {
         return response;
       })
@@ -95,7 +93,7 @@ export class RepliesService extends ClientService {
     model_type: USER_RECORDS;
   }) {
     const { parent_id, comment_id, reply_id, data, model_type } = params;
-    return this.sendRequest<PutRecordResponse<any>>(`/${model_type}/${parent_id}/comments/${comment_id}/replies/${reply_id}`, `PUT`, data).pipe(
+    return this.clientService.sendRequest<PutRecordResponse<any>>(`/${model_type}/${parent_id}/comments/${comment_id}/replies/${reply_id}`, `PUT`, data).pipe(
       map((response) => {
         return response;
       })
@@ -109,7 +107,7 @@ export class RepliesService extends ClientService {
     model_type: USER_RECORDS;
   }) {
     const { parent_id, comment_id, reply_id, model_type } = params;
-    return this.sendRequest<DeleteRecordResponse>(`/${model_type}/${parent_id}/comments/${comment_id}/replies/${reply_id}`, `DELETE`).pipe(
+    return this.clientService.sendRequest<DeleteRecordResponse>(`/${model_type}/${parent_id}/comments/${comment_id}/replies/${reply_id}`, `DELETE`).pipe(
       map((response) => {
         return response;
       })
@@ -124,7 +122,7 @@ export class RepliesService extends ClientService {
     model_type: USER_RECORDS;
   }) {
     const { parent_id, comment_id, reply_id, data, model_type } = params;
-    return this.sendRequest<PutRecordResponse<IPostReaction>>(`/${model_type}/${parent_id}/comments/${comment_id}/replies/${reply_id}/user-reaction`, `PUT`, data).pipe(
+    return this.clientService.sendRequest<PutRecordResponse<IPostReaction>>(`/${model_type}/${parent_id}/comments/${comment_id}/replies/${reply_id}/user-reaction`, `PUT`, data).pipe(
       map((response) => {
         return response;
       })

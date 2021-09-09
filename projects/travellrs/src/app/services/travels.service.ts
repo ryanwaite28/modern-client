@@ -8,15 +8,14 @@ import { Subject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class TravelsService extends ClientService {
+export class TravelsService {
   private newTravelCreatedStream = new Subject<any>();
   
   constructor(
-    public http: HttpClient,
+    private http: HttpClient,
     private userService: UserService,
-  ) {
-    super(http);
-  }
+    private clientService: ClientService,
+  ) {}
 
   // newTravelCreated() {
   //   return this.newTravelCreatedStream.asObservable();
@@ -46,7 +45,7 @@ export class TravelsService extends ClientService {
   }
 
   createTravel<T = any>(data: FormData, user_id: number) {
-    return this.sendRequest<T>(`/travellrs/markers/owner/${user_id}`, `POST`, data);
+    return this.clientService.sendRequest<T>(`/travellrs/markers/owner/${user_id}`, `POST`, data);
   }
 }
 
@@ -58,7 +57,7 @@ export class TravelsService extends ClientService {
 
 
 
-// export class TravelsService extends ClientService {
+// export class TravelsService {
 //   /*
 //     9/4/2021
 

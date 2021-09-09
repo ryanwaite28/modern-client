@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
+import { flatMap, map } from 'rxjs/operators';
 import { PlainObject } from '../interfaces/json-object.interface';
 import { ClientService } from './client.service';
 
@@ -8,7 +9,7 @@ import { ClientService } from './client.service';
   providedIn: 'root'
 })
 export class GoogleMapsService {
-  private google?: any;
+  private google: any;
   private isReadyStream = new BehaviorSubject<any>(null);
   private componentForm: PlainObject = {
     street_number: 'short_name',
@@ -20,39 +21,69 @@ export class GoogleMapsService {
     postal_code: 'short_name'
   };
 
+  private loading = false;
+
   get mapsIsReady(): boolean {
     return !!this.google;
   }
 
   constructor(
     private clientService: ClientService
-  ) {
-    this.clientService.sendRequest<{ data: string }>(`/common/utils/get-google-api-key`, 'POST').subscribe({
-      next: (response) => {
-        this.getGoogleMaps(response.data);
-      },
-      error: (error: HttpErrorResponse) => {
-        console.log(error);
-        this.isReadyStream.error(error);
-      }
-    });
+  ) {}
+
+  // called by app initializer, xsrf-token should be available by now
+  loadGoogleMaps() {
+    return this.clientService.sendRequest<{ data: string }>(`/common/utils/get-google-api-key`, 'POST')
+      .pipe(flatMap((response: any, index: number) => {
+        return this.getGoogleMaps(response.data);
+      }))
   }
 
   private getGoogleMaps(google_api_key: string) {
-    const wd = (<any> window);
-    wd['initMap'] = () => {
-      this.google = wd['google'];
-      console.log('google maps loaded.', this);
-      this.isReadyStream.next(wd['google']);
-    };
+    if (this.loading) {
+      console.log('already loading google maps...');
+      return this.isReady();
+    }
+    return new Observable<any>((observer) => {
+      if (!google_api_key) {
+        const e = new TypeError(`google_api_key has no value; cannot load google maps`);
+        this.isReadyStream.error(e);
+        observer.error(e);
+        observer.complete();
+        return;
+      }
+      if (this.google) {
+        this.isReadyStream.next(this.google);
+        observer.next(this.google);
+        observer.complete();
+        return;
+      }
 
-    const googleScript = document.createElement('script');
-    googleScript.setAttribute('async', 'true');
-    googleScript.setAttribute('defer', 'true');
-    const srcUrl = `https://maps.googleapis.com/maps/api/js?key=${google_api_key}&libraries=places&callback=initMap`;
-    googleScript.setAttribute('src', srcUrl);
+      const googleScript = document.createElement('script');
+      googleScript.setAttribute('async', 'true');
+      googleScript.setAttribute('defer', 'true');
+      const srcUrl = `https://maps.googleapis.com/maps/api/js?key=${google_api_key}&libraries=places&callback=initMap`;
+      googleScript.setAttribute('src', srcUrl);
 
-    document.body.appendChild(googleScript);
+      const wd = (<any> window);
+      wd['initMap'] = () => {
+        this.google = wd['google'];
+        if (this.google) {
+          console.log('google maps loaded.', this);
+          this.isReadyStream.next(this.google);
+          observer.next(this.google);
+        } else {
+          console.log('google maps was not loaded.', this);
+          const e = new Error(`google maps was not loaded.`);
+          this.isReadyStream.error(e);
+          observer.error(e);
+        }
+
+        document.body.removeChild(googleScript);
+        observer.complete();
+      };
+      document.body.appendChild(googleScript);
+    });
   }
 
   isReady() {

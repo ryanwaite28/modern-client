@@ -7,18 +7,15 @@ import { ClientService } from './client.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ConnectionsService extends ClientService {
+export class ConnectionsService {
 
   constructor(
-    public http: HttpClient,
-    private userStore: UserStoreService,
-  ) {
-    super(http);
-  }
+    private clientService: ClientService,
+  ) {}
 
   get_connections_count(you_id: number, user_id: number) {
     const endpoint = `/users/${you_id}/connections/count`;
-    return this.sendRequest<any>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -27,7 +24,7 @@ export class ConnectionsService extends ClientService {
 
   check_connection(you_id: number, user_id: number) {
     const endpoint = `/users/${you_id}/connections/${user_id}/check`;
-    return this.sendRequest<any>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -36,7 +33,7 @@ export class ConnectionsService extends ClientService {
 
   check_connection_request(you_id: number, user_id: number) {
     const endpoint = `/users/${you_id}/connections/${user_id}/check-request`;
-    return this.sendRequest<any>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -45,7 +42,7 @@ export class ConnectionsService extends ClientService {
 
   send_connection_request(you_id: number, user_id: number) {
     const endpoint = `/users/${you_id}/connections/${user_id}`;
-    return this.sendRequest<any>(endpoint, `POST`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `POST`).pipe(
       map((response) => {
         return response;
       })
@@ -54,7 +51,7 @@ export class ConnectionsService extends ClientService {
 
   cancel_connection_request(you_id: number, user_id: number) {
     const endpoint = `/users/${you_id}/connections/${user_id}/cancel`;
-    return this.sendRequest<any>(endpoint, `DELETE`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `DELETE`).pipe(
       map((response) => {
         return response;
       })
@@ -63,7 +60,7 @@ export class ConnectionsService extends ClientService {
 
   accept_connection_request(you_id: number, user_id: number) {
     const endpoint = `/users/${you_id}/connections/${user_id}`;
-    return this.sendRequest<any>(endpoint, `PUT`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `PUT`).pipe(
       map((response) => {
         return response;
       })
@@ -72,7 +69,7 @@ export class ConnectionsService extends ClientService {
 
   decline_connection_request(you_id: number, user_id: number) {
     const endpoint = `/users/${you_id}/connections/${user_id}/decline`;
-    return this.sendRequest<any>(endpoint, `DELETE`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `DELETE`).pipe(
       map((response) => {
         return response;
       })

@@ -14,17 +14,15 @@ import { ClientService } from './client.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ResourcesService extends ClientService {
+export class ResourcesService {
   constructor(
-    public http: HttpClient,
+    private clientService: ClientService,
     private userStore: UserStoreService,
-  ) {
-    super(http);
-  }
+  ) {}
 
   check_interest(you_id: number, resource_id: number) {
     const endpoint = `/users/${you_id}/resources/${resource_id}/interests`;
-    return this.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -33,7 +31,7 @@ export class ResourcesService extends ClientService {
 
   show_interest(you_id: number, resource_id: number) {
     const endpoint = `/users/${you_id}/resources/${resource_id}/interests`;
-    return this.sendRequest<PostRecordResponse<any>>(endpoint, `POST`).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<any>>(endpoint, `POST`).pipe(
       map((response) => {
         return response;
       })
@@ -42,7 +40,7 @@ export class ResourcesService extends ClientService {
 
   remove_interest(you_id: number, resource_id: number) {
     const endpoint = `/users/${you_id}/resources/${resource_id}/interests`;
-    return this.sendRequest<DeleteRecordResponse>(endpoint, `DELETE`).pipe(
+    return this.clientService.sendRequest<DeleteRecordResponse>(endpoint, `DELETE`).pipe(
       map((response) => {
         return response;
       })
@@ -52,7 +50,7 @@ export class ResourcesService extends ClientService {
   get_resource(
     id: number
   ) {
-    return this.sendRequest<GetRecordResponse<any>>(`/resources/${id}`, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(`/resources/${id}`, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -65,7 +63,7 @@ export class ResourcesService extends ClientService {
       : min_id
         ? '/resources/' + resource_id + '/interests/' + min_id
         : '/resources/' + resource_id + '/interests';
-    return this.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -76,7 +74,7 @@ export class ResourcesService extends ClientService {
     id: number,
     data: PlainObject
   ) {
-    return this.sendRequest<PostRecordResponse<any>>(`/users/${id}/resources`, `POST`, data).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<any>>(`/users/${id}/resources`, `POST`, data).pipe(
       map((response) => {
         return response;
       })
@@ -88,7 +86,7 @@ export class ResourcesService extends ClientService {
     resource_id: number,
     data: PlainObject
   ) {
-    return this.sendRequest<PutRecordResponse<any>>(`/users/${id}/resources/${resource_id}`, `PUT`, data).pipe(
+    return this.clientService.sendRequest<PutRecordResponse<any>>(`/users/${id}/resources/${resource_id}`, `PUT`, data).pipe(
       map((response) => {
         return response;
       })
@@ -99,7 +97,7 @@ export class ResourcesService extends ClientService {
     id: number,
     resource_id: number,
   ) {
-    return this.sendRequest<DeleteRecordResponse>(`/users/${id}/resources/${resource_id}`, `DELETE`).pipe(
+    return this.clientService.sendRequest<DeleteRecordResponse>(`/users/${id}/resources/${resource_id}`, `DELETE`).pipe(
       map((response) => {
         return response;
       })

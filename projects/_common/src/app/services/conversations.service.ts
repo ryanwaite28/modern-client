@@ -15,16 +15,13 @@ import { PlainObject } from '../interfaces/json-object.interface';
 @Injectable({
   providedIn: 'root'
 })
-export class ConversationsService extends ClientService {
+export class ConversationsService {
   session: GetSessionResponse | null = null;
   sessionChecked: boolean | null = null;
 
   constructor(
-    public http: HttpClient,
-    private userStore: UserStoreService,
-  ) {
-    super(http);
-  }
+    private clientService: ClientService,
+  ) {}
 
   get_user_conversations(you_id: number, timestamp?: string | null, get_all: boolean = false) {
     const endpoint = get_all
@@ -32,7 +29,7 @@ export class ConversationsService extends ClientService {
       : timestamp
         ? '/common/users/' + you_id + '/conversations/' + timestamp
         : '/common/users/' + you_id + '/conversations';
-    return this.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -41,7 +38,7 @@ export class ConversationsService extends ClientService {
 
   get_user_conversation(you_id: number, conversation_id: number) {
     const endpoint = `/common/users/${you_id}/${conversation_id}`;
-    return this.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -52,7 +49,7 @@ export class ConversationsService extends ClientService {
     const endpoint = min_id
       ? '/common/users/' + you_id + '/conversations/' + conversation_id + '/messages/' + min_id
       : '/common/users/' + you_id + '/conversations/' + conversation_id + '/messages';
-    return this.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -65,7 +62,7 @@ export class ConversationsService extends ClientService {
       : min_id
         ? '/common/users/' + you_id + '/conversations/' + conversation_id + '/members/' + min_id
         : '/common/users/' + you_id + '/conversations/' + conversation_id + '/members';
-    return this.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -74,7 +71,7 @@ export class ConversationsService extends ClientService {
 
   search_users(you_id: number, conversation_id: number, query_term: string) {
     const endpoint = `/common/users/${you_id}/conversations/${conversation_id}/search-users?query_term=${query_term}`;
-    return this.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -83,7 +80,7 @@ export class ConversationsService extends ClientService {
 
   create_conversation(you_id: number, formData: FormData) {
     const endpoint = `/common/users/${you_id}/conversations`;
-    return this.sendRequest<PostRecordResponse<any>>(endpoint, `POST`, formData).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<any>>(endpoint, `POST`, formData).pipe(
       map((response) => {
         return response;
       })
@@ -92,7 +89,7 @@ export class ConversationsService extends ClientService {
 
   update_conversation(you_id: number, conversation_id: number, formData: FormData) {
     const endpoint = `/common/users/${you_id}/conversations/${conversation_id}`;
-    return this.sendRequest<PutRecordResponse<any>>(endpoint, `PUT`, formData).pipe(
+    return this.clientService.sendRequest<PutRecordResponse<any>>(endpoint, `PUT`, formData).pipe(
       map((response) => {
         return response;
       })
@@ -101,7 +98,7 @@ export class ConversationsService extends ClientService {
 
   delete_conversation(you_id: number, conversation_id: number) {
     const endpoint = `/common/users/${you_id}/conversations/${conversation_id}`;
-    return this.sendRequest<DeleteRecordResponse>(endpoint, `DELETE`).pipe(
+    return this.clientService.sendRequest<DeleteRecordResponse>(endpoint, `DELETE`).pipe(
       map((response) => {
         return response;
       })
@@ -110,7 +107,7 @@ export class ConversationsService extends ClientService {
 
   add_conversation_member(you_id: number, conversation_id: number, user_id: number) {
     const endpoint = '/common/users/' + you_id + '/conversations/' + conversation_id + '/members/' + user_id;
-    return this.sendRequest<PostRecordResponse<any>>(endpoint, `POST`).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<any>>(endpoint, `POST`).pipe(
       map((response) => {
         return response;
       })
@@ -119,7 +116,7 @@ export class ConversationsService extends ClientService {
 
   remove_conversation_member(you_id: number, conversation_id: number, user_id: number) {
     const endpoint = '/common/users/' + you_id + '/conversations/' + conversation_id + '/members/' + user_id;
-    return this.sendRequest<DeleteRecordResponse>(endpoint, `DELETE`).pipe(
+    return this.clientService.sendRequest<DeleteRecordResponse>(endpoint, `DELETE`).pipe(
       map((response) => {
         return response;
       })
@@ -128,7 +125,7 @@ export class ConversationsService extends ClientService {
 
   leave_conversation(you_id: number, conversation_id: number) {
     const endpoint = '/common/users/' + you_id + '/conversations/' + conversation_id + '/members';
-    return this.sendRequest<DeleteRecordResponse>(endpoint, `DELETE`).pipe(
+    return this.clientService.sendRequest<DeleteRecordResponse>(endpoint, `DELETE`).pipe(
       map((response) => {
         return response;
       })
@@ -137,7 +134,7 @@ export class ConversationsService extends ClientService {
 
   create_conversation_message(you_id: number, conversation_id: number, data: PlainObject) {
     const endpoint = '/common/users/' + you_id + '/conversations/' + conversation_id + '/messages';
-    return this.sendRequest<PostRecordResponse<any>>(endpoint, `POST`, data).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<any>>(endpoint, `POST`, data).pipe(
       map((response) => {
         return response;
       })
@@ -146,7 +143,7 @@ export class ConversationsService extends ClientService {
 
   mark_message_as_seen(you_id: number, conversation_id: number, message_id: number) {
     const endpoint = '/common/users/' + you_id + '/conversations/' + conversation_id + '/messages/' + message_id + '/mark-as-seen';
-    return this.sendRequest<PostRecordResponse<any>>(endpoint, `POST`, {}).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<any>>(endpoint, `POST`, {}).pipe(
       map((response) => {
         return response;
       })

@@ -13,7 +13,51 @@ import { UserService } from 'projects/_common/src/app/services/user.service';
 import { CommonModule } from '@angular/common';
 import { XsrfTokenInterceptor } from 'projects/_common/src/app/http-interceptors/xsrf-token.http-interceptor';
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
-import { take } from 'rxjs/operators';
+import { catchError, flatMap, map, retry, take } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+function APP_INITIALIZER_FACTORY(
+  clientService: ClientService,
+  userService: UserService,
+  googleMapsService: GoogleMapsService,
+) {
+  function APP_INITIALIZER_FN(
+    resolve: (value: unknown) => void,
+    reject: (reasom?: any) => any
+  ) {
+    clientService.getXsrfToken()
+      .pipe(flatMap((token, index) => {
+        console.log('APP_INITIALIZER (xsrf token) - admit one', clientService);
+        return userService.checkUserSession().pipe(take(1));
+      }))
+      .pipe(flatMap((user, index) => {
+        console.log('APP_INITIALIZER (user) - admit one', { user });
+        return googleMapsService.loadGoogleMaps();
+      }))
+      .pipe(flatMap((value, index) => {
+        console.log('APP_INITIALIZER (google maps) - admit one', googleMapsService);
+        resolve(true);
+        return of();
+      }))
+      .pipe(
+        map(() => {
+          console.log(`done APP_INITIALIZERS`);
+        }),
+        catchError((error: any) => {
+          console.log(error);
+          resolve(false);
+          throw error;
+        })
+      )
+      .toPromise();
+  }
+
+  function returnFactoryFn() {
+    return new Promise(APP_INITIALIZER_FN);
+  }
+
+  return returnFactoryFn;
+}
 
 @NgModule({
   declarations: [
@@ -44,72 +88,11 @@ import { take } from 'rxjs/operators';
       provide: APP_INITIALIZER,
       multi: true,
       deps: [
-        UserService,
         ClientService,
+        UserService,
         GoogleMapsService,
       ],
-      useFactory: (
-        userService: UserService,
-        clientService: ClientService,
-        googleMapsService: GoogleMapsService,
-      ) => {
-        return () => {
-          const getUserPromise = new Promise((resolve, reject) => {
-            userService.checkUserSession().subscribe({
-              next: (user) => {
-                console.log('APP_INITIALIZER (user) - admit one', { user });
-                return resolve(true);
-              },
-              error: (error: HttpErrorResponse) => {
-                console.log('APP_INITIALIZER (user) - error', error);
-                return resolve(true);
-              }
-            });
-          });
-
-          const getXsrfTokenPromise = new Promise((resolve, reject) => {
-            clientService.sendRequest(`/common/utils/get-xsrf-token`, `GET`).subscribe({
-              next: (response) => {
-                console.log('APP_INITIALIZER (xsrf token) - admit one', response);
-                return resolve(true);
-              },
-              error: (error: HttpErrorResponse) => {
-                console.log('APP_INITIALIZER (xsrf token) - error', error);
-                return resolve(false);
-              }
-            });
-          });
-
-          const getGoogleMapsPromise = new Promise((resolve, reject) => {
-            getXsrfTokenPromise.then((result) => {
-              console.log({ xsrfCallResult: result });
-              setTimeout(() => {
-                googleMapsService.isReady().pipe(take(1)).subscribe({
-                  next: (google) => {
-                    if (googleMapsService.mapsIsReady) {
-                      console.log('APP_INITIALIZER (google maps) - admit one', google, googleMapsService);
-                      resolve(true);
-                    }
-                  },
-                  error: (error: any) => {
-                    console.log('APP_INITIALIZER (google maps) - error', error, googleMapsService);
-                    resolve(true);
-                  },
-                  complete: () => {
-                    
-                  },
-                });
-              }, 500);
-            });
-          });
-
-          return Promise.all([
-            getUserPromise,
-            getXsrfTokenPromise,
-            getGoogleMapsPromise,
-          ]);
-        }
-      }
+      useFactory: APP_INITIALIZER_FACTORY
     }
   ],
   bootstrap: [AppComponent]

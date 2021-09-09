@@ -1,6 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +10,9 @@ export class ClientService {
   DOMAIN: string;
   API_PREFIX: string;
   isProd: boolean;
+  xsrf_token: string = '';
+
+  private xsrf_token_ready = new BehaviorSubject<string | null>(null);
 
   constructor(
     public http: HttpClient
@@ -18,7 +22,29 @@ export class ClientService {
     this.DOMAIN = this.isProd ? 'https://rmw-modern-server.herokuapp.com' : `http://localhost:6700`;
     const apiDomain = this.DOMAIN + '/apps';
     this.API_PREFIX = apiDomain;
-    // console.log({ isProd, apiDomain }, this);
+  }
+
+  isXsrfTokenReady() {
+    return this.xsrf_token_ready.asObservable();
+  }
+
+  getXsrfToken() {
+    if (this.xsrf_token) {
+      return of(this.xsrf_token);
+    }
+    return this.sendRequest<any>(`/common/utils/get-xsrf-token`, 'GET')
+      .pipe(
+        map((response) => {
+          this.xsrf_token = response.xsrf_token;
+          this.xsrf_token_ready.next(this.xsrf_token);
+          return this.xsrf_token;
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.xsrf_token = '';
+          this.xsrf_token_ready.error(null);
+          throw error;
+        })
+      );
   }
 
   sendRequest<T>(
@@ -40,6 +66,9 @@ export class ClientService {
     };
     if (data && data.constructor === Object) {
       httpOptions.headers.set('Content-Type', 'application/json');
+    }
+    if (this.xsrf_token) {
+      httpOptions.headers.set('x-xsrf-token', this.xsrf_token);
     }
 
     let requestObservable: Observable<T>;

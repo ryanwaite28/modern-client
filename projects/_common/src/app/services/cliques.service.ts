@@ -9,17 +9,14 @@ import { ClientService } from './client.service';
 @Injectable({
   providedIn: 'root'
 })
-export class CliquesService extends ClientService {
+export class CliquesService {
   constructor(
-    public http: HttpClient,
-    private userStore: UserStoreService,
-  ) {
-    super(http);
-  }
+    private clientService: ClientService,
+  ) {}
 
   search_users(you_id: number, clique_id: number, query_term: string) {
     const endpoint = `/users/${you_id}/cliques/${clique_id}/search-users?query_term=${query_term}`;
-    return this.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -28,7 +25,7 @@ export class CliquesService extends ClientService {
 
   add_clique_member(you_id: number, clique_id: number, user_id: number) {
     const endpoint = '/users/' + you_id + '/cliques/' + clique_id + '/members/' + user_id;
-    return this.sendRequest<PostRecordResponse<any>>(endpoint, `POST`).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<any>>(endpoint, `POST`).pipe(
       map((response) => {
         return response;
       })
@@ -37,7 +34,7 @@ export class CliquesService extends ClientService {
 
   remove_clique_member(you_id: number, clique_id: number, user_id: number) {
     const endpoint = '/users/' + you_id + '/cliques/' + clique_id + '/members/' + user_id;
-    return this.sendRequest<DeleteRecordResponse>(endpoint, `DELETE`).pipe(
+    return this.clientService.sendRequest<DeleteRecordResponse>(endpoint, `DELETE`).pipe(
       map((response) => {
         return response;
       })
@@ -46,7 +43,7 @@ export class CliquesService extends ClientService {
 
   leave_clique(you_id: number, clique_id: number) {
     const endpoint = '/users/' + you_id + '/cliques/' + clique_id + '/members/leave';
-    return this.sendRequest<DeleteRecordResponse>(endpoint, `DELETE`).pipe(
+    return this.clientService.sendRequest<DeleteRecordResponse>(endpoint, `DELETE`).pipe(
       map((response) => {
         return response;
       })
@@ -55,7 +52,7 @@ export class CliquesService extends ClientService {
 
   check_interest(you_id: number, clique_id: number) {
     const endpoint = `/users/${you_id}/cliques/${clique_id}/interests`;
-    return this.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -64,7 +61,7 @@ export class CliquesService extends ClientService {
 
   check_membership(you_id: number, clique_id: number) {
     const endpoint = `/users/${you_id}/cliques/${clique_id}/membership`;
-    return this.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -73,7 +70,7 @@ export class CliquesService extends ClientService {
 
   show_interest(you_id: number, clique_id: number) {
     const endpoint = `/users/${you_id}/cliques/${clique_id}/interests`;
-    return this.sendRequest<PostRecordResponse<any>>(endpoint, `POST`).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<any>>(endpoint, `POST`).pipe(
       map((response) => {
         return response;
       })
@@ -82,7 +79,7 @@ export class CliquesService extends ClientService {
 
   remove_interest(you_id: number, clique_id: number) {
     const endpoint = `/users/${you_id}/cliques/${clique_id}/interests`;
-    return this.sendRequest<DeleteRecordResponse>(endpoint, `DELETE`).pipe(
+    return this.clientService.sendRequest<DeleteRecordResponse>(endpoint, `DELETE`).pipe(
       map((response) => {
         return response;
       })
@@ -95,7 +92,7 @@ export class CliquesService extends ClientService {
       : min_id
         ? '/users/' + you_id + '/cliques/' + clique_id + '/members/' + min_id
         : '/users/' + you_id + '/cliques/' + clique_id + '/members';
-    return this.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -105,7 +102,7 @@ export class CliquesService extends ClientService {
   get_clique(
     id: number
   ) {
-    return this.sendRequest<GetRecordResponse<any>>(`/cliques/${id}`, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(`/cliques/${id}`, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -118,7 +115,7 @@ export class CliquesService extends ClientService {
       : min_id
         ? '/cliques/' + clique_id + '/interests/' + min_id
         : '/cliques/' + clique_id + '/interests';
-    return this.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -129,7 +126,7 @@ export class CliquesService extends ClientService {
     id: number,
     data: PlainObject
   ) {
-    return this.sendRequest<PostRecordResponse<any>>(`/users/${id}/cliques`, `POST`, data).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<any>>(`/users/${id}/cliques`, `POST`, data).pipe(
       map((response) => {
         return response;
       })
@@ -141,7 +138,7 @@ export class CliquesService extends ClientService {
     clique_id: number,
     data: PlainObject
   ) {
-    return this.sendRequest<PutRecordResponse<any>>(`/users/${id}/cliques/${clique_id}`, `PUT`, data).pipe(
+    return this.clientService.sendRequest<PutRecordResponse<any>>(`/users/${id}/cliques/${clique_id}`, `PUT`, data).pipe(
       map((response) => {
         return response;
       })
@@ -152,7 +149,7 @@ export class CliquesService extends ClientService {
     id: number,
     clique_id: number,
   ) {
-    return this.sendRequest<DeleteRecordResponse>(`/users/${id}/cliques/${clique_id}`, `DELETE`).pipe(
+    return this.clientService.sendRequest<DeleteRecordResponse>(`/users/${id}/cliques/${clique_id}`, `DELETE`).pipe(
       map((response) => {
         return response;
       })
@@ -163,7 +160,7 @@ export class CliquesService extends ClientService {
 
   send_clique_member_request(creator_id: number, clique_id: number, user_id: number) {
     const endpoint = `/users/${creator_id}/cliques/${clique_id}/member-requests/${user_id}`;
-    return this.sendRequest<PostRecordResponse<any>>(endpoint, `POST`).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<any>>(endpoint, `POST`).pipe(
       map((response) => {
         return response;
       })
@@ -172,7 +169,7 @@ export class CliquesService extends ClientService {
 
   cancel_clique_member_request(creator_id: number, clique_id: number, member_request_id: number) {
     const endpoint = `/users/${creator_id}/cliques/${clique_id}/member-requests/${member_request_id}/cancel`;
-    return this.sendRequest<PostRecordResponse<any>>(endpoint, `DELETE`).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<any>>(endpoint, `DELETE`).pipe(
       map((response) => {
         return response;
       })
@@ -181,7 +178,7 @@ export class CliquesService extends ClientService {
 
   accept_clique_member_request(creator_id: number, clique_id: number, member_request_id: number) {
     const endpoint = `/users/${creator_id}/cliques/${clique_id}/member-requests/${member_request_id}/accept`;
-    return this.sendRequest<PostRecordResponse<any>>(endpoint, `PUT`).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<any>>(endpoint, `PUT`).pipe(
       map((response) => {
         return response;
       })
@@ -190,7 +187,7 @@ export class CliquesService extends ClientService {
   
   decline_clique_member_request(creator_id: number, clique_id: number, member_request_id: number) {
     const endpoint = `/users/${creator_id}/cliques/${clique_id}/member-requests/${member_request_id}/decline`;
-    return this.sendRequest<PostRecordResponse<any>>(endpoint, `DELETE`).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<any>>(endpoint, `DELETE`).pipe(
       map((response) => {
         return response;
       })

@@ -16,32 +16,30 @@ import { ClientService } from './client.service';
 @Injectable({
   providedIn: 'root'
 })
-export class PostsService extends ClientService {
+export class PostsService {
 
   constructor(
-    public http: HttpClient,
-  ) {
-    super(http);
-  }
+    private clientService: ClientService,
+  ) {}
 
-  get_post(post_id) {
-    return this.sendRequest<GetRecordResponse<IPost>>(`/posts/${post_id}`, `GET`).pipe(
+  get_post(post_id: number) {
+    return this.clientService.sendRequest<GetRecordResponse<IPost>>(`/posts/${post_id}`, `GET`).pipe(
       map((response) => {
         return response;
       })
     );
   }
 
-  get_post_comments_count(post_id) {
-    return this.sendRequest<GetRecordResponse<any>>(`/posts/${post_id}/comments/count`, `GET`).pipe(
+  get_post_comments_count(post_id: number) {
+    return this.clientService.sendRequest<GetRecordResponse<any>>(`/posts/${post_id}/comments/count`, `GET`).pipe(
       map((response) => {
         return response;
       })
     );
   }
 
-  get_post_reactions_count(post_id) {
-    return this.sendRequest<GetRecordResponse<IReactionsCounts>>(`/posts/${post_id}/user-reactions/count`, `GET`).pipe(
+  get_post_reactions_count(post_id: number) {
+    return this.clientService.sendRequest<GetRecordResponse<IReactionsCounts>>(`/posts/${post_id}/user-reactions/count`, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -50,7 +48,7 @@ export class PostsService extends ClientService {
 
   get_user_reaction(params: { post_id: number; user_id: number; }) {
     const { post_id, user_id } = params;
-    return this.sendRequest<GetRecordResponse<any>>(`/posts/${post_id}/user-reaction/${user_id}`, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<any>>(`/posts/${post_id}/user-reaction/${user_id}`, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -58,7 +56,7 @@ export class PostsService extends ClientService {
   }
 
   create_post(data: PlainObject) {
-    return this.sendRequest<PostRecordResponse<IPost>>(`/posts`, `POST`, data).pipe(
+    return this.clientService.sendRequest<PostRecordResponse<IPost>>(`/posts`, `POST`, data).pipe(
       map((response) => {
         return response;
       })
@@ -67,7 +65,7 @@ export class PostsService extends ClientService {
 
   update_post(params: { post_id: number; data: PlainObject }) {
     const { post_id, data } = params;
-    return this.sendRequest<PutRecordResponse<IPost>>(`/posts/${post_id}`, `PUT`, data).pipe(
+    return this.clientService.sendRequest<PutRecordResponse<IPost>>(`/posts/${post_id}`, `PUT`, data).pipe(
       map((response) => {
         return response;
       })
@@ -75,7 +73,7 @@ export class PostsService extends ClientService {
   }
 
   delete_post(post_id: number) {
-    return this.sendRequest<DeleteRecordResponse>(`/posts/${post_id}`, `DELETE`).pipe(
+    return this.clientService.sendRequest<DeleteRecordResponse>(`/posts/${post_id}`, `DELETE`).pipe(
       map((response) => {
         return response;
       })
@@ -84,7 +82,7 @@ export class PostsService extends ClientService {
 
   toggle_user_reaction(params: { post_id: number; data: { reaction: REACTION_TYPES } }) {
     const { post_id, data } = params;
-    return this.sendRequest<PutRecordResponse<IPostReaction>>(`/posts/${post_id}/user-reaction`, `PUT`, data).pipe(
+    return this.clientService.sendRequest<PutRecordResponse<IPostReaction>>(`/posts/${post_id}/user-reaction`, `PUT`, data).pipe(
       map((response) => {
         return response;
       })
