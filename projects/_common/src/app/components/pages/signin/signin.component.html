@@ -1,45 +1,28 @@
-<div id="App">
-  <common-navbar
-    [appName]="'Modern Apps'"
-  ></common-navbar>
+<div class="uk-container">
+  <form class="row-pad-1" [formGroup]="signinForm" (ngSubmit)="onSubmit()">
+    <fieldset class="uk-fieldset">
+      <legend class="uk-legend">Sign In</legend>
+      
+      <div class="uk-margin">
+        <span class="label-info">
+          Email ({{ signinForm.value.email.length }}/{{ TEXT_FORM_LIMIT }})
+        </span>
+        <input class="uk-input" type="email" placeholder="Email" formControlName="email" >
+      </div>
+      <div class="uk-margin">
+        <span class="label-info">
+          Password ({{ signinForm.value.password.length }}/{{ TEXT_FORM_LIMIT }})
+        </span>
+        <input class="uk-input" type="password" placeholder="Password" formControlName="password" >
+      </div>
+    </fieldset>
 
-  <section class="main">
-    <div class="uk-container">
-      <form class="row-pad-1" [formGroup]="signinForm" (ngSubmit)="onSubmit()">
-        <fieldset class="uk-fieldset">
-          <legend class="uk-legend">Sign In</legend>
-          
-          <div class="uk-margin">
-            <span class="label-info">
-              Email ({{ signinForm.value.email.length }}/{{ TEXT_FORM_LIMIT }})
-            </span>
-            <input class="uk-input" type="email" placeholder="Email" formControlName="email" >
-          </div>
-          <div class="uk-margin">
-            <span class="label-info">
-              Password ({{ signinForm.value.password.length }}/{{ TEXT_FORM_LIMIT }})
-            </span>
-            <input class="uk-input" type="password" placeholder="Password" formControlName="password" >
-          </div>
-        </fieldset>
-
-        <button
-          type="submit"
-          class="uk-button uk-button-primary"
-          [disabled]="!signinForm.valid || loading"
-        >
-          Submit
-        </button>
-      </form>
-    </div>
-  </section>
-
-  <common-footer
-    [appName]="'Modern Apps'"
-  ></common-footer>
-
-  <!-- alerts -->
-  <div class="alerts-box">
-    <common-alerts-fragment></common-alerts-fragment>
-  </div>
+    <button
+      type="submit"
+      class="uk-button uk-button-primary"
+      [disabled]="!signinForm.valid || loading"
+    >
+      Submit
+    </button>
+  </form>
 </div>

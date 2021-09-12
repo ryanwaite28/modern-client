@@ -1,31 +1,19 @@
-<div id="App">
-  <common-navbar
-    [appName]="'Modern Apps'"
-  ></common-navbar>
+<div>
+  <!-- <p>Check out these apps!</p> -->
 
-  <section class="main">
-    <div>
-      <!-- <p>Check out these apps!</p> -->
-    
-      <div class="flex-content-center row-pad-1">
-        <div *ngFor="let app of apps">
-          <a [routerLink]="app.link">
-            <div class="app-box uk-card uk-card-default" >
-              <div class="uk-card-media-top">
-                <img src="" alt="">
-              </div>
-              <div class="uk-card-body">
-                <h3 class="uk-card-title">{{ app.name }}</h3>
-                <p>{{ app.desc }}</p>
-              </div>
-            </div>
-          </a>
+  <div class="flex-content-center row-pad-1">
+    <div *ngFor="let app of apps">
+      <a [routerLink]="app.link">
+        <div class="app-box uk-card uk-card-default" >
+          <div class="uk-card-media-top">
+            <img src="" alt="">
+          </div>
+          <div class="uk-card-body">
+            <h3 class="uk-card-title">{{ app.name }}</h3>
+            <p>{{ app.desc }}</p>
+          </div>
         </div>
-      </div>
+      </a>
     </div>
-  </section>
-
-  <common-footer
-    [appName]="'Modern Apps'"
-  ></common-footer>
+  </div>
 </div>

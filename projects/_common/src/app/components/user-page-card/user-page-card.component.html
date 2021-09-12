@@ -16,10 +16,61 @@
       </div>
     </div>
   </div>
-  <div class="uk-card-body">
-    <p>
-      Bio:<br/>
-      {{ user.bio }}
-    </p>
+
+  <div class="padding-10"  *ngIf="isNotYou">
+    <button
+      [disabled]="loading"
+      (click)="toggleFollow()"
+      data-toggle="tooltip"
+      class="uk-button uk-button-small uk-button-{{ isFollowing ? 'info' : 'light' }}"
+      type="button"
+      placement="top"
+      [ngbTooltip]="(isFollowing ? 'Unfollow' : 'Follow') + ' this user'"
+    >
+      <i class="fa{{ isFollowing ? 's' : 'r' }} fa-star"></i>
+      
+    </button>
+    &nbsp;
+
+    <button
+      *ngIf="user.can_message"
+      [disabled]="loading"
+      (click)="messageFormIsOpen = !messageFormIsOpen"
+      class="uk-button uk-button-small uk-button-primary"
+      type="button"
+      placement="top"
+      [ngbTooltip]="(messageFormIsOpen ? 'Close' : 'Message User')"
+    >
+      <i class="fas fa-{{ messageFormIsOpen ? 'times' : 'envelope' }}"></i>
+    </button>
+    &nbsp;
+
+    <div *ngIf="messageFormIsOpen">
+      <form class="well" [formGroup]="messageForm" (ngSubmit)="sendMessage()">
+        <div class="uk-margin">
+          <span class="label-info">
+            Body ({{ messageForm.value.body.length }}/{{ MSG_MAX_LENGTH }})
+          </span>
+          <textarea
+            type="text"
+            class="uk-textarea"
+            placeholder="Enter message..."
+            rows="3"
+            formControlName="body"
+          ></textarea>
+        </div>
+        <div>
+          <button
+            type="submit"
+            title="Message this user"
+            class="uk-button uk-button-small uk-button-secondary"
+            [disabled]="loading || messageForm.invalid"
+          >
+          <i class="fas fa-paper-plane"></i>
+          Submit
+        </button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>

@@ -1,1 +1,20 @@
-<p>common app</p>
+<div id="App">
+  <common-navbar
+    [appName]="appName"
+    [appMainPageLink]="appMainPageLink"
+    [appLinks]="appLinks"
+  ></common-navbar>
+
+  <section class="main">
+    <router-outlet></router-outlet>
+  </section>
+
+  <common-footer
+    [appName]="appName"
+  ></common-footer>
+
+  <!-- alerts -->
+  <div class="alerts-box">
+    <common-alerts-fragment></common-alerts-fragment>
+  </div>
+</div>

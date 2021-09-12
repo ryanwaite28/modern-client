@@ -3,6 +3,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+import {
+  NgbModule,
+  NgbTooltipModule,
+  NgbCarouselModule
+} from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { CommonAppRoutingModule } from './app-routing.module';
 import { CommonAppComponent } from './app.component';
 import { CommonNavbarPartialComponent } from './components/navbar-partial/navbar-partial.component';
@@ -25,6 +31,12 @@ import { CommonModule } from '@angular/common';
 import { CommonUserPageCardComponent } from './components/user-page-card/user-page-card.component';
 import { TimeAgoPipe } from './pipes/time-ago.pipe';
 import { CommonUserNotificationsFragmentComponent } from './components/pages/user/notifications/notifications.component';
+import { CommonMessagesFragmentComponent } from './components/pages/user/messages/messages.component';
+import { CommonConversationsComponent } from './components/pages/user/conversations/conversations.component';
+import { CommonFollowersComponent } from './components/pages/user/followers/followers.component';
+import { CommonFollowingsComponent } from './components/pages/user/followings/followings.component';
+import { CommonUserFieldsComponent } from './components/pages/user/user-fields/user-fields.component';
+import { CommonVerifyEmailComponent } from './components/pages/verify-email/verify-email.component';
 
 @NgModule({
   declarations: [
@@ -43,16 +55,24 @@ import { CommonUserNotificationsFragmentComponent } from './components/pages/use
     CommonAppsComponent,
     CommonAlertsFragmentComponent,
     CommonUserPageCardComponent,
-
     TimeAgoPipe,
-
     CommonUserNotificationsFragmentComponent,
+    CommonMessagesFragmentComponent,
+    CommonConversationsComponent,
+    CommonFollowersComponent,
+    CommonFollowingsComponent,
+    CommonUserFieldsComponent,
+    CommonVerifyEmailComponent,
   ],
   imports: [
     BrowserModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    NgbModule,
+    NgbTooltipModule,
+    NgbCarouselModule,
+    NgSelectModule,
 
     CommonAppRoutingModule,
   ],
@@ -61,6 +81,10 @@ import { CommonUserNotificationsFragmentComponent } from './components/pages/use
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    NgbModule,
+    NgbTooltipModule,
+    NgbCarouselModule,
+    NgSelectModule,
 
     CommonAppRoutingModule,
     

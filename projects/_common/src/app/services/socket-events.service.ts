@@ -99,7 +99,7 @@ export class SocketEventsService {
   }
 
   private handleEvent(event: any) {
-    const subjectStream = this.streamsMap[event.event_type];
+    const subjectStream = this.streamsMap[event.event_type || event.event];
     if (subjectStream) {
       subjectStream.next(event);
     }
