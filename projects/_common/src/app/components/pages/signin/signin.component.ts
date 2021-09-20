@@ -4,6 +4,7 @@ import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertService } from '../../../services/alert.service';
 import { UserService } from '../../../services/user.service';
+import { UserStoreService } from '../../../stores/user-store.service';
 
 @Component({
   selector: 'common-signin',
@@ -40,6 +41,7 @@ export class CommonUserSigninComponent implements OnInit {
 
   constructor(
     private userService: UserService,
+    private userStore: UserStoreService,
     private alertService: AlertService,
     private router: Router
   ) { }
@@ -114,11 +116,13 @@ export class CommonUserSigninComponent implements OnInit {
     this.userService.verify_sms_code({
       request_id: this.sms_request_id!,
       code: this.phoneVerifyForm.value.code,
-      shouldSetUserSession: true
     }).subscribe(
-      (response) => {
+      (response: any) => {
         this.alertService.handleResponseSuccessGeneric(response);
+        this.loading = false;
         this.phone_is_verified = true;
+        window.localStorage.setItem('rmw-modern-apps-jwt', response.token);
+        this.userStore.setState(response.you);
         this.router.navigate(['/', 'modern', 'users', response.you.id]);
       },
       (error: HttpErrorResponse) => {

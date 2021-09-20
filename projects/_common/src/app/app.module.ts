@@ -37,6 +37,7 @@ import { CommonFollowersComponent } from './components/pages/user/followers/foll
 import { CommonFollowingsComponent } from './components/pages/user/followings/followings.component';
 import { CommonUserFieldsComponent } from './components/pages/user/user-fields/user-fields.component';
 import { CommonVerifyEmailComponent } from './components/pages/verify-email/verify-email.component';
+import { CommonUserVerifyStripeAccountFragmentComponent } from './components/pages/user/verify-stripe-account-fragment/verify-stripe-account-fragment.component';
 
 @NgModule({
   declarations: [
@@ -63,6 +64,7 @@ import { CommonVerifyEmailComponent } from './components/pages/verify-email/veri
     CommonFollowingsComponent,
     CommonUserFieldsComponent,
     CommonVerifyEmailComponent,
+    CommonUserVerifyStripeAccountFragmentComponent,
   ],
   imports: [
     BrowserModule,

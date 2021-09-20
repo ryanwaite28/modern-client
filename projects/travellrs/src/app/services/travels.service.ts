@@ -34,7 +34,7 @@ export class TravelsService {
   }
 
   getUserTravels<T = any>(user_id: number, min_id?: number) {
-    return this.userService.get_user_records(
+    return this.userService.get_user_records<T>(
       user_id,
       MODERN_APPS.TRAVELLRS,
       USER_RECORDS.MARKERS,

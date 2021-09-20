@@ -15,7 +15,7 @@ export class DeliveryService {
 
 
   getUserDeliveriesAll<T = any>(user_id: number) {
-    return this.userService.get_user_records(
+    return this.userService.get_user_records<T>(
       user_id,
       MODERN_APPS.DELIVERME,
       USER_RECORDS.DELIVERIES,
@@ -26,7 +26,7 @@ export class DeliveryService {
   }
 
   getUserDeliveries<T = any>(user_id: number, min_id?: number) {
-    return this.userService.get_user_records(
+    return this.userService.get_user_records<T>(
       user_id,
       MODERN_APPS.DELIVERME,
       USER_RECORDS.DELIVERIES,
@@ -34,6 +34,10 @@ export class DeliveryService {
       false,
       true
     );
+  }
+
+  get_delivery_by_id<T = any>(delivery_id: number) {
+    return this.clientService.sendRequest<T>(`/deliverme/deliveries/${delivery_id}`, `GET`);
   }
 
   create_delivery<T = any>(data: FormData) {
@@ -56,7 +60,7 @@ export class DeliveryService {
   }
 
   getUserPastDeliverings<T = any>(user_id: number, min_id?: number) {
-    return this.userService.get_user_records(
+    return this.userService.get_user_records<T>(
       user_id,
       MODERN_APPS.DELIVERME,
       USER_RECORDS.DELIVERINGS,
@@ -98,6 +102,10 @@ export class DeliveryService {
     return this.clientService.sendRequest<T>(`/deliverme/users/${you_id}/mark-delivery-as-dropped-off/${delivery_id}`, `POST`);
   }
 
+  markDeliveryAsReturned<T = any>(you_id: number, delivery_id: number) {
+    return this.clientService.sendRequest<T>(`/deliverme/users/${you_id}/mark-delivery-as-returned/${delivery_id}`, `POST`);
+  }
+
   markDeliveryAsCompleted<T = any>(you_id: number, delivery_id: number) {
     return this.clientService.sendRequest<T>(`/deliverme/users/${you_id}/mark-delivery-as-completed/${delivery_id}`, `POST`);
   }
@@ -120,5 +128,17 @@ export class DeliveryService {
 
   updateUserDelivermeSettings<T = any>(you_id: number, data: any) {
     return this.clientService.sendRequest<T>(`/deliverme/users/${you_id}/settings`, `POST`, data);
+  }
+
+  searchDeliveries<T = any>(data: any) {
+    return this.clientService.sendRequest<T>(`/deliverme/deliveries/search`, `POST`, data);
+  }
+
+  sendDeliveryMessage<T>(data: any) {
+    return this.clientService.sendRequest<T>(`/deliverme/deliveries/${data.delivery_id}/message`, `POST`, data);
+  }
+
+  createCheckoutSession<T>(delivery_id: number) {
+    return this.clientService.sendRequest<T>(`/deliverme/deliveries/${delivery_id}/create-checkout-session`, `POST`);
   }
 }

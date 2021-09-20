@@ -7,11 +7,11 @@
             <div class="user-icon-container-left">
               <img
                 class="user-icon-circle"
-                [src]="(m.sender_id === you.id ? m.user.icon_link : m.sender.icon_link) || './assets/img/anon.png'"
+                [src]="(m.sender_id === you!.id ? m.user.icon_link : m.sender.icon_link) || './assets/img/anon.png'"
               />
             </div>
             <p>
-              {{ m.sender_id === you.id ? (m.user.firstname + ' ' + m.user.lastname) : (m.sender.firstname + ' ' + m.sender.lastname) }}
+              {{ m.sender_id === you!.id ? (m.user.firstname + ' ' + m.user.lastname) : (m.sender.firstname + ' ' + m.sender.lastname) }}
               &nbsp; 
               <span *ngIf="m.unread_messages_count && m.unread_messages_count > 0" class="badge badge-info">{{ m.unread_messages_count }}</span>
               <br/>
@@ -48,13 +48,13 @@
   
           <div class="messages-item transition" *ngFor="let m of messages_list">
             <div class="messages-item-inner">
-              <div class="user-icon-container-{{ m.from.id === you.id ? 'right' : 'left' }}">
+              <div class="user-icon-container-{{ m.from.id === you!.id ? 'right' : 'left' }}">
                 <img
                   class="user-icon-circle"
                   [src]="(m.from.icon_link) || './assets/img/anon.png'"
                 />
               </div>
-              <div class="message-text-{{ m.from.id === you.id ? 'right' : 'left' }}">
+              <div class="message-text-{{ m.from.id === you!.id ? 'right' : 'left' }}">
                 <p>
                   <a [routerLink]="['/', 'modern', 'users', m.from.id, 'home']">
                    {{ m.from.firstname + ' ' + m.from.lastname }}
@@ -77,7 +77,7 @@
               <small>
                 <em>
                   {{ 
-                    currentMessagingSelected.sender_id === you.id
+                    currentMessagingSelected.sender_id === you!.id
                       ? currentMessagingSelected.user.firstname
                       : currentMessagingSelected.sender.firstname
                   }} is typing...

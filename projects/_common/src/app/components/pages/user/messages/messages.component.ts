@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Params, ActivatedRoute } from '@angular/router';
-import { EVENT_TYPES } from 'projects/_common/src/app/enums/all.enums';
+import { COMMON_EVENT_TYPES } from 'projects/_common/src/app/enums/all.enums';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
 import { SocketEventsService } from 'projects/_common/src/app/services/socket-events.service';
@@ -61,7 +61,7 @@ export class CommonMessagesFragmentComponent implements OnInit, OnDestroy {
       this.currentParams = params;
     });
 
-    this.newMessageSub = this.socketEventsService.listen(EVENT_TYPES.NEW_MESSAGE)
+    this.newMessageSub = this.socketEventsService.listen(COMMON_EVENT_TYPES.NEW_MESSAGE)
       .subscribe((event: any) => {
         this.handleMessageEvent(event);
       });
@@ -119,12 +119,12 @@ export class CommonMessagesFragmentComponent implements OnInit, OnDestroy {
   handleToRoomEvents(event: any) {
     if (event.from_user_id && event.from_user_id !== this.you!.id) {
       switch (event.event) {
-        case EVENT_TYPES.MESSAGE_TYPING: {
+        case COMMON_EVENT_TYPES.MESSAGE_TYPING: {
           console.log('user is typing...');
           this.userIsTyping = true;
           break;
         }
-        case EVENT_TYPES.MESSAGE_TYPING_STOPPED: {
+        case COMMON_EVENT_TYPES.MESSAGE_TYPING_STOPPED: {
           console.log('user stopped typing...');
           this.userIsTyping = false;
           break;
@@ -138,9 +138,9 @@ export class CommonMessagesFragmentComponent implements OnInit, OnDestroy {
     this.messages_list = [];
     
     if (this.socketCurrentMessagingEmitter) {
-      const OLD_TO_ROOM = `${EVENT_TYPES.TO_MESSAGING_ROOM}:${this.currentMessagingSelected.id}`;
+      const OLD_TO_ROOM = `${COMMON_EVENT_TYPES.TO_MESSAGING_ROOM}:${this.currentMessagingSelected.id}`;
       this.socketCurrentMessagingEmitter.off(OLD_TO_ROOM);
-      this.socketEventsService.emit(EVENT_TYPES.LEAVE_TO_MESSAGING_ROOM, {
+      this.socketEventsService.emit(COMMON_EVENT_TYPES.LEAVE_TO_MESSAGING_ROOM, {
         messaging_id: this.currentMessagingSelected.id
       });
     }
@@ -157,22 +157,22 @@ export class CommonMessagesFragmentComponent implements OnInit, OnDestroy {
     this.messages_list = [];
       
     if (this.socketCurrentMessagingEmitter) {
-      const OLD_TO_ROOM = `${EVENT_TYPES.TO_MESSAGING_ROOM}:${this.currentMessagingSelected.id}`;
+      const OLD_TO_ROOM = `${COMMON_EVENT_TYPES.TO_MESSAGING_ROOM}:${this.currentMessagingSelected.id}`;
       this.socketCurrentMessagingEmitter.off(OLD_TO_ROOM);
-      this.socketEventsService.emit(EVENT_TYPES.LEAVE_TO_MESSAGING_ROOM, {
+      this.socketEventsService.emit(COMMON_EVENT_TYPES.LEAVE_TO_MESSAGING_ROOM, {
         messaging_id: this.currentMessagingSelected.id
       });
     }
       
     this.currentMessagingSelected = messaging;
-    const NEW_TO_ROOM = `${EVENT_TYPES.TO_MESSAGING_ROOM}:${this.currentMessagingSelected.id}`;
+    const NEW_TO_ROOM = `${COMMON_EVENT_TYPES.TO_MESSAGING_ROOM}:${this.currentMessagingSelected.id}`;
     console.log({ NEW_TO_ROOM });
 
     this.socketCurrentMessagingEmitter = this.socketEventsService.listenCustom(NEW_TO_ROOM, (event) => {
       console.log(event);
       this.handleToRoomEvents(event);
     });
-    this.socketEventsService.emit(EVENT_TYPES.JOIN_TO_MESSAGING_ROOM, {
+    this.socketEventsService.emit(COMMON_EVENT_TYPES.JOIN_TO_MESSAGING_ROOM, {
       messaging_id: this.currentMessagingSelected.id
     });
 
@@ -235,20 +235,23 @@ export class CommonMessagesFragmentComponent implements OnInit, OnDestroy {
       this.messageForm.value
     ).subscribe({
       next: (response) => {
-        this.messages_list.push(response.data);
+        // this.messages_list.push(response.data);
         this.messageForm.setValue({ body: '' });
         this.messageForm.get('body')!.markAsPristine();
         this.loading = false;
-        if (this.typingTimeout) {
-          clearTimeout(this.typingTimeout);
-        }
-        const TO_ROOM = `TO-MESSAGINGS:${this.currentMessagingSelected.id}`;
-        this.socketEventsService.emit(TO_ROOM, {
-          event: EVENT_TYPES.MESSAGE_TYPING_STOPPED,
-          from_user_id: this.you!.id,
-          to_user_id: other_user.id
-        });
-        this.typingTimeout = null;
+        // if (this.typingTimeout) {
+        //   clearTimeout(this.typingTimeout);
+        // }
+        // setTimeout(() => {
+        //   const TO_ROOM = `TO-MESSAGINGS:${this.currentMessagingSelected.id}`;
+        //   this.socketEventsService.emit(TO_ROOM, {
+        //     event: COMMON_EVENT_TYPES.MESSAGE_TYPING_STOPPED,
+        //     messaging_id: this.currentMessagingSelected.id,
+        //     from_user_id: this.you!.id,
+        //     to_user_id: other_user.id
+        //   });
+        // }, 500);
+        // this.typingTimeout = null;
       },
       error: (error: HttpErrorResponse) => {
         this.alertService.handleResponseErrorGeneric(error);
@@ -264,12 +267,12 @@ export class CommonMessagesFragmentComponent implements OnInit, OnDestroy {
       ? this.currentMessagingSelected.user
       : this.currentMessagingSelected.sender;
 
-    const TO_ROOM = EVENT_TYPES.TO_MESSAGING_ROOM;
+    const TO_ROOM = COMMON_EVENT_TYPES.TO_MESSAGING_ROOM;
 
     const startTimeout = () => {
       this.typingTimeout = setTimeout(() => {
         this.socketEventsService.emit(TO_ROOM, {
-          event: EVENT_TYPES.MESSAGE_TYPING_STOPPED,
+          event: COMMON_EVENT_TYPES.MESSAGE_TYPING_STOPPED,
           messaging_id: this.currentMessagingSelected.id,
           from_user_id: this.you!.id,
           to_user_id: other_user.id
@@ -287,7 +290,7 @@ export class CommonMessagesFragmentComponent implements OnInit, OnDestroy {
     startTimeout();
 
     this.socketEventsService.emit(TO_ROOM, {
-      event: EVENT_TYPES.MESSAGE_TYPING,
+      event: COMMON_EVENT_TYPES.MESSAGE_TYPING,
       messaging_id: this.currentMessagingSelected.id,
       from_user_id: this.you!.id,
       to_user_id: other_user.id

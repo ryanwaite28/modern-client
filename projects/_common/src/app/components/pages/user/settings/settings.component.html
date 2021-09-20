@@ -63,6 +63,42 @@
     </div>
   </div>
 
+  <!-- Phone -->
+  <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+    <div class="uk-card-body">
+      <h3>Phone</h3>
+      <p>Change Phone Number</p>
+
+      <form class="" [formGroup]="phoneForm" (ngSubmit)="send_sms_verification()">
+        <div class="uk-margin">
+          <span class="label-info">
+            Phone <small>10-11 digit number</small> <small *ngIf="you!.phone"> (current phone number: {{ you!.phone }})</small>
+          </span>
+          <input class="uk-input" type="text" placeholder="Phone" formControlName="phone" >
+        </div>
+        
+        <button type="submit" class="uk-button uk-button-small uk-button-secondary"
+          [disabled]="phone_is_verified || verification_requested_successfully || !phoneForm.valid || '1' + phoneForm.value.phone === you!.phone">
+          Submit
+        </button>
+      </form>
+
+      <br/>
+
+      <form class="" *ngIf="verification_requested_successfully" [formGroup]="phoneVerifyForm" (ngSubmit)="verify_sms_code()">
+        <div class="uk-margin">
+          <span class="label-info">
+            Enter verification code 
+          </span>
+          <input class="uk-input" type="text" placeholder="Enter code" formControlName="code" >
+        </div>
+
+        <button type="submit" class="uk-button uk-button-small uk-button-secondary"
+          [disabled]="phone_is_verified || !phoneVerifyForm.valid">Submit</button>
+      </form>
+    </div>
+  </div>
+
   <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
     <div class="uk-card-body">
       <form class="" [formGroup]="userPasswordForm" (ngSubmit)="onSubmitUserPasswordForm()">
@@ -101,8 +137,6 @@
     </div>
   </div>
 
-  
-
   <!-- Icon -->
   <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
     <div class="uk-card-body">
@@ -132,6 +166,19 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Stripe account -->
+  <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+    <div class="uk-card-body">
+      <h3>Stripe Account</h3>
+      
+      <ng-container [ngSwitch]="!!you!.stripe_account_id && !!you!.stripe_account_verified">
+        <a (click)="createStripeAccount()" *ngSwitchCase="false" class="stripe-connect"><span>Connect with</span></a>
+
+        <p *ngSwitchCase="true">You're connected!</p>
+      </ng-container>
     </div>
   </div>
 </div>

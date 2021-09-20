@@ -56,10 +56,17 @@ export class AppComponent implements OnInit {
             class: '',
             requiresAuth: true
           },
+          // {
+          //   name: 'Settings',
+          //   value: ['/', 'modern', 'apps', 'deliverme', 'users', you!.id, 'settings'],
+          //   title: 'DeliverMe Settings Page',
+          //   class: '',
+          //   requiresAuth: true
+          // },
           {
-            name: 'Settings',
-            value: ['/', 'modern', 'apps', 'deliverme', 'users', you!.id, 'settings'],
-            title: 'DeliverMe Settings Page',
+            name: 'Search',
+            value: ['/', 'modern', 'apps', 'deliverme', 'users', you!.id, 'search'],
+            title: 'DeliverMe Search Deliveries Page',
             class: '',
             requiresAuth: true
           }

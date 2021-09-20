@@ -11,7 +11,7 @@ import { ClientService } from './client.service';
 export class GoogleMapsService {
   private google: any;
   private isReadyStream = new BehaviorSubject<any>(null);
-  private componentForm: PlainObject = {
+  readonly componentForm: PlainObject = {
     street_number: 'short_name',
     route: 'long_name',
     locality: 'long_name',
@@ -39,6 +39,49 @@ export class GoogleMapsService {
       }))
   }
 
+  get_distance_spherical_api(params: {
+    from_lat: number;
+    from_lng: number;
+    to_lat: number;
+    to_lng: number;
+  }) {
+    /* 
+      https://developers.google.com/maps/documentation/javascript/reference/geometry?hl=en-US#spherical.computeDistanceBetween
+      https://stackoverflow.com/questions/1502590/calculate-distance-between-two-points-in-google-maps-v3
+    */
+    const lat_lng_a = new this.google.maps.LatLng(params.from_lat, params.from_lng);
+    const lat_lng_b = new this.google.maps.LatLng(params.to_lat, params.to_lng);
+    const distance = (this.google.maps.geometry.spherical.computeDistanceBetween(lat_lng_a, lat_lng_b) / 1000).toFixed(2);
+    console.log({ distance });
+    return parseFloat(distance);
+  }
+
+  get_distance_haversine_distance(params: {
+    from_lat: number;
+    from_lng: number;
+    to_lat: number;
+    to_lng: number;
+  }) {
+    /*  
+      https://developers.google.com/maps/documentation/distance-matrix/overview#DistanceMatrixRequests
+      https://cloud.google.com/blog/products/maps-platform/how-calculate-distances-map-maps-javascript-api
+    */
+    var M = 3958.8; // Radius of the Earth in miles
+    var K = 6371.0710; // Radius of the Earth in kilometers
+
+    var rlat1 = params.from_lat * (Math.PI/180); // Convert degrees to radians
+    var rlat2 = params.to_lat * (Math.PI/180); // Convert degrees to radians
+    var difflat = rlat2-rlat1; // Radian difference (latitudes)
+    var difflon = (params.to_lng - params.from_lng) * (Math.PI/180); // Radian difference (longitudes)
+
+    var d = 2 * M * Math.asin(
+      Math.sqrt(
+        Math.sin(difflat/2) * Math.sin(difflat/2) + Math.cos(rlat1) * Math.cos(rlat2) * Math.sin(difflon/2) * Math.sin(difflon/2)
+      )
+    );
+    return d;
+  }
+
   private getGoogleMaps(google_api_key: string) {
     if (this.loading) {
       console.log('already loading google maps...');
@@ -62,7 +105,7 @@ export class GoogleMapsService {
       const googleScript = document.createElement('script');
       googleScript.setAttribute('async', 'true');
       googleScript.setAttribute('defer', 'true');
-      const srcUrl = `https://maps.googleapis.com/maps/api/js?key=${google_api_key}&libraries=places&callback=initMap`;
+      const srcUrl = `https://maps.googleapis.com/maps/api/js?key=${google_api_key}&libraries=places,geometry&callback=initMap`;
       googleScript.setAttribute('src', srcUrl);
 
       const wd = (<any> window);
@@ -231,7 +274,7 @@ export class GoogleMapsService {
         return 'city';
       case 'administrative_area_level_1':
         return 'state';
-      case 'administrative_area_level_1':
+      case 'administrative_area_level_2':
           return 'county';
       case 'country':
         return 'country';

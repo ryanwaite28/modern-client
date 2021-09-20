@@ -40,14 +40,6 @@ export class TravellrsUserHomePageComponent implements OnInit, AfterViewInit, On
     input: null,
     autocomplete: null,
   };
-  componentForm: PlainObject = {
-    street_number: 'short_name',
-    route: 'long_name',
-    locality: 'long_name',
-    administrative_area_level_1: 'short_name',
-    country: 'long_name',
-    postal_code: 'short_name'
-  };
 
   TEXT_FORM_LIMIT = 250;
   newMarkerForm = new FormGroup({
@@ -141,8 +133,8 @@ export class TravellrsUserHomePageComponent implements OnInit, AfterViewInit, On
       // and fill the corresponding field on the form.
       for (var i = 0; i < place.address_components.length; i++) {
         var addressType = place.address_components[i].types[0];
-        if (this.componentForm[addressType]) {
-          var val = place.address_components[i][this.componentForm[addressType]];
+        if (this.googleMapsService.componentForm[addressType]) {
+          var val = place.address_components[i][this.googleMapsService.componentForm[addressType]];
           this.placeData[this.googleMapsService.switchName(addressType)] = val;
         }
       }

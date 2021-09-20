@@ -1,14 +1,16 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { COMMON_EVENT_TYPES } from 'projects/_common/src/app/enums/all.enums';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
 import { SocketEventsService } from 'projects/_common/src/app/services/socket-events.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
+import { getUserFullName } from 'projects/_common/src/app/_misc/chamber';
 import { Subscription } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
-import { DELIVERME_EVENT_TYPES } from '../../../enums/deliverme.enum';
+import { DELIVERME_COMMON_EVENT_TYPES } from '../../../enums/deliverme.enum';
 import { DeliveryService } from '../../../services/delivery.service';
 
 @Component({
@@ -18,22 +20,37 @@ import { DeliveryService } from '../../../services/delivery.service';
 })
 export class DeliveryCardComponent implements OnInit {
   @ViewChild('newDeliveryTrackingUpdateFormElm') newDeliveryTrackingUpdateFormElm: ElementRef<HTMLFormElement> | null = null;
+  @ViewChild('paymentFormElm') paymentFormElm: ElementRef<HTMLFormElement> | null = null;
   
   @Input() you: IUser | null = null;
   @Input() delivery: any;
 
   @Output() deliveryDelete = new EventEmitter<any>();
   @Output() deliveryCompleted = new EventEmitter<any>();
+  @Output() deliveryReturned = new EventEmitter<any>();
 
   isEditing: boolean = false;
   loading: boolean = false;
+  showDetails: boolean = false;
+  deliveryEventsListeners: any[] = [];
+  payment_client_secret: any;
 
   newDeliveryTrackingUpdateForm = new FormGroup({
     message: new FormControl('', [Validators.required]),
     file: new FormControl(null)
   });
 
-  deliveryEventsListeners: any[] = [];
+  messageFormIsOpen = false;
+  messages_list_end = false;
+  MSG_MAX_LENGTH = 1000;
+  messageForm = new FormGroup({
+    body: new FormControl('', [
+      Validators.required,
+      // Validators.pattern(/(.*)+/),
+      Validators.minLength(1),
+      Validators.maxLength(this.MSG_MAX_LENGTH)
+    ])
+  });
 
   get isDeliveryOwner(): boolean {
     const match = !!this.you && !!this.delivery && this.you.id === this.delivery.owner_id;
@@ -55,6 +72,7 @@ export class DeliveryCardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.messages_list_end = !!this.delivery && this.delivery.delivery_messages.length < 5;
     if (this.delivery && this.delivery.deliverme_delivery_tracking_updates) {
       for (const tracking_update of this.delivery.deliverme_delivery_tracking_updates) {
         this.getLocationForTrackingUpdate(tracking_update);
@@ -67,12 +85,14 @@ export class DeliveryCardComponent implements OnInit {
     for (const listener of this.deliveryEventsListeners) {
       listener.off && listener.off();
     }
+    const deliveryRoom = `${DELIVERME_COMMON_EVENT_TYPES.TO_DELIVERY}:${this.delivery.id}`;
+    this.socketEventsService.leaveRoom(deliveryRoom);
   }
 
   startEventListener() {
     if (this.delivery) {
       const carrierAssignedListener = this.socketEventsService.listenCustom(
-        DELIVERME_EVENT_TYPES.CARRIER_ASSIGNED,
+        DELIVERME_COMMON_EVENT_TYPES.CARRIER_ASSIGNED,
         (event: any) => {
           console.log(event);
           this.alertService.handleResponseSuccessGeneric({
@@ -81,26 +101,26 @@ export class DeliveryCardComponent implements OnInit {
           if (event.data.id === this.delivery.id) {
             this.delivery.carrier_id = event.user.id;
             this.delivery.carrier = event.user;
+            this.delivery.returned = false;
           }
         }
       );
 
       const carrierUnassignedListener = this.socketEventsService.listenCustom(
-        DELIVERME_EVENT_TYPES.CARRIER_UNASSIGNED,
+        DELIVERME_COMMON_EVENT_TYPES.CARRIER_UNASSIGNED,
         (event: any) => {
           console.log(event);
           this.alertService.handleResponseSuccessGeneric({
             message: event.message
           });
           if (event.data.id === this.delivery.id) {
-            this.delivery.carrier_id = null;
-            this.delivery.carrier = null;
+            this.delivery = event.data;
           }
         }
       );
 
       const markedPickedListener = this.socketEventsService.listenCustom(
-        DELIVERME_EVENT_TYPES.CARRIER_MARKED_AS_PICKED_UP,
+        DELIVERME_COMMON_EVENT_TYPES.CARRIER_MARKED_AS_PICKED_UP,
         (event: any) => {
           console.log(event);
           this.alertService.handleResponseSuccessGeneric({
@@ -113,7 +133,7 @@ export class DeliveryCardComponent implements OnInit {
       );
 
       const markedDroppedListener = this.socketEventsService.listenCustom(
-        DELIVERME_EVENT_TYPES.CARRIER_MARKED_AS_DROPPED_OFF,
+        DELIVERME_COMMON_EVENT_TYPES.CARRIER_MARKED_AS_DROPPED_OFF,
         (event: any) => {
           console.log(event);
           this.alertService.handleResponseSuccessGeneric({
@@ -126,7 +146,7 @@ export class DeliveryCardComponent implements OnInit {
       );
 
       const trackingUpdateListener = this.socketEventsService.listenCustom(
-        DELIVERME_EVENT_TYPES.DELIVERY_NEW_TRACKING_UPDATE,
+        DELIVERME_COMMON_EVENT_TYPES.DELIVERY_NEW_TRACKING_UPDATE,
         (event: any) => {
           console.log(event);
           this.alertService.handleResponseSuccessGeneric({
@@ -134,14 +154,14 @@ export class DeliveryCardComponent implements OnInit {
           });
           if (event.data.delivery_id === this.delivery.id) {
             const tracking_update = event.data;
-            this.delivery.deliverme_delivery_tracking_updates?.push(tracking_update);
+            this.delivery.deliverme_delivery_tracking_updates?.unshift(tracking_update);
             this.getLocationForTrackingUpdate(tracking_update);
           }
         }
       );
 
       const deliveryCompletedListener = this.socketEventsService.listenCustom(
-        DELIVERME_EVENT_TYPES.DELIVERY_COMPLETED,
+        DELIVERME_COMMON_EVENT_TYPES.DELIVERY_COMPLETED,
         (event: any) => {
           console.log(event);
           this.alertService.handleResponseSuccessGeneric({
@@ -154,16 +174,62 @@ export class DeliveryCardComponent implements OnInit {
         }
       );
 
+      const deliveryReturnedListener = this.socketEventsService.listenCustom(
+        DELIVERME_COMMON_EVENT_TYPES.DELIVERY_RETURNED,
+        (event: any) => {
+          console.log(event);
+          this.alertService.handleResponseSuccessGeneric({
+            message: event.message
+          });
+          if (event.data.id === this.delivery.id) {
+            this.delivery = event.data;
+            this.deliveryReturned.emit();
+          }
+        }
+      );
+
       this.deliveryEventsListeners = [
         carrierAssignedListener,
         carrierUnassignedListener,
         trackingUpdateListener,
         markedPickedListener,
         markedDroppedListener,
-        deliveryCompletedListener
+        deliveryCompletedListener,
+        deliveryReturnedListener,
       ];
 
+      if (
+        !this.delivery.completed &&
+        this.you!.id === this.delivery.owner_id ||
+        this.you!.id === this.delivery.carrier_id
+      ) {
+        const deliveryRoom = `${DELIVERME_COMMON_EVENT_TYPES.TO_DELIVERY}:${this.delivery.id}`;
+        this.socketEventsService.joinRoom(deliveryRoom);
+
+        const deliveryMessageListener = this.socketEventsService.listenCustom(deliveryRoom,
+          (event: any) => {
+            console.log(event);
+            this.handleToDeliveryEvents(event);
+          }
+        );
+
+        this.deliveryEventsListeners.push(deliveryMessageListener);
+      }
+
       console.log(`deliveryEventsListeners`, this.deliveryEventsListeners);
+    }
+  }
+
+  handleToDeliveryEvents(event: any) {
+    switch (event.event) {
+      case DELIVERME_COMMON_EVENT_TYPES.DELIVERY_NEW_MESSAGE: {
+        this.alertService.handleResponseSuccessGeneric({
+          message: event.message
+        });
+        if (event.data.delivery_id === this.delivery.id) {
+          this.delivery.delivery_messages.push(event.data);
+        }
+      }
     }
   }
 
@@ -205,7 +271,7 @@ export class DeliveryCardComponent implements OnInit {
             this.alertService.handleResponseSuccessGeneric(response);
             this.loading = false;
             const tracking_update = response.data;
-            this.delivery.deliverme_delivery_tracking_updates?.push(tracking_update);
+            this.delivery.deliverme_delivery_tracking_updates?.unshift(tracking_update);
             this.getLocationForTrackingUpdate(tracking_update);
 
             if (iconInputElm) {
@@ -276,28 +342,109 @@ export class DeliveryCardComponent implements OnInit {
     });
   }
 
+  sendDeliveryMessage() {
+    if (this.loading) {
+      return;
+    }
+    if (!this.messageForm.value.body.trim()) {
+      return window.alert(`Message form cannot be empty`);
+    }
+
+    this.loading = true;
+    this.deliveryService.sendDeliveryMessage({
+      body: this.messageForm.value.body,
+      delivery_id: this.delivery.id
+    }).subscribe({
+      next: (response: any) => {
+        this.alertService.addAlert({
+          type: this.alertService.AlertTypes.SUCCESS,
+          message: response.message
+        }, true);
+        // this.delivery.delivery_messages.unshift(response.data);
+        this.messageForm.setValue({ body: '' });
+        this.loading = false;
+      }
+    });
+  }
+
   payCarrier() {
-    // const ask = window.confirm(`Are you ready to pay the carrier? This action cannot be undone.`);
-    // if (!ask) {
-    //   return;
-    // }
-    // this.loading = true;
-    // this.deliveryService.payCarrier(
-    //   this.you!.id,
-    //   this.delivery.id,
-    // ).subscribe({
-    //   next: (response) => {
-    //     this.alertService.handleResponseSuccessGeneric(response);
-    //     this.loading = false;
-    //     this.delivery.completed = true;
-    //   },
-    //   error: (error: HttpErrorResponse) => {
-    //     this.loading = false;
-    //     this.alertService.handleResponseErrorGeneric(error);
-    //   },
-    //   complete: () => {
-    //     this.loading = false;
-    //   }
-    // });
+    // https://stripe.com/docs/connect/collect-then-transfer-guide
+
+    const ask = window.confirm(`Are you ready to pay the carrier?`);
+    if (!ask) {
+      return;
+    }
+    
+    this.loading = true;
+    this.deliveryService.createCheckoutSession(this.delivery.id).subscribe({
+      error: (error: HttpErrorResponse) => {
+        this.loading = false;
+        this.alertService.handleResponseErrorGeneric(error);
+      },
+      next: (response: any) => {
+        this.loading = false;
+        if (response.payment_client_secret) {
+          this.payment_client_secret = response.payment_client_secret;
+          this.alertService.handleResponseSuccessGeneric(response);
+          const stripe = (<any> window).Stripe(response.stripe_pk, {
+            // stripeAccount: this.you!.stripe_account_id
+          });
+          var elements = stripe.elements();
+          var style = {
+            base: {
+              color: "#32325d",
+            }
+          };
+          var card = elements.create("card", { style: style });
+          const cardId = '#card-element-' + this.delivery.id;
+          card.mount(cardId);
+
+          card.on('change', (event: any) => {
+            var displayError = document.getElementById('card-errors-' + this.delivery.id);
+            if (event.error) {
+              displayError!.textContent = event.error.message;
+            } else {
+              displayError!.textContent = '';
+            }
+          });
+
+          const form = document.getElementById('payment-form-' + this.delivery.id);
+
+          form!.addEventListener('submit', (ev) => {
+            this.loading = true;
+            ev.preventDefault();
+            stripe.confirmCardPayment(this.payment_client_secret, {
+              payment_method: {
+                card: card,
+                billing_details: {
+                  email: this.delivery.owner.email,
+                  name: getUserFullName(this.delivery.owner),
+                  phone: this.delivery.owner.phone,
+                }
+              }
+            }).then((result: any) => {
+              this.loading = false;
+              console.log({ result });
+              if (result.error) {
+                // Show error to your customer (e.g., insufficient funds)
+                console.log(result.error.message);
+                this.alertService.showErrorMessage(result.error.message);
+              } else {
+                // The payment has been processed!
+                if (result.paymentIntent.status === 'succeeded') {
+                  // Show a success message to your customer
+                  // There's a risk of the customer closing the window before callback
+                  // execution. Set up a webhook or plugin to listen for the
+                  // payment_intent.succeeded event that handles any business critical
+                  // post-payment actions.
+                  this.alertService.handleResponseSuccessGeneric({ message: `Payment successful!` });
+                  this.delivery.completed = true;
+                }
+              }
+            });
+          });
+        }
+      }
+    });
   }
 }

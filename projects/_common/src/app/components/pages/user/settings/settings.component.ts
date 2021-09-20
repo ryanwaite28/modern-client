@@ -30,17 +30,10 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
   cityQuery?: string;
   zipcodeQuery?: string;
   placeData: PlainObject = {};
-  componentForm: PlainObject = {
-    street_number: 'short_name',
-    route: 'long_name',
-    locality: 'long_name',
-    administrative_area_level_1: 'short_name',
-    country: 'long_name',
-    postal_code: 'short_name'
-  };
 
   verification_requested_successfully: boolean = false;
   sms_request_id?: string;
+  sms_results: any;
   phone_is_verified: boolean = false;
   
   // forms
@@ -55,6 +48,7 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
 
   userInfoForm = new FormGroup({
     email: new FormControl('', this.COMMON_TEXT_VALIDATOR),
+    // phone: new FormControl('', [Validators.pattern(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]{10,11}$/g)]),
     username: new FormControl('', [Validators.maxLength(this.TEXT_FORM_LIMIT)]),
     displayname: new FormControl('', [Validators.maxLength(this.TEXT_FORM_LIMIT)]),
     // city: new FormControl('', [Validators.maxLength(this.TEXT_FORM_LIMIT)]),
@@ -78,7 +72,7 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
   });
 
   phoneForm = new FormGroup({
-    phone: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]),
+    phone: new FormControl('', [Validators.pattern(/^[\d]+$/), Validators.minLength(10), Validators.maxLength(10)]),
   });
   phoneVerifyForm = new FormGroup({
     code: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]),
@@ -156,9 +150,9 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
       // and fill the corresponding field on the form.
       for (var i = 0; i < place.address_components.length; i++) {
         var addressType = place.address_components[i].types[0];
-        if (this.componentForm[addressType]) {
-          var val = place.address_components[i][this.componentForm[addressType]];
-          this.placeData[this.switchName(addressType)] = val;
+        if (this.googleService.componentForm[addressType]) {
+          var val = place.address_components[i][this.googleService.componentForm[addressType]];
+          this.placeData[this.googleService.switchName(addressType)] = val;
           var elm = document.getElementById(addressType);
           if (elm) { (<any> elm).value = val; };
         }
@@ -181,22 +175,6 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
     });
   }
 
-  switchName(name: string) {
-    switch(name) {
-      case 'locality':
-        return 'city';
-      case 'administrative_area_level_1':
-        return 'state';
-      case 'country':
-        return 'country';
-      case 'postal_code':
-        return 'zipcode';
-
-      default:
-        return name;
-    }
-  }
-
   setFormsInitialState() {
     if (this.you && !this.initState) {
       this.initState = true;
@@ -205,6 +183,7 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
 
       this.userInfoForm.setValue({
         email: this.you.email,
+        // phone: this.you.phone,
         username: this.you.username,
         displayname: this.you.displayname,
         // city: this.you.city,
@@ -245,6 +224,9 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
       ...this.userInfoForm.value,
       ...this.phoneForm.value,
       ...this.placeData,
+
+      phone_is_verified: this.phone_is_verified,
+      sms_results: this.sms_results,
     };
     if (this.manage.place) {
       data.location = this.manage.place.formatted_address;
@@ -259,6 +241,7 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
           this.loading = false;
         },
         (error: HttpErrorResponse) => {
+          this.loading = false;
           this.handleResponseError(error);
         }
       );
@@ -278,6 +261,7 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
           this.loading = false;
         },
         (error: HttpErrorResponse) => {
+          this.loading = false;
           this.handleResponseError(error);
         }
       );
@@ -311,6 +295,7 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
           this.loading = false;
         },
         (error: HttpErrorResponse) => {
+          this.loading = false;
           this.handleResponseError(error);
         }
       );
@@ -344,6 +329,7 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
           this.loading = false;
         },
         (error: HttpErrorResponse) => {
+          this.loading = false;
           this.handleResponseError(error);
         }
       );
@@ -367,10 +353,39 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
   }
 
   send_sms_verification() {
-    this.userService.send_sms_verification(`1` + this.phoneForm.value.phone)
+    const phone = this.phoneForm.value.phone 
+      ? `1` + this.phoneForm.value.phone
+      : 'x';
+
+    this.loading = true;
+    if (phone === 'x') {
+      const ask = window.confirm(`The phone input was blank. Remove phone from your account?`);
+      if (!ask) {
+        return;
+      }
+      this.userService.send_sms_verification(phone)
+        .subscribe(
+          (response: any) => {
+            this.loading = false;
+            window.localStorage.setItem('rmw-modern-apps-jwt', response.token);
+            this.userStore.setState(response.you);
+            this.verification_requested_successfully = false;
+            this.sms_results = undefined;
+            this.sms_request_id = undefined;
+          },
+          (error: HttpErrorResponse) => {
+            this.loading = false;
+            this.handleResponseError(error);
+          }
+        );
+      return;
+    }
+
+    this.userService.send_sms_verification(phone)
       .subscribe(
         (response: any) => {
           this.verification_requested_successfully = true;
+          this.sms_results = response.sms_results;
           this.sms_request_id = response.sms_request_id;
         },
         (error: HttpErrorResponse) => {
@@ -380,19 +395,36 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
   }
 
   verify_sms_code() {
-    this.userService.update_phone(this.you!.id, {
-      request_id: this.sms_request_id,
+    this.loading = true;
+    this.userService.verify_sms_code({
+      request_id: this.sms_request_id!,
       code: this.phoneVerifyForm.value.code,
-      phone: this.phoneForm.value.phone
-    })
-      .subscribe(
-        (response: any) => {
-          this.phone_is_verified = true;
-          this.handleResponseSuccess(response);
-        },
-        (error: HttpErrorResponse) => {
-          this.handleResponseError(error);
-        }
-      );
+    }).subscribe(
+      (response: any) => {
+        this.loading = false;
+        this.phone_is_verified = true;
+        window.localStorage.setItem('rmw-modern-apps-jwt', response.token);
+        this.userStore.setState(response.you);
+        this.handleResponseSuccess(response);
+      },
+      (error: HttpErrorResponse) => {
+        this.loading = false;
+        this.handleResponseError(error);
+      }
+    );
+  }
+
+  createStripeAccount() {
+    this.loading = true;
+    this.userService.create_stripe_account(this.you!.id).subscribe(
+      (response: any) => {
+        this.loading = false;
+        window.open(response.onboarding_url, `_blank`);
+      },
+      (error: HttpErrorResponse) => {
+        this.loading = false;
+        this.handleResponseError(error);
+      }
+    );
   }
 }

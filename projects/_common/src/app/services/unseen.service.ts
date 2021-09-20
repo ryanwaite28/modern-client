@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { EVENT_TYPES } from '../enums/all.enums';
+import { COMMON_EVENT_TYPES } from '../enums/all.enums';
 import { IUser } from '../interfaces/user.interface';
 import { UserStoreService } from '../stores/user-store.service';
 import { getUserFullName } from '../_misc/chamber';
@@ -73,26 +73,26 @@ export class UnseenService {
     });
 
     const notification_events = [
-      EVENT_TYPES.NEW_RESOURCE_INTEREST,
-      EVENT_TYPES.NEW_CLIQUE_INTEREST,
+      COMMON_EVENT_TYPES.NEW_RESOURCE_INTEREST,
+      COMMON_EVENT_TYPES.NEW_CLIQUE_INTEREST,
 
-      EVENT_TYPES.CONVERSATION_MEMBER_ADDED,
-      EVENT_TYPES.CONVERSATION_MEMBER_REMOVED,
+      COMMON_EVENT_TYPES.CONVERSATION_MEMBER_ADDED,
+      COMMON_EVENT_TYPES.CONVERSATION_MEMBER_REMOVED,
 
-      EVENT_TYPES.NEW_FOLLOWER,
-      EVENT_TYPES.NEW_UNFOLLOWER,
+      COMMON_EVENT_TYPES.NEW_FOLLOWER,
+      COMMON_EVENT_TYPES.NEW_UNFOLLOWER,
 
-      EVENT_TYPES.CLIQUE_MEMBER_LEFT,
-      EVENT_TYPES.CLIQUE_MEMBER_REQUEST,
-      EVENT_TYPES.CLIQUE_MEMBER_CANCEL,
-      EVENT_TYPES.CLIQUE_MEMBER_ACCEPT,
-      EVENT_TYPES.CLIQUE_MEMBER_DECLINE,
+      COMMON_EVENT_TYPES.CLIQUE_MEMBER_LEFT,
+      COMMON_EVENT_TYPES.CLIQUE_MEMBER_REQUEST,
+      COMMON_EVENT_TYPES.CLIQUE_MEMBER_CANCEL,
+      COMMON_EVENT_TYPES.CLIQUE_MEMBER_ACCEPT,
+      COMMON_EVENT_TYPES.CLIQUE_MEMBER_DECLINE,
 
-      EVENT_TYPES.CONNECTION_DECLINE,
-      EVENT_TYPES.CONNECTION_ACCEPT,
-      EVENT_TYPES.CONNECTION_REQUEST,
-      EVENT_TYPES.CONNECTION_CANCEL,
-      EVENT_TYPES.CONNECTION_BROKEN,
+      COMMON_EVENT_TYPES.CONNECTION_DECLINE,
+      COMMON_EVENT_TYPES.CONNECTION_ACCEPT,
+      COMMON_EVENT_TYPES.CONNECTION_REQUEST,
+      COMMON_EVENT_TYPES.CONNECTION_CANCEL,
+      COMMON_EVENT_TYPES.CONNECTION_BROKEN,
     ];
 
     notification_events.forEach((event_type) => {
@@ -102,11 +102,11 @@ export class UnseenService {
       });
     });
 
-    this.socketEventsService.listen(EVENT_TYPES.NEW_MESSAGE).subscribe((event: any) => {
+    this.socketEventsService.listen(COMMON_EVENT_TYPES.NEW_MESSAGE).subscribe((event: any) => {
       this.increment('messages', 1);
     });
 
-    this.socketEventsService.listen(EVENT_TYPES.NEW_CONVERSATION_MESSAGE).subscribe((event: any) => {
+    this.socketEventsService.listen(COMMON_EVENT_TYPES.NEW_CONVERSATION_MESSAGE).subscribe((event: any) => {
       if (event.data.user_id !== this.you!.id) {
         this.increment('conversations', 1);
       }

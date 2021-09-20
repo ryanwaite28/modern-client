@@ -3,7 +3,7 @@ import * as io from 'socket.io-client';
 import { UserStoreService } from '../stores/user-store.service';
 import { Subscription, Subject, Observable } from 'rxjs';
 import { IUser } from '../interfaces/user.interface';
-import { EVENT_TYPES } from '../enums/all.enums';
+import { COMMON_EVENT_TYPES } from '../enums/all.enums';
 import { ClientService } from './client.service';
 import { ConversationsService } from './conversations.service';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -31,7 +31,7 @@ export class SocketEventsService {
   // user's conversations
   private youConversationsSocketListeners: any = {};
 
-  EVENT_TYPES = EVENT_TYPES;
+  COMMON_EVENT_TYPES = COMMON_EVENT_TYPES;
 
   constructor(
     private clientService: ClientService,
@@ -39,7 +39,7 @@ export class SocketEventsService {
     private userService: UserService,
     private conversationsService: ConversationsService,
   ) {
-    Object.keys(EVENT_TYPES).forEach((key) => {
+    Object.keys(COMMON_EVENT_TYPES).forEach((key) => {
       this.streamsMap[key] = new Subject<any>();
     });
 
@@ -99,7 +99,7 @@ export class SocketEventsService {
   }
 
   private handleEvent(event: any) {
-    const subjectStream = this.streamsMap[event.event_type || event.event];
+    const subjectStream = this.streamsMap[event.event_type || event.event || event.eventName];
     if (subjectStream) {
       subjectStream.next(event);
     }
@@ -109,7 +109,15 @@ export class SocketEventsService {
     this.socket.emit(eventName, data);
   }
 
-  listen<T>(event_type: EVENT_TYPES) {
+  joinRoom(room: string) {
+    this.socket.emit(COMMON_EVENT_TYPES.SOCKET_JOIN_ROOM, { room });
+  }
+
+  leaveRoom(room: string) {
+    this.socket.emit(COMMON_EVENT_TYPES.SOCKET_LEAVE_ROOM, { room });
+  }
+
+  listen<T>(event_type: COMMON_EVENT_TYPES) {
     const subjectStream = this.streamsMap[event_type];
     if (!subjectStream) {
       throw new ReferenceError(`Unknown key for event stream: ${event_type}`);
@@ -128,9 +136,9 @@ export class SocketEventsService {
     // add new listener
     if (conversation_id) {
       this.youConversationsSocketListeners[conversation_id] = this.listenCustom(
-        `${EVENT_TYPES.NEW_CONVERSATION_MESSAGE}:conversation-${conversation_id}`,
+        `${COMMON_EVENT_TYPES.NEW_CONVERSATION_MESSAGE}:conversation-${conversation_id}`,
         (event: any) => {
-          this.streamsMap[EVENT_TYPES.NEW_CONVERSATION_MESSAGE].next(event);
+          this.streamsMap[COMMON_EVENT_TYPES.NEW_CONVERSATION_MESSAGE].next(event);
         }
       );
       return;
@@ -145,9 +153,9 @@ export class SocketEventsService {
       next: (response) => {
         for (const conversation of response.data) {
           this.youConversationsSocketListeners[conversation.id] = this.listenCustom(
-            `${EVENT_TYPES.NEW_CONVERSATION_MESSAGE}:conversation-${conversation.id}`,
+            `${COMMON_EVENT_TYPES.NEW_CONVERSATION_MESSAGE}:conversation-${conversation.id}`,
             (event: any) => {
-              this.streamsMap[EVENT_TYPES.NEW_CONVERSATION_MESSAGE].next(event);
+              this.streamsMap[COMMON_EVENT_TYPES.NEW_CONVERSATION_MESSAGE].next(event);
             }
           );
         }

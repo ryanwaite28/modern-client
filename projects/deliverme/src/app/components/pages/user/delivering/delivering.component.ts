@@ -27,7 +27,7 @@ const searchCriterias = [
   styleUrls: ['./delivering.component.scss']
 })
 export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestroy {
-  you: IUser | null = null;
+  you: any;
   current_delivering: any;
   potential_delivering: any;
 
@@ -61,6 +61,10 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
 
   onCurrentDeliveryCompleted() {
     this.past_deliverings.push(this.current_delivering);
+    this.current_delivering = undefined;
+  }
+
+  onCurrentDeliveryReturned() {
     this.current_delivering = undefined;
   }
 
@@ -238,6 +242,29 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
         console.log(response);
         this.alertService.handleResponseSuccessGeneric(response);
         this.current_delivering = response.data;
+        this.loading = false;
+      },
+      error: (error: any) => {
+        this.loading = false;
+        this.alertService.handleResponseErrorGeneric(error);
+      },
+      complete: () => {
+        this.loading = false;
+      },
+    });
+  }
+
+  markDeliveryAsReturned() {
+    const ask = window.confirm(`Have you returned this delivery?`);
+    if (!ask) {
+      return;
+    }
+    this.loading = true;
+    this.deliveryService.markDeliveryAsReturned<any>(this.you!.id, this.current_delivering.id).subscribe({
+      next: (response) => {
+        console.log(response);
+        this.alertService.handleResponseSuccessGeneric(response);
+        this.current_delivering = undefined;
         this.loading = false;
       },
       error: (error: any) => {

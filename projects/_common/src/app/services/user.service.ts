@@ -116,13 +116,9 @@ export class UserService {
   verify_sms_code(params: {
     request_id: string,
     code: string,
-    shouldSetUserSession?: boolean
   }): Observable<GetVerifySmsCode> {
-    const { request_id, code, shouldSetUserSession } = params;
-    const queryParams = shouldSetUserSession
-      ? '?setUserSession=true'
-      : '';
-    const endpoint = `/common/users/verify-sms-code/request_id/${request_id}/code/${code}${queryParams}`;
+    const { request_id, code } = params;
+    const endpoint = `/common/users/verify-sms-code/request_id/${request_id}/code/${code}`;
     return this.clientService.sendRequest<GetVerifySmsCode>(endpoint, `GET`).pipe(
       map((response: any) => {
         return response;
@@ -235,7 +231,7 @@ export class UserService {
       : min_id
         ? '/' + app + '/users/' + user_id + `${partial_prefix}` + path + '/' + min_id
         : '/' + app + '/users/' + user_id + `${partial_prefix}` + path;
-    return this.clientService.sendRequest<GetRecordResponse<T[]>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<GetRecordResponse<T>>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -341,14 +337,35 @@ export class UserService {
   }
 
   update_conversation_last_opened(you_id: number, conversation_id: number) {
-    return this.clientService.sendRequest<PostRecordResponse<any>>(`/common/users/${you_id}/conversations/${conversation_id}/update-last-opened`, `PUT`).pipe(
+    return this.clientService.sendRequest<PutRecordResponse<any>>(`/common/users/${you_id}/conversations/${conversation_id}/update-last-opened`, `PUT`).pipe(
       map((response: any) => {
         return response;
       })
     );
   }
 
+  
   /** PUT */
+  
+  create_stripe_account<T = any>(you_id: number) {
+    return this.clientService.sendRequest<PutRecordResponse<T>>(
+      `/common/users/${you_id}/create-stripe-account`, `PUT`
+    ).pipe(
+      map((response: any) => {
+        return response;
+      })
+    );
+  }
+
+  verify_stripe_account<T = any>(you_id: number) {
+    return this.clientService.sendRequest<PutRecordResponse<T>>(
+      `/common/users/${you_id}/verify-stripe-account`, `PUT`
+    ).pipe(
+      map((response: any) => {
+        return response;
+      })
+    );
+  }
 
   sign_in(data: PlainObject) {
     return this.clientService.sendRequest<SignInResponse>('/common/users', `PUT`, data).pipe(

@@ -45,6 +45,20 @@ export class AlertService {
     }
   }
 
+  showSuccessMessage(message: string) {
+    this.addAlert({
+      type: this.AlertTypes.SUCCESS,
+      message,
+    }, true);
+  }
+
+  showErrorMessage(message: string) {
+    this.addAlert({
+      type: this.AlertTypes.DANGER,
+      message,
+    }, true);
+  }
+
   handleResponseSuccessGeneric(response: { message: string }) {
     this.addAlert({
       type: this.AlertTypes.SUCCESS,

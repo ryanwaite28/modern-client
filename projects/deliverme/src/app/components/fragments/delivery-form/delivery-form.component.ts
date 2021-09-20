@@ -65,14 +65,6 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
   fromPlaceData: any = {};
   toPlaceData: any = {};
   sizes = sizes;
-  componentForm: any = {
-    street_number: 'short_name',
-    route: 'long_name',
-    locality: 'long_name',
-    administrative_area_level_1: 'short_name',
-    country: 'long_name',
-    postal_code: 'short_name'
-  };
 
   newDeliveryForm: FormGroup;
 
@@ -161,8 +153,8 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
       // and fill the corresponding field on the form.
       for (var i = 0; i < place.address_components.length; i++) {
         var addressType = place.address_components[i].types[0];
-        if (this.componentForm[addressType]) {
-          var val = place.address_components[i][this.componentForm[addressType]];
+        if (this.googleMapsService.componentForm[addressType]) {
+          var val = place.address_components[i][this.googleMapsService.componentForm[addressType]];
           placeData[this.googleMapsService.switchName(addressType)] = val;
         }
       }
@@ -184,22 +176,6 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
 
       console.log(place, this);
     });
-  }
-
-  get_distance() {
-    /*  
-      https://developers.google.com/maps/documentation/distance-matrix/overview#DistanceMatrixRequests
-    */
-    var M = 3958.8; // Radius of the Earth in miles
-    var K = 3958.8; // Radius of the Earth in kilometers
-
-    var rlat1 = this.fromPlaceData.lat * (Math.PI/180); // Convert degrees to radians
-    var rlat2 = this.toPlaceData.lat * (Math.PI/180); // Convert degrees to radians
-    var difflat = rlat2-rlat1; // Radian difference (latitudes)
-    var difflon = (this.toPlaceData.lng - this.fromPlaceData.lng) * (Math.PI/180); // Radian difference (longitudes)
-
-    var d = 2 * M * Math.asin(Math.sqrt(Math.sin(difflat/2)*Math.sin(difflat/2)+Math.cos(rlat1)*Math.cos(rlat2)*Math.sin(difflon/2)*Math.sin(difflon/2)));
-    return d;
   }
 
   resetForm(
@@ -247,6 +223,13 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
       }, true);
     }
 
+    const distance = this.googleMapsService.get_distance_spherical_api({
+      from_lat: this.fromPlaceData.lat,
+      from_lng: this.fromPlaceData.lng,
+      to_lat: this.toPlaceData.lat,
+      to_lng: this.toPlaceData.lng,
+    });
+
     const formData = new FormData(newDeliveryFormElm);
     const payload = {
       ...this.newDeliveryForm!.value,
@@ -273,7 +256,8 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
       to_lat: this.toPlaceData.lat,
       to_lng: this.toPlaceData.lng,
 
-      distance_miles: this.get_distance(),
+      distance_miles: distance,
+
       file: undefined,
     };
     formData.append(`payload`, JSON.stringify(payload));

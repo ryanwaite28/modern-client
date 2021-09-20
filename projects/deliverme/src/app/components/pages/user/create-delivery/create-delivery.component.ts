@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { DeliveryService } from 'projects/deliverme/src/app/services/delivery.service';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
@@ -12,8 +12,8 @@ import { UserStoreService } from 'projects/_common/src/app/stores/user-store.ser
   templateUrl: './create-delivery.component.html',
   styleUrls: ['./create-delivery.component.scss']
 })
-export class DeliverMeUserCreateDeliveryFragmentComponent implements AfterViewInit, OnDestroy {
-  you: IUser | null = null;
+export class DeliverMeUserCreateDeliveryFragmentComponent implements OnInit, OnDestroy {
+  you: any;
   loading: boolean = false;
 
   constructor(
@@ -24,7 +24,7 @@ export class DeliverMeUserCreateDeliveryFragmentComponent implements AfterViewIn
     private changeDetectorRef: ChangeDetectorRef,
   ) { }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.userStore.getChangesObs().subscribe((you) => {
       this.you = you;
     });

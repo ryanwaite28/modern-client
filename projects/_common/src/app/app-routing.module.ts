@@ -12,9 +12,11 @@ import { CommonMessagesFragmentComponent } from './components/pages/user/message
 import { CommonUserNotificationsFragmentComponent } from './components/pages/user/notifications/notifications.component';
 import { CommonUserSettingsFragmentComponent } from './components/pages/user/settings/settings.component';
 import { CommonUserPageComponent } from './components/pages/user/user-page.component';
+import { CommonUserVerifyStripeAccountFragmentComponent } from './components/pages/user/verify-stripe-account-fragment/verify-stripe-account-fragment.component';
 import { CommonVerifyEmailComponent } from './components/pages/verify-email/verify-email.component';
 import { CommonWelcomeComponent } from './components/pages/welcome/welcome.component';
 import { UserAuthGuard } from './guards/auth.guard';
+import { SignedInGuard } from './guards/signed-in.guard';
 import { SignedOutGuard } from './guards/signed-out.guard';
 import { UserResolver } from './resolvers/user.resolver';
 
@@ -30,6 +32,8 @@ const routes: Routes = [
       { path: 'contact', pathMatch: 'full', component: CommonContactComponent },
       { path: 'apps', pathMatch: 'full', component: CommonAppsComponent },
       { path: 'verify-email/:uuid', pathMatch: 'full', component: CommonVerifyEmailComponent },
+      
+      { path: 'settings', component: CommonUserSettingsFragmentComponent, canActivate: [SignedInGuard] },
 
       {
         path: 'users/:user_id',
@@ -45,7 +49,7 @@ const routes: Routes = [
           { path: 'settings', component: CommonUserSettingsFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
           { path: 'notifications', component: CommonUserNotificationsFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
           { path: 'messages', component: CommonMessagesFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
-          // { path: 'conversations', component: ConversationsFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
+          { path: 'verify-stripe-account', component: CommonUserVerifyStripeAccountFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
           
           // { path: 'info', component: InfoFragmentComponent },
           // { path: 'posts', component: UserPostsFragmentComponent },

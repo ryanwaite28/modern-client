@@ -3,13 +3,19 @@ import { Routes, RouterModule } from '@angular/router';
 import { UserAuthGuard } from 'projects/_common/src/app/guards/auth.guard';
 import { UserResolver } from 'projects/_common/src/app/resolvers/user.resolver';
 import { AppComponent } from './app.component';
+import { DeliverMeDeliveryContainerPageComponent } from './components/pages/delivery-container-page/delivery-container-page.component';
+import { DeliverMeDeliveryPageComponent } from './components/pages/delivery-container-page/delivery-page/delivery-page.component';
+import { DeliveryPaymentCancelPageComponent } from './components/pages/delivery-container-page/delivery-payment-cancel-page/delivery-payment-cancel-page.component';
+import { DeliveryPaymentSuccessPageComponent } from './components/pages/delivery-container-page/delivery-payment-success-page/delivery-payment-success-page.component';
 import { DeliverMeUserCreateDeliveryFragmentComponent } from './components/pages/user/create-delivery/create-delivery.component';
 import { DeliverMeUserDeliveriesFragmentComponent } from './components/pages/user/deliveries/deliveries.component';
 import { DeliverMeUserDeliveringFragmentComponent } from './components/pages/user/delivering/delivering.component';
+import { DeliverMeUserDeliverySearchFragmentComponent } from './components/pages/user/delivery-search/delivery-search.component';
 import { DeliverMeUserHomeComponent } from './components/pages/user/home/home.component';
 import { DeliverMeUserSettingsFragmentComponent } from './components/pages/user/settings/settings.component';
 import { DeliverMeUserPageComponent } from './components/pages/user/user-page.component';
 import { DeliverMeWelcomeComponent } from './components/pages/welcome/welcome.component';
+import { DeliveryResolver } from './resolvers/delivery.resolver';
 
 const routes: Routes = [
   {
@@ -20,6 +26,19 @@ const routes: Routes = [
       {
         path: '',
         component: DeliverMeWelcomeComponent,
+      },
+
+      {
+        path: 'deliveries/:delivery_id',
+        component: DeliverMeDeliveryContainerPageComponent,
+        resolve: {
+          delivery: DeliveryResolver,
+        },
+        children: [
+          { path: '', pathMatch: 'full', component: DeliverMeDeliveryPageComponent },
+          { path: 'payment-success', component: DeliveryPaymentSuccessPageComponent },
+          { path: 'payment-cancel', component: DeliveryPaymentCancelPageComponent },
+        ]
       },
       
       {
@@ -33,10 +52,11 @@ const routes: Routes = [
           { path: '', pathMatch: 'full', redirectTo: 'home' },
       
           { path: 'home', component: DeliverMeUserHomeComponent },
-          { path: 'settings', component: DeliverMeUserSettingsFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
+          // { path: 'settings', component: DeliverMeUserSettingsFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
           { path: 'create-delivery', component: DeliverMeUserCreateDeliveryFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
           { path: 'deliveries', component: DeliverMeUserDeliveriesFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
           { path: 'delivering', component: DeliverMeUserDeliveringFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
+          { path: 'search', component: DeliverMeUserDeliverySearchFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
         ]
       }
     ]

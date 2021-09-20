@@ -14,50 +14,72 @@
   </div>
 
   <div class="uk-card-body">
-    <h3 class="uk-card-title">{{ delivery.title }}</h3>
+    <h3 class="uk-card-title">
+      <a [routerLink]="['/', 'modern', 'apps', 'deliverme', 'deliveries', delivery.id]">{{ delivery.title }}</a>
+    </h3>
     <p>{{ delivery.description }}</p>
-    <div class="border-lightgrey-1" *ngIf="delivery.completed" uk-alert>Completed!</div>
-    <hr/>
-
-    <p>
-      <strong>Delivery Created</strong><br/>
-      {{ delivery.created_at | date : 'MMM d, y - h:mm a' }}<br/>
-      <small>{{ delivery.created_at | timeAgo }}</small>
-    </p>
-
-    <p>
-      <strong>Info</strong><br/>
-      <small>Size: {{ delivery.size }}</small><br/>
-      <small>Weight: {{ delivery.weight }} lbs</small><br/>
-      <small>Urgent: {{ delivery.urgent ? 'yes' : 'no' }}</small><br/>
-      <small>Payout: ${{ delivery.payout }}</small><br/>
-      <small>Penalty: ${{ delivery.penalty }}</small><br/>
-    </p>
-
-    <p>
-      <strong>From</strong><br/>{{ delivery.from_location }}<br/>
-      <small>Pickup From: {{ delivery.from_person }}</small><br/>
-      <small>Phone: {{ delivery.from_person_phone }}</small><br/>
-      <small>Email: {{ delivery.from_person_email }}</small><br/>
-      <small>ID Required: {{ delivery.from_person_id_required ? 'yes' : 'no' }}</small><br/>
-      <small>Signature Required: {{ delivery.from_person_sig_required ? 'yes' : 'no' }}</small>
-    </p>
-    <p>
-      <strong>To</strong><br/>{{ delivery.to_location }}<br/>
-      <small>Dropoff To: {{ delivery.to_person }}</small><br/>
-      <small>Phone: {{ delivery.to_person_phone }}</small><br/>
-      <small>Email: {{ delivery.to_person_email }}</small><br/>
-      <small>ID Required: {{ delivery.to_person_id_required ? 'yes' : 'no' }}</small><br/>
-      <small>Signature Required: {{ delivery.to_person_sig_required ? 'yes' : 'no' }}</small>
-    </p>
-
-    <p>
-      <strong>Distance</strong><br/>
-      {{ delivery.distance_miles | number }} Miles
-    </p>
+    <div class="border-lightgrey-1" uk-alert>
+      {{
+        delivery.completed
+          ? 'Completed'
+          : delivery.carrier_id
+            ? 'In Progress'
+            : 'Open'
+      }}
+    </div>
+    <button
+      type="button"
+      class="uk-button uk-button-small uk-button-secondary"
+      [disabled]="loading"
+      (click)="showDetails = !showDetails"
+    >
+      {{ showDetails ? 'Hide' : 'Show' }} Details
+    </button>
+    
+    <div *ngIf="showDetails">
+      <br>
+      <hr/>
+      <p>
+        <strong>Delivery Created</strong><br/>
+        {{ delivery.created_at | date : 'MMM d, y - h:mm a' }}<br/>
+        <small>{{ delivery.created_at | timeAgo }}</small>
+      </p>
+  
+      <p>
+        <strong>Info</strong><br/>
+        <small>Delivery ID: {{ delivery.id }}</small><br/>
+        <small>Size: {{ delivery.size }}</small><br/>
+        <small>Weight: {{ delivery.weight }} lbs</small><br/>
+        <small>Urgent: {{ delivery.urgent ? 'yes' : 'no' }}</small><br/>
+        <small>Payout: ${{ delivery.payout }}</small><br/>
+        <small>Penalty: ${{ delivery.penalty }}</small><br/>
+      </p>
+  
+      <p>
+        <strong>From</strong><br/>{{ delivery.from_location }}<br/>
+        <small>Pickup From: {{ delivery.from_person }}</small><br/>
+        <small>Phone: {{ delivery.from_person_phone }}</small><br/>
+        <small>Email: {{ delivery.from_person_email }}</small><br/>
+        <small>ID Required: {{ delivery.from_person_id_required ? 'yes' : 'no' }}</small><br/>
+        <small>Signature Required: {{ delivery.from_person_sig_required ? 'yes' : 'no' }}</small>
+      </p>
+      <p>
+        <strong>To</strong><br/>{{ delivery.to_location }}<br/>
+        <small>Dropoff To: {{ delivery.to_person }}</small><br/>
+        <small>Phone: {{ delivery.to_person_phone }}</small><br/>
+        <small>Email: {{ delivery.to_person_email }}</small><br/>
+        <small>ID Required: {{ delivery.to_person_id_required ? 'yes' : 'no' }}</small><br/>
+        <small>Signature Required: {{ delivery.to_person_sig_required ? 'yes' : 'no' }}</small>
+      </p>
+  
+      <p>
+        <strong>Distance</strong><br/>
+        {{ delivery.distance_miles | number }} Miles
+      </p>
+    </div>
   </div>
 
-  <div class="uk-card-footer" *ngIf="isDeliveryOwner && !delivery.datetime_picked_up">
+  <div class="uk-card-footer" *ngIf="isDeliveryOwner && !delivery.datetime_picked_up && showDetails">
     <!-- <a class="uk-button uk-button-text" (click)="isEditing = !isEditing;">{{ isEditing ? 'Cancel Edit' : 'Edit' }}</a> -->
     <a class="uk-button uk-button-text" (click)="deleteDelivery()">Delete</a>
 
@@ -71,7 +93,7 @@
     </div> -->
   </div>
 
-  <div class="uk-card-footer" *ngIf="delivery.carrier">
+  <div class="uk-card-footer" *ngIf="delivery.carrier && showDetails">
     <p class="uk-card-title">Carrier</p>
 
     <div class="uk-grid-small uk-flex-middle" uk-grid>
@@ -119,80 +141,169 @@
       <small>PayPal: {{ delivery.carrier.deliverme_settings.paypal_me }}</small><br>
       <small>Google Pay: {{ delivery.carrier.deliverme_settings.google_pay }}</small><br>
     </p>
+  </div>
+  
+  <div class="uk-card-footer" *ngIf="showDetails">
+    <p class="uk-text-large">
+      Tracking Updates
+    </p>
 
-    <div>
-      <p>
-        <strong>Tracking Updates</strong>
-      </p>
-
-      <div class="uk-margin" *ngIf="!!you && delivery.carrier_id === you.id && !delivery.datetime_delivered">
-        <form
-          #newDeliveryTrackingUpdateFormElm
-          [formGroup]="newDeliveryTrackingUpdateForm"
-          (ngSubmit)="onSubmitNewDeliveryTrackingUpdate(newDeliveryTrackingUpdateFormElm, iconInput)"
-        >
-          <textarea
-            type="text"
-            class="uk-textarea"
-            placeholder="Enter Delivery Tracking Update"
-            rows="3"
-            formControlName="message"
-          ></textarea>
-          <div class="uk-margin">
-            <span class="label-info">
-              Image
-            </span>
-            <br/>
-            <input
-              #iconInput
-              type="file"
-              class=""
-              name="tracking_update_image"
-              formControlName="file"
-            />
-          </div>
-          <span class="margin-right-10">
-            <button
-              type="submit"
-              class="uk-button uk-button-small uk-button-secondary"
-              [disabled]="newDeliveryTrackingUpdateForm.invalid || loading"
-            >
-              Add Update
-            </button>
+    <div class="uk-margin" *ngIf="!!you && delivery.carrier_id === you.id && !delivery.datetime_delivered">
+      <form
+        #newDeliveryTrackingUpdateFormElm
+        [formGroup]="newDeliveryTrackingUpdateForm"
+        (ngSubmit)="onSubmitNewDeliveryTrackingUpdate(newDeliveryTrackingUpdateFormElm, iconInput)"
+      >
+        <textarea
+          type="text"
+          class="uk-textarea"
+          placeholder="Enter Delivery Tracking Update"
+          rows="3"
+          formControlName="message"
+        ></textarea>
+        <div class="uk-margin">
+          <span class="label-info">
+            Image
           </span>
-        </form>
-        <br>
-      </div>
-
-
-      <div class="">
-        <p *ngIf="!delivery.deliverme_delivery_tracking_updates.length">None yet...</p>
-        <div class="tracking-update-item" *ngFor="let tracking_update of delivery.deliverme_delivery_tracking_updates">
-          <p>
-            <strong>{{ tracking_update.message }}</strong><br/>
-            {{ tracking_update.created_at | date : 'MMM d, y - h:mm a' }}<br/>
-            <small>{{ tracking_update.created_at | timeAgo }}</small>
-            <ng-container *ngIf="tracking_update.placeData">
-              <br/>
-              <small>{{ tracking_update.placeData.city }}, {{ tracking_update.placeData.state }}</small>
-            </ng-container>
-          </p>
-          <img class="margin-bottom-10" *ngIf="tracking_update.icon_link" [src]="tracking_update.icon_link" [alt]="tracking_update.message">
+          <br/>
+          <input
+            #iconInput
+            type="file"
+            class=""
+            name="tracking_update_image"
+            formControlName="file"
+          />
         </div>
+        <span class="margin-right-10">
+          <button
+            type="submit"
+            class="uk-button uk-button-small uk-button-secondary"
+            [disabled]="newDeliveryTrackingUpdateForm.invalid || loading"
+          >
+            Add Update
+          </button>
+        </span>
+      </form>
+      <br>
+    </div>
+
+    <div class="">
+      <p *ngIf="!delivery.deliverme_delivery_tracking_updates.length">None yet...</p>
+      <div class="tracking-update-item" *ngFor="let tracking_update of delivery.deliverme_delivery_tracking_updates">
+        <p>
+          <strong>{{ tracking_update.message }}</strong><br/>
+          {{ tracking_update.created_at | date : 'MMM d, y - h:mm a' }}<br/>
+          <small>{{ tracking_update.created_at | timeAgo }}</small>
+          <ng-container *ngIf="tracking_update.placeData">
+            <br/>
+            <small>{{ tracking_update.placeData.city }}, {{ tracking_update.placeData.state }} {{ tracking_update.placeData.zipcode }}</small>
+          </ng-container>
+        </p>
+        <img class="margin-bottom-10" *ngIf="tracking_update.icon_link" [src]="tracking_update.icon_link" [alt]="tracking_update.message">
       </div>
     </div>
   </div>
 
-  <div class="uk-card-footer" *ngIf="!!delivery.datetime_delivered && !!you && delivery.owner_id === you.id && !delivery.completed">
+  <div class="uk-card-footer" *ngIf="showDetails">
+    <p class="uk-text-large">Messages</p>
+
+    <div>
+      <!-- <div class="messages-item transition" *ngIf="!messages_list_end">
+        <button
+          (click)="getMessages()"
+          title="Load more"
+          class="uk-button uk-button-small uk-button-primary"
+          [disabled]="loading"
+        >
+          <i class="fas fa-sync"></i>
+          Load More
+        </button>
+      </div> -->
+
+      <div class="messages-item transition" *ngFor="let m of delivery.delivery_messages">
+        <div class="messages-item-inner">
+          <div class="user-icon-container-{{ m.user.id === you!.id ? 'right' : 'left' }}">
+            <img
+              class="user-icon-circle"
+              [src]="(m.user.icon_link) || './assets/img/anon.png'"
+            />
+          </div>
+          <div class="message-text-{{ m.user.id === you!.id ? 'right' : 'left' }}">
+            <p>
+              <a [routerLink]="['/', 'modern', 'users', m.user.id, 'home']">
+               {{ m.user.firstname + ' ' + m.user.lastname }}
+              </a>
+              <br/>
+              <span class="lead" [innerHTML]="m.body"></span>
+              <br/>
+              <small class="text-grey">
+                <em>{{ m.created_at | date : 'MMM d, y (h:mm a)' }}</em>
+              </small>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form *ngIf="!delivery.completed && delivery.carrier" class="well" [formGroup]="messageForm" (ngSubmit)="sendDeliveryMessage()">
+      <div class="uk-margin">
+        <span class="label-info">
+          Body ({{ messageForm.value.body.length }}/{{ MSG_MAX_LENGTH }})
+        </span>
+        <textarea
+          type="text"
+          class="uk-textarea"
+          placeholder="Enter message..."
+          rows="3"
+          formControlName="body"
+        ></textarea>
+      </div>
+      <div>
+        <button
+          type="submit"
+          title="Message this user"
+          class="uk-button uk-button-small uk-button-secondary"
+          [disabled]="loading || messageForm.invalid"
+        >
+        <i class="fas fa-paper-plane"></i>
+        Submit
+      </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="uk-card-footer" *ngIf="showDetails && !!delivery.datetime_delivered && !!you && delivery.owner_id === you.id && !delivery.completed">
     <!-- <a class="uk-button uk-button-text" (click)="payCarrier()">Pay Carrier</a> -->
 
-    <button
+    <!-- <button
       type="button"
       class="uk-button uk-button-small uk-button-secondary"
       [disabled]="loading"
       (click)="markDeliveryAsCompleted()"
     >
       Mark as Paid and Complete
+    </button> -->
+
+    <button
+      type="button"
+      class="uk-button uk-button-small uk-button-secondary"
+      [disabled]="loading || !!payment_client_secret"
+      (click)="payCarrier()"
+    >
+      Pay Carrier
     </button>
+
+    <div #paymentContainerElm class="margin-top-10" [ngClass]="{ 'ghost': !payment_client_secret }">
+      <form [attr.id]="'payment-form-' + delivery.id" #paymentFormElm>
+        <div [attr.id]="'card-element-' + delivery.id" class="card-element">
+          <!-- Elements will create input elements here -->
+        </div>
+      
+        <!-- We'll put the error messages in this element -->
+        <div [attr.id]="'card-errors-' + delivery.id" role="alert"></div>
+      
+        <button [disabled]="loading" [attr.id]="'card-submit-button-' + delivery.id" class="submit">Pay</button>
+      </form>
+    </div>
   </div>
 </div>
