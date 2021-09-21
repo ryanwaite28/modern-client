@@ -3,4 +3,20 @@
   <p class="uk-text-large text-center">
     Welcome to Modern Apps!
   </p>
+
+  <div *ngIf="!you" class="text-center">
+    <section uk-margin>
+      <div class="margin-bottom-20">
+        <a [routerLink]="['/modern/signup']">
+          <button class="uk-button uk-button-primary uk-button-large">Sign Up</button>
+        </a>
+      </div>
+
+      <div class="margin-bottom-20">
+        <a [routerLink]="['/modern/signin']">
+          <button class="uk-button uk-button-secondary uk-button-large">Log In</button>
+        </a>
+      </div>
+    </section>
+  </div>
 </div>
