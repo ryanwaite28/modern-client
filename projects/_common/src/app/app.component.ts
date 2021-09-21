@@ -50,6 +50,13 @@ export class CommonAppComponent {
             requiresAuth: true
           },
           {
+            name: 'Conversations',
+            value: ['/', 'modern', 'users', you!.id, 'conversations'],
+            title: 'Modern Apps - User Conversations Page',
+            class: '',
+            requiresAuth: true
+          },
+          {
             name: 'Settings',
             value: ['/', 'modern', 'users', you!.id, 'settings'],
             title: 'Modern Apps - User Home Page',

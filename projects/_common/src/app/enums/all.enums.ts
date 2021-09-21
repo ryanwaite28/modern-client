@@ -109,6 +109,11 @@ export enum SUBSCRIPTION_TARGET_ACTIONS_INFO {
   
 }
 
+export enum USER_CARD_LAYOUTS {
+  LONG,
+  BOX,
+}
+
 export enum SUBSCRIPTION_TARGET_FREQ {
   INSTANT = 'INSTANT',
   DAILY = 'DAILY',

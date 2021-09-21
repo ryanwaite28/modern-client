@@ -7,6 +7,7 @@ import { CommonAppsComponent } from './components/pages/apps/apps.component';
 import { CommonContactComponent } from './components/pages/contact/contact.component';
 import { CommonUserSigninComponent } from './components/pages/signin/signin.component';
 import { CommonUserSignupComponent } from './components/pages/signup/signup.component';
+import { CommonConversationsComponent } from './components/pages/user/conversations/conversations.component';
 import { CommonUserHomeFragmentComponent } from './components/pages/user/home/home.component';
 import { CommonMessagesFragmentComponent } from './components/pages/user/messages/messages.component';
 import { CommonUserNotificationsFragmentComponent } from './components/pages/user/notifications/notifications.component';
@@ -49,6 +50,7 @@ const routes: Routes = [
           { path: 'settings', component: CommonUserSettingsFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
           { path: 'notifications', component: CommonUserNotificationsFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
           { path: 'messages', component: CommonMessagesFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
+          { path: 'conversations', component: CommonConversationsComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
           { path: 'verify-stripe-account', component: CommonUserVerifyStripeAccountFragmentComponent, canActivate: [UserAuthGuard], data: { authParamsProp: 'user_id' } },
           
           // { path: 'info', component: InfoFragmentComponent },

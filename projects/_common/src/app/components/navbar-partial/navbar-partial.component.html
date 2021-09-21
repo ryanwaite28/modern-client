@@ -1,13 +1,31 @@
 <ul class="uk-navbar-nav">
   <li>
-    <a href="#">Modern ({{ !!you ? "Signed In" : "Signed Out" }})</a>
+    <a *ngIf="!!you" href="#">
+      <span *ngIf="unseenState.notifications || unseenState.conversations || unseenState.messages">
+        <i style="color: red" class="fa fa-circle" aria-hidden="true"></i>
+      </span>
+      <span style="font-size: xx-large">
+        <i class="fa fa-user-circle" aria-hidden="true"></i>
+      </span>
+    </a>
     <div class="uk-navbar-dropdown">
       <ul class="uk-nav uk-navbar-dropdown-nav">
         <ng-container [ngSwitch]="!!you">
           <ng-container *ngSwitchCase="true">
             <li><a [routerLink]="['/', 'modern', 'users', you!.id]">Home</a></li>
             <li><a [routerLink]="['/', 'modern', 'users', you!.id, 'settings']">Settings</a></li>
-            <li><a [routerLink]="['/', 'modern', 'users', you!.id, 'notifications']">Notifications</a></li>
+            <li><a [routerLink]="['/', 'modern', 'users', you!.id, 'messages']">
+              Messages 
+              <span *ngIf="unseenState.messages" class="uk-badge">{{ unseenState.messages }}</span>
+            </a></li>
+            <li><a [routerLink]="['/', 'modern', 'users', you!.id, 'conversations']">
+              Conversations 
+              <span *ngIf="unseenState.conversations" class="uk-badge">{{ unseenState.conversations }}</span>
+            </a></li>
+            <li><a [routerLink]="['/', 'modern', 'users', you!.id, 'notifications']">
+              Notifications 
+              <span *ngIf="unseenState.notifications" class="uk-badge">{{ unseenState.notifications }}</span>
+            </a></li>
             <li class="uk-nav-divider"></li>
             <li><a (click)="onSignout()">Sign Out</a></li>
           </ng-container>

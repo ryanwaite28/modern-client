@@ -136,7 +136,7 @@ export class SocketEventsService {
     // add new listener
     if (conversation_id) {
       this.youConversationsSocketListeners[conversation_id] = this.listenCustom(
-        `${COMMON_EVENT_TYPES.NEW_CONVERSATION_MESSAGE}:conversation-${conversation_id}`,
+        COMMON_EVENT_TYPES.NEW_CONVERSATION_MESSAGE,
         (event: any) => {
           this.streamsMap[COMMON_EVENT_TYPES.NEW_CONVERSATION_MESSAGE].next(event);
         }
@@ -152,8 +152,10 @@ export class SocketEventsService {
     ).subscribe({
       next: (response) => {
         for (const conversation of response.data) {
+          this.joinRoom(`conversation-${conversation.id}`);
+          
           this.youConversationsSocketListeners[conversation.id] = this.listenCustom(
-            `${COMMON_EVENT_TYPES.NEW_CONVERSATION_MESSAGE}:conversation-${conversation.id}`,
+            COMMON_EVENT_TYPES.NEW_CONVERSATION_MESSAGE,
             (event: any) => {
               this.streamsMap[COMMON_EVENT_TYPES.NEW_CONVERSATION_MESSAGE].next(event);
             }

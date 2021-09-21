@@ -1,44 +1,11 @@
 
 <div class="uk-container row-pad-1" *ngIf="user">
-  <div class="uk-child-width-expand@s" uk-grid>
-    <div class="uk-width-2-5@m">
-
-      <!-- <div class="uk-card uk-card-default uk-grid-collapse uk-child-width-1-2@s uk-margin" uk-grid>
-        <div class="uk-card-media-left uk-cover-container">
-          <img 
-            [src]="user.icon_link || './assets/img/anon.png'" 
-            [alt]="user.firstname + ' ' + user.lastname"
-            uk-cover
-          />
-          <canvas width="600" height="400"></canvas>
-        </div>
-        <div>
-          <div class="uk-card-body">
-            <h3 class="uk-card-title">Media Left</h3>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</p>
-          </div>
-        </div>
-      </div> -->
-
-      <!-- <div class="uk-card uk-card-default uk-margin">
-        <div class="uk-card-media-top">
-          <img 
-          class="middlr"
-            [src]="user.icon_link || './assets/img/anon.png'" 
-            [alt]="user.displayname"
-          />
-        </div>
-        <div class="uk-card-body">
-          <h3 class="uk-card-title">Media Top</h3>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.</p>
-        </div>
-      </div> -->
-
+  <div class="uk-child-width-expand@s" >
+    <div class="uk-width-expand@m margin-bottom-50">
       <common-user-page-card
         [you]="you"
         [user]="user"
       ></common-user-page-card>
-
     </div>
 
     <div class="uk-width-expand@m">

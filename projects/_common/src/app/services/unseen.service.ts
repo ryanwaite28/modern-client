@@ -22,7 +22,10 @@ export interface IUnseen {
   notifications: number;
 }
 
-export type UnseenProp = 'messages' | 'conversations' | 'notifications';
+export type UnseenProp =
+  'messages' |
+  'conversations' |
+  'notifications';
 
 @Injectable({
   providedIn: 'root'
