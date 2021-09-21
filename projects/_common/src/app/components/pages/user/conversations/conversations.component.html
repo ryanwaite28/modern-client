@@ -3,29 +3,19 @@
     <div class="uk-child-width-expand@m" uk-grid>
       <div class="uk-width-2-5@m conversations-list">
         <div class="conversations-item">
-          <form #conversationForm (ngSubmit)="isEditingCurrentConversationSelected ? editConversation() : createConversation()">
+          <form
+            #conversationFormElm 
+            [formGroup]="conversationForm" 
+            (ngSubmit)="isEditingCurrentConversationSelected ? editConversation(conversationFormElm) : createConversation(conversationFormElm)"
+          >
             <h4>{{ isEditingCurrentConversationSelected ? 'Edit' : 'Create' }} Conversation</h4>
-            <!-- <div class="form-group">
-              <label for="">
-                Title
-                <span class="label-info text-grey">
-                  <small>({{ conversationForm.title.value.length }}/150)</small>
-                </span>
-              </label>
-              <input type="text" class="form-control"
-                name="title"
-                [(ngModel)]="conversationForm.title.value"
-                placeholder="Enter title..."
-                required
-              />
-            </div> -->
 
             <div class="uk-margin">
               <span class="label-info">
-                Title ({{ conversationForm.title.value.length }}/150)
+                Title ({{ conversationForm.value.title.length }}/150)
               </span>
               <input class="uk-input" type="text" placeholder="Username" name="title"
-                [(ngModel)]="conversationForm.title.value" >
+                formControlName="title" >
             </div>
             <div class="form-group">
               <label for="">
@@ -39,7 +29,7 @@
             <button
               type="submit"
               class="uk-button uk-button-small uk-button-primary"
-              [disabled]="!conversationForm.title.value.trim().length || loading"
+              [disabled]="!conversationForm.value.title.trim().length || loading"
             >
               <i class="fas fa-{{ isEditingCurrentConversationSelected ? 'edit' : 'plus' }}"></i>
               {{ isEditingCurrentConversationSelected ? 'Edit' : 'Create' }}

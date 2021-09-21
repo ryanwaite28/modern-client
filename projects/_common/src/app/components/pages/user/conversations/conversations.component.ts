@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Params, ActivatedRoute } from '@angular/router';
 import { COMMON_EVENT_TYPES } from 'projects/_common/src/app/enums/all.enums';
 import { PlainObject } from 'projects/_common/src/app/interfaces/json-object.interface';
@@ -20,7 +20,12 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   styleUrls: ['./conversations.component.scss']
 })
 export class CommonConversationsComponent implements OnInit, OnDestroy {
-  @ViewChild('conversationForm', { static: false }) conversationForm: ElementRef<HTMLFormElement> | any;
+  @ViewChild('conversationFormElm', { static: false }) conversationFormElm: ElementRef<HTMLFormElement> | any;
+  
+  conversationForm = new FormGroup({
+    title: new FormControl('', [Validators.required])
+  });
+
   you: IUser | any;
   user: IUser | any;
   currentParams: Params | any;
@@ -322,10 +327,16 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
   setEditingState() {
     if (!this.isEditingCurrentConversationSelected) {
       this.isEditingCurrentConversationSelected = true;
-      this.conversationForm.nativeElement.title.value = this.currentConversationSelected.title;
+      this.conversationFormElm.nativeElement.title.value = this.currentConversationSelected.title;
+      this.conversationForm.setValue({
+        title: this.currentConversationSelected.title
+      });
     } else {
       this.isEditingCurrentConversationSelected = false;
-      this.conversationForm.nativeElement.reset();;
+      this.conversationFormElm.nativeElement.reset();
+      this.conversationForm.reset({
+        title: ''
+      });
     }
   }
 
@@ -412,8 +423,8 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  createConversation() {
-    const formData = new FormData(this.conversationForm.nativeElement);
+  createConversation(conversationFormElm: HTMLFormElement) {
+    const formData = new FormData(conversationFormElm.nativeElement);
     this.loading = true;
     this.conversationsService.create_conversation(
       this.you.id,
@@ -424,7 +435,10 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
         this.conversations_map[response.data.id] = response.data;
         this.usersTypingMap[response.data.id] = [];
         this.addListeners(response.data.id)
-        this.conversationForm.nativeElement.reset();
+        conversationFormElm.nativeElement.reset();
+        this.conversationForm.reset({
+          title: ''
+        });
         this.alertService.addAlert({
           type: this.alertService.AlertTypes.SUCCESS,
           message: response.message
@@ -439,8 +453,8 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  editConversation() {
-    const formData = new FormData(this.conversationForm.nativeElement);
+  editConversation(conversationFormElm: HTMLFormElement) {
+    const formData = new FormData(conversationFormElm.nativeElement);
     this.loading = true;
     this.conversationsService.update_conversation(
       this.you.id,
@@ -452,7 +466,10 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
         this.currentConversationSelected.icon_link = response.data.icon_link;
         this.currentConversationSelected.icon_id = response.data.icon_id;
 
-        this.conversationForm.nativeElement.reset();
+        conversationFormElm.nativeElement.reset();
+        this.conversationForm.reset({
+          title: ''
+        });
         this.alertService.addAlert({
           type: this.alertService.AlertTypes.SUCCESS,
           message: response.message
