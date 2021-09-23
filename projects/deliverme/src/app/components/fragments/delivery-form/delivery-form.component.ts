@@ -15,6 +15,8 @@ const sizes = [
   'X-LARGE',
 ];
 
+const payout_min = 5;
+
 const delivery_form_config = [
   { field: 'title', defaultValue: '', validations: [Validators.required, Validators.minLength(10)] },
   { field: 'description', defaultValue: '', validations: [Validators.required, Validators.minLength(10)] },
@@ -34,7 +36,7 @@ const delivery_form_config = [
 
   { field: 'size', defaultValue: sizes[1], validations: [Validators.required] },
   { field: 'weight', defaultValue: 0, validations: [Validators.required, Validators.min(0)] },
-  { field: 'payout', defaultValue: 0, validations: [Validators.required, Validators.min(10)] },
+  { field: 'payout', defaultValue: 0, validations: [Validators.required, Validators.min(payout_min)] },
   { field: 'penalty', defaultValue: 0, validations: [Validators.required, Validators.min(0)] },
   { field: 'auto_accept_anyone', defaultValue: true, validations: [] },
   { field: 'urgent', defaultValue: false, validations: [] },
@@ -65,6 +67,7 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
   fromPlaceData: any = {};
   toPlaceData: any = {};
   sizes = sizes;
+  payout_min = payout_min;
 
   newDeliveryForm: FormGroup;
 

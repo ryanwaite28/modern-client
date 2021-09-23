@@ -34,7 +34,9 @@ export class DeliverMeUserCreateDeliveryFragmentComponent implements OnInit, OnD
   }
 
   onSubmitNewDelivery(params: any) {
-    const ask = window.confirm(`Are all input values correct? The delivery cannot be edited later.`);
+    const msg =
+      `Are all input values correct? The delivery cannot be edited later.`;
+    const ask = window.confirm(msg);
     if (!ask) {
       return;
     }

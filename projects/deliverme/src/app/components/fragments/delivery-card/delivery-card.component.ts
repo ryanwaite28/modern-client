@@ -318,7 +318,7 @@ export class DeliveryCardComponent implements OnInit {
   }
 
   markDeliveryAsCompleted() {
-    const ask = window.confirm(`Is this delivery paid and completed?`);
+    const ask = window.confirm(`Is this delivery been successfully delivered?`);
     if (!ask) {
       return;
     }
@@ -438,7 +438,23 @@ export class DeliveryCardComponent implements OnInit {
                   // payment_intent.succeeded event that handles any business critical
                   // post-payment actions.
                   this.alertService.handleResponseSuccessGeneric({ message: `Payment successful!` });
-                  this.delivery.completed = true;
+                  this.deliveryService.markDeliveryAsCompleted(
+                    this.you!.id,
+                    this.delivery.id,
+                  ).subscribe({
+                    next: (response) => {
+                      this.alertService.handleResponseSuccessGeneric(response);
+                      this.loading = false;
+                      this.delivery.completed = true;
+                    },
+                    error: (error: HttpErrorResponse) => {
+                      this.loading = false;
+                      // this.alertService.handleResponseErrorGeneric(error);
+                    },
+                    complete: () => {
+                      this.loading = false;
+                    }
+                  });
                 }
               }
             });
