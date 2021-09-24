@@ -48,11 +48,11 @@ const delivery_form_config = [
   styleUrls: ['./delivery-form.component.scss']
 })
 export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('newDeliveryFormElm') newDeliveryFormElm: ElementRef<HTMLFormElement> | null = null;
-  @ViewChild('fromLocationInput') fromLocationInput: ElementRef<HTMLInputElement> | null = null;
-  @ViewChild('toLocationInput') toLocationInput: ElementRef<HTMLInputElement> | null = null;
+  @ViewChild('newDeliveryFormElm') newDeliveryFormElm: ElementRef<HTMLFormElement> | any;
+  @ViewChild('fromLocationInput') fromLocationInput: ElementRef<HTMLInputElement> | any;
+  @ViewChild('toLocationInput') toLocationInput: ElementRef<HTMLInputElement> | any;
 
-  @Input() you: IUser | null = null;
+  @Input() you: IUser | any;
   @Input() delivery: any;
   @Input() isEditing: boolean = false;
   @Input() loading?: boolean;
@@ -60,7 +60,7 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
   @Output() deliveryFormSubmit = new EventEmitter<any>();
 
   google: any;
-  googleSub: Subscription | null = null;
+  googleSub: Subscription | any;
   map: any;
   fromAutocomplete: any;
   toAutocomplete: any;

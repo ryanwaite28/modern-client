@@ -13,7 +13,7 @@ import { UserStoreService } from 'projects/_common/src/app/stores/user-store.ser
   styleUrls: ['./delivery-page.component.scss']
 })
 export class DeliverMeDeliveryPageComponent implements OnInit {
-  you: IUser | null = null;
+  you: IUser | any;
   delivery: any = null;
 
   constructor(

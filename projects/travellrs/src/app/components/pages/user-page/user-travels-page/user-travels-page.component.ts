@@ -18,15 +18,15 @@ import { take } from 'rxjs/operators';
   styleUrls: ['./user-travels-page.component.scss']
 })
 export class TravellrsUserTravelsPageComponent implements OnInit {
-  @ViewChild('mapsDiv') mapsDiv: ElementRef<HTMLDivElement> | null = null;
+  @ViewChild('mapsDiv') mapsDiv: ElementRef<HTMLDivElement> | any;
   
-  you: IUser | null = null;
-  user: IUser | null = null;
+  you: IUser | any;
+  user: IUser | any;
   travels: any[] = [];
   end_reached: boolean = true;
   loading: boolean = false;
   google: any;
-  googleSub: Subscription | null = null;
+  googleSub: Subscription | any;
   map: any;
   infoWindow: any;
   markers: any[] = [];

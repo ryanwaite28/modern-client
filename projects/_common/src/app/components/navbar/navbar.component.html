@@ -1,4 +1,4 @@
-<nav class="uk-navbar-container uk-margin" uk-navbar [style.backgroundColor]="bgColor">
+<nav class="uk-navbar-container" uk-navbar [style.backgroundColor]="bgColor">
   <div class="uk-navbar-left">
     <ng-container [ngSwitch]="!!appMainPageLink">
       <a class="uk-navbar-item uk-logo" *ngSwitchCase="true" [routerLink]="appMainPageLink">{{ appName }}</a>

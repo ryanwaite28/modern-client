@@ -20,7 +20,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./settings.component.scss']
 })
 export class CommonUserSettingsFragmentComponent implements OnInit {
-  you: IUser | null = null;
+  you: IUser | any;
   loading: boolean = false;
   initState = false;
   infoData: PlainObject = {};

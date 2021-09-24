@@ -12,7 +12,7 @@ import { UserStoreService } from 'projects/_common/src/app/stores/user-store.ser
   styleUrls: ['./deliveries.component.scss']
 })
 export class DeliverMeUserDeliveriesFragmentComponent implements AfterViewInit, OnDestroy {
-  you: IUser | null = null;
+  you: IUser | any;
   deliveries: any[] = [];
   end_reached: boolean = true;
   loading: boolean = false;

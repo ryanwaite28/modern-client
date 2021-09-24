@@ -11,8 +11,8 @@ import { UserStoreService } from '../../../stores/user-store.service';
   styleUrls: ['./user-page.component.scss']
 })
 export class CommonUserPageComponent implements OnInit {
-  you: IUser | null = null;
-  user: IUser | null = null;
+  you: IUser | any;
+  user: IUser | any;
   user_fields: IUserField[] = [];
 
   get isYou(): boolean {

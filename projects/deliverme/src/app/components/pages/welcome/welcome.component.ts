@@ -11,10 +11,10 @@ import { Subscription } from 'rxjs/internal/Subscription';
   styleUrls: ['./welcome.component.scss']
 })
 export class DeliverMeWelcomeComponent implements OnInit {
-  you: IUser | null = null;
+  you: IUser | any;
   loading: boolean = false;
 
-  locationInput: HTMLInputElement | null = null;
+  locationInput: HTMLInputElement | any;
   subscriptionsMap = new Map<string, Subscription>();
   locationResults: any;
   autoCompleteData: any;

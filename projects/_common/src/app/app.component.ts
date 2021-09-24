@@ -10,11 +10,11 @@ import { UserStoreService } from './stores/user-store.service';
   styleUrls: ['./app.component.scss']
 })
 export class CommonAppComponent {
-  you: IUser | null = null;
+  you: IUser | any;
   
   appName: string = 'Modern Apps';
   appLinks: any[] = [];
-  appMainPageLink: any[] = ['/', 'modern', 'apps', 'deliverme'];
+  appMainPageLink: any[] = ['/', 'modern', 'welcome'];
 
   constructor(
     private userStore: UserStoreService,
@@ -28,6 +28,13 @@ export class CommonAppComponent {
       this.you = you;
       if (this.you) {
         this.appLinks = [
+          {
+            name: 'Apps',
+            value: ['/', 'modern', 'apps'],
+            title: 'Modern Apps - All Apps Page',
+            class: '',
+            requiresAuth: true
+          },
           {
             name: 'Home',
             value: ['/', 'modern', 'users', you!.id, 'home'],

@@ -24,7 +24,7 @@ export class CommonUserSigninComponent implements OnInit {
     'password': new FormControl('', this.COMMON_TEXT_VALIDATOR),
   });
   error = false;
-  errorMessage: string | null = null;
+  errorMessage: string | any;
 
   phoneForm = new FormGroup({
     phone: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]),
@@ -33,10 +33,10 @@ export class CommonUserSigninComponent implements OnInit {
     code: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]{6}$/)]),
   });
   phoneError = false;
-  phoneErrorMessage: string | null = null;
+  phoneErrorMessage: string | any;
 
   verification_requested_successfully: boolean = false;
-  sms_request_id: string | null = null;
+  sms_request_id: string | any;
   phone_is_verified: boolean = false;
 
   constructor(

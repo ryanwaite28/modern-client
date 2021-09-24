@@ -13,7 +13,7 @@ import { UserService } from './user.service';
   providedIn: 'root'
 })
 export class SocketEventsService {
-  private you: IUser | null = null;
+  private you: IUser | any;
   private socket: any;
 
   private connect_event: any;

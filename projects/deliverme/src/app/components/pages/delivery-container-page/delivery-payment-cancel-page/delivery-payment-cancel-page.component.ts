@@ -11,7 +11,7 @@ import { UserStoreService } from 'projects/_common/src/app/stores/user-store.ser
   styleUrls: ['./delivery-payment-cancel-page.component.scss']
 })
 export class DeliveryPaymentCancelPageComponent implements OnInit {
-  you: IUser | null = null;
+  you: IUser | any;
   delivery: any = null;
 
   constructor(

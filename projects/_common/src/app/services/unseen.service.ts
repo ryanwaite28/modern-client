@@ -31,7 +31,7 @@ export type UnseenProp =
   providedIn: 'root'
 })
 export class UnseenService {
-  private you: IUser | null = null;
+  private you: IUser | any;
   private unseen: IUnseen = {
     messages: 0,
     conversations: 0,

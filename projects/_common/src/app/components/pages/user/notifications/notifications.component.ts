@@ -13,7 +13,7 @@ import { take } from 'rxjs/operators';
   styleUrls: ['./notifications.component.scss']
 })
 export class CommonUserNotificationsFragmentComponent implements OnInit {
-  you: IUser | null = null;
+  you: IUser | any;
   
   notifications: INotification[] = [];
   loading: boolean = false;

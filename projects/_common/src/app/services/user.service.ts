@@ -33,7 +33,7 @@ import { HttpStatusCode } from '../enums/http-codes.enum';
   providedIn: 'root'
 })
 export class UserService {
-  session: GetSessionResponse | null = null;
+  session: GetSessionResponse | any;
   sessionChecked: boolean = false;
 
   constructor(

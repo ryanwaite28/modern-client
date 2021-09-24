@@ -15,6 +15,7 @@ import { XsrfTokenInterceptor } from 'projects/_common/src/app/http-interceptors
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
 import { catchError, flatMap, map, retry, take } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { ContenderAppModule } from 'projects/contender/src/app/app.module';
 
 function APP_INITIALIZER_FACTORY(
   clientService: ClientService,
@@ -27,15 +28,15 @@ function APP_INITIALIZER_FACTORY(
   ) {
     clientService.getXsrfToken()
       .pipe(flatMap((token, index) => {
-        console.log('APP_INITIALIZER (xsrf token) - admit one', clientService);
+        // console.log('APP_INITIALIZER (xsrf token) - admit one', clientService);
         return userService.checkUserSession().pipe(take(1));
       }))
       .pipe(flatMap((user, index) => {
-        console.log('APP_INITIALIZER (user) - admit one', { user });
+        // console.log('APP_INITIALIZER (user) - admit one', { user });
         return googleMapsService.loadGoogleMaps();
       }))
       .pipe(flatMap((value, index) => {
-        console.log('APP_INITIALIZER (google maps) - admit one', googleMapsService);
+        // console.log('APP_INITIALIZER (google maps) - admit one', googleMapsService);
         resolve(true);
         return of();
       }))
@@ -75,9 +76,11 @@ function APP_INITIALIZER_FACTORY(
     /* apps */
     
     CommonAppModule,
+
     DeliverMeAppModule,
     TravellrsAppModule,
-    // HotspotAppModule,
+    ContenderAppModule,
+    HotspotAppModule,
 
     
     AppRoutingModule,

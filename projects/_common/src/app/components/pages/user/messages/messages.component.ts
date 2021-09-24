@@ -17,9 +17,9 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./messages.component.scss']
 })
 export class CommonMessagesFragmentComponent implements OnInit, OnDestroy {
-  you: IUser | null = null;
-  user: IUser | null = null;
-  currentParams: Params | null = null;
+  you: IUser | any;
+  user: IUser | any;
+  currentParams: Params | any;
   currentMessagingSelected: any = null;
   loading = false;
 

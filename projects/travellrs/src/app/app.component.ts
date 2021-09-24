@@ -10,7 +10,7 @@ import { UserStoreService } from 'projects/_common/src/app/stores/user-store.ser
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  you: IUser | null = null;
+  you: IUser | any;
   
   appName: string = 'Travellrs';
   appLinks: any[] = [];

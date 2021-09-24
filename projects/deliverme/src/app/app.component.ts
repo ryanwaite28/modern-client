@@ -10,11 +10,12 @@ import { UserStoreService } from 'projects/_common/src/app/stores/user-store.ser
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  you: IUser | null = null;
+  you: IUser | any;
   
   appName: string = 'Deliver Me';
+  appPath = 'deliverme';
   appLinks: any[] = [];
-  appMainPageLink: any[] = ['/', 'modern', 'apps', 'deliverme'];
+  appMainPageLink: any[] = ['/', 'modern', 'apps', this.appPath];
 
   constructor(
     private userStore: UserStoreService,
@@ -28,44 +29,44 @@ export class AppComponent implements OnInit {
       this.you = you;
       if (this.you) {
         this.appLinks = [
-          // {
-          //   name: 'welcome',
-          //   value: ['/', 'modern', 'apps', 'deliverme', 'welcome'],
-          //   title: 'DeliverMe Welcome Page',
-          //   class: '',
-          //   requiresAuth: false
-          // },
+          {
+            name: 'Home',
+            value: ['/', 'modern', 'apps', this.appPath, 'users', you!.id, 'home'],
+            title: 'DeliverMe User Home Page',
+            class: '',
+            requiresAuth: false
+          },
           {
             name: 'Create Delivery',
-            value: ['/', 'modern', 'apps', 'deliverme', 'users', you!.id, 'create-delivery'],
+            value: ['/', 'modern', 'apps', this.appPath, 'users', you!.id, 'create-delivery'],
             title: 'DeliverMe User Create Delivery Page',
             class: '',
             requiresAuth: true
           },
           {
             name: 'Deliveries',
-            value: ['/', 'modern', 'apps', 'deliverme', 'users', you!.id, 'deliveries'],
+            value: ['/', 'modern', 'apps', this.appPath, 'users', you!.id, 'deliveries'],
             title: 'DeliverMe User Deliveries Page',
             class: '',
             requiresAuth: true
           },
           {
             name: 'Delivering',
-            value: ['/', 'modern', 'apps', 'deliverme', 'users', you!.id, 'delivering'],
+            value: ['/', 'modern', 'apps', this.appPath, 'users', you!.id, 'delivering'],
             title: 'DeliverMe User Delivering Page',
             class: '',
             requiresAuth: true
           },
           // {
           //   name: 'Settings',
-          //   value: ['/', 'modern', 'apps', 'deliverme', 'users', you!.id, 'settings'],
+          //   value: ['/', 'modern', 'apps', this.appPath, 'users', you!.id, 'settings'],
           //   title: 'DeliverMe Settings Page',
           //   class: '',
           //   requiresAuth: true
           // },
           {
             name: 'Search',
-            value: ['/', 'modern', 'apps', 'deliverme', 'users', you!.id, 'search'],
+            value: ['/', 'modern', 'apps', this.appPath, 'users', you!.id, 'search'],
             title: 'DeliverMe Search Deliveries Page',
             class: '',
             requiresAuth: true

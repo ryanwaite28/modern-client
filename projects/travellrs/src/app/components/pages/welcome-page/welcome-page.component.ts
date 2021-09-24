@@ -16,10 +16,10 @@ declare var $: any;
   styleUrls: ['./welcome-page.component.scss']
 })
 export class TravellrsWelcomePageComponent implements OnInit {
-  you: IUser | null = null;
+  you: IUser | any;
   loading: boolean = false;
 
-  locationInput: HTMLInputElement | null = null;
+  locationInput: HTMLInputElement | any;
   subscriptionsMap = new Map<string, Subscription>();
   locationResults: any;
   autoCompleteData: any;

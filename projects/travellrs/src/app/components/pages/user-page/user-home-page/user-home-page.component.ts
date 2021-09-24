@@ -24,14 +24,14 @@ import { take } from 'rxjs/operators';
   styleUrls: ['./user-home-page.component.scss']
 })
 export class TravellrsUserHomePageComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('mapsDiv') mapsDiv: ElementRef<HTMLDivElement> | null = null;
-  @ViewChild('pacInput') pacInput: ElementRef<HTMLInputElement> | null = null;
+  @ViewChild('mapsDiv') mapsDiv: ElementRef<HTMLDivElement> | any;
+  @ViewChild('pacInput') pacInput: ElementRef<HTMLInputElement> | any;
   
   loading: boolean = false;
-  you: IUser | null = null;
+  you: IUser | any;
   selectedPlace: any;
   google: any;
-  googleSub: Subscription | null = null;
+  googleSub: Subscription | any;
   placeData: PlainObject = {};
   manage: any = {
     map: null,

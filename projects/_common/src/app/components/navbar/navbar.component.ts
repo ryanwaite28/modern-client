@@ -11,7 +11,7 @@ import { UserStoreService } from '../../stores/user-store.service';
   styleUrls: ['./navbar.component.scss']
 })
 export class CommonNavbarComponent implements OnInit {
-  you: IUser | null = null;
+  you: IUser | any;
   searchQuery: string = '';
   unseenState: Partial<IUnseen> = {
     notifications: 0,
@@ -21,7 +21,7 @@ export class CommonNavbarComponent implements OnInit {
 
   @Input() appName: string = '';
   @Input() appLinks: any = [];
-  @Input() appMainPageLink: any[] | null = null;
+  @Input() appMainPageLink: any[] | any;
   @Input() bgColor: string = '#f8f8f8';
 
   constructor(
@@ -32,7 +32,7 @@ export class CommonNavbarComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log(this);
+    // console.log(this);
     this.userStore.getChangesObs().subscribe(you => {
       this.you = you;
       if (!you) {

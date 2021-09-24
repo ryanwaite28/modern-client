@@ -13,7 +13,7 @@ import { UserStoreService } from 'projects/_common/src/app/stores/user-store.ser
   styleUrls: ['./settings.component.scss']
 })
 export class DeliverMeUserSettingsFragmentComponent implements OnInit, OnDestroy {
-  you: IUser | null = null;
+  you: IUser | any;
   loading = false;
 
   delivermeSettingsForm = new FormGroup({

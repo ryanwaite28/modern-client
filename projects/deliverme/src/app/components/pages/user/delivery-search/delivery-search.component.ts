@@ -15,8 +15,8 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./delivery-search.component.scss']
 })
 export class DeliverMeUserDeliverySearchFragmentComponent implements OnInit {
-  @ViewChild('fromLocationInput') fromLocationInput: ElementRef<HTMLInputElement> | null = null;
-  @ViewChild('toLocationInput') toLocationInput: ElementRef<HTMLInputElement> | null = null;
+  @ViewChild('fromLocationInput') fromLocationInput: ElementRef<HTMLInputElement> | any;
+  @ViewChild('toLocationInput') toLocationInput: ElementRef<HTMLInputElement> | any;
   
   you: any;
   loading: boolean = false;
@@ -30,7 +30,7 @@ export class DeliverMeUserDeliverySearchFragmentComponent implements OnInit {
   });
 
   google: any;
-  googleSub: Subscription | null = null;
+  googleSub: Subscription | any;
   map: any;
   fromAutocomplete: any;
   toAutocomplete: any;

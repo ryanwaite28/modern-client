@@ -16,8 +16,8 @@ import { PlainObject } from '../interfaces/json-object.interface';
   providedIn: 'root'
 })
 export class ConversationsService {
-  session: GetSessionResponse | null = null;
-  sessionChecked: boolean | null = null;
+  session: GetSessionResponse | any;
+  sessionChecked: boolean | any;
 
   constructor(
     private clientService: ClientService,

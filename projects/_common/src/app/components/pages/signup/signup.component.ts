@@ -14,7 +14,7 @@ import { genderOptions } from '../../../_misc/vault';
 export class CommonUserSignupComponent implements OnInit {
   loading: boolean = false;
   verification_requested_successfully: boolean = false;
-  sms_request_id: string | null = null;
+  sms_request_id: string | any;
   phone_is_verified: boolean = false;
 
   TEXT_FORM_LIMIT = 250;
@@ -44,7 +44,7 @@ export class CommonUserSignupComponent implements OnInit {
   });
 
   error = false;
-  errorMessage: string | null = null;
+  errorMessage: string | any;
 
   constructor(
     private userService: UserService,

@@ -19,10 +19,10 @@ import { DeliveryService } from '../../../services/delivery.service';
   styleUrls: ['./delivery-card.component.scss']
 })
 export class DeliveryCardComponent implements OnInit {
-  @ViewChild('newDeliveryTrackingUpdateFormElm') newDeliveryTrackingUpdateFormElm: ElementRef<HTMLFormElement> | null = null;
-  @ViewChild('paymentFormElm') paymentFormElm: ElementRef<HTMLFormElement> | null = null;
+  @ViewChild('newDeliveryTrackingUpdateFormElm') newDeliveryTrackingUpdateFormElm: ElementRef<HTMLFormElement> | any;
+  @ViewChild('paymentFormElm') paymentFormElm: ElementRef<HTMLFormElement> | any;
   
-  @Input() you: IUser | null = null;
+  @Input() you: IUser | any;
   @Input() delivery: any;
 
   @Output() deliveryDelete = new EventEmitter<any>();

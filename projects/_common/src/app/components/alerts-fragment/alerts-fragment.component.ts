@@ -27,7 +27,7 @@ export class CommonAlertsFragmentComponent implements OnInit {
         }, this.TIMEOUT_DURATION);
       }
     });
-    console.log(this);
+    // console.log(this);
   }
 
   closeAlert() {

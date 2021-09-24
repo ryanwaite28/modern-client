@@ -13,7 +13,7 @@ import { flatMap, map } from 'rxjs/operators';
   styleUrls: ['./delivery-payment-success-page.component.scss']
 })
 export class DeliveryPaymentSuccessPageComponent implements OnInit {
-  you: IUser | null = null;
+  you: IUser | any;
   delivery: any = null;
   session_id: any = null;
 
