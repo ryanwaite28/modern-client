@@ -79,7 +79,7 @@
     </div>
   </div>
 
-  <div class="uk-card-footer" *ngIf="isDeliveryOwner && !delivery.datetime_picked_up && showDetails">
+  <div class="uk-card-footer" *ngIf="isDeliveryOwner && !delivery.carrier_id">
     <!-- <a class="uk-button uk-button-text" (click)="isEditing = !isEditing;">{{ isEditing ? 'Cancel Edit' : 'Edit' }}</a> -->
     <a class="uk-button uk-button-text" (click)="deleteDelivery()">Delete</a>
 
@@ -142,6 +142,29 @@
       <small>Google Pay: {{ delivery.carrier.deliverme_settings.google_pay }}</small><br>
     </p>
   </div>
+
+  <!-- <div class="uk-card-footer" *ngIf="isDeliveryOwner && !delivery.carrier_id">
+    <div>
+      <button
+        type="submit"
+        title="Message this user"
+        class="uk-button uk-button-small uk-button-secondary"
+        (click)="isEditing = !isEditing"
+        [disabled]="loading"
+      >
+        <i class="fas fa-{{ isEditing ? 'cancel' : 'pencil' }}"></i>
+        {{ isEditing ? 'Cancel Edit' : 'Edit' }}
+      </button>
+    </div>
+
+    <div *ngIf="isEditing" class="margin-top-10">
+      <deliverme-delivery-form
+        [isEditing]="isEditing"
+        [delivery]="delivery"
+        (deliveryFormSubmit)="onSubmitEditDelivery($event)"
+      ></deliverme-delivery-form>
+    </div>
+  </div> -->
   
   <div class="uk-card-footer" *ngIf="showDetails">
     <p class="uk-text-large">
@@ -265,9 +288,9 @@
           class="uk-button uk-button-small uk-button-secondary"
           [disabled]="loading || messageForm.invalid"
         >
-        <i class="fas fa-paper-plane"></i>
-        Submit
-      </button>
+          <i class="fas fa-paper-plane"></i>
+          Submit
+        </button>
       </div>
     </form>
   </div>

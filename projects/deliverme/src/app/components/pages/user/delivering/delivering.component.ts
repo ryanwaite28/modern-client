@@ -28,7 +28,7 @@ const searchCriterias = [
 })
 export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestroy {
   you: any;
-  current_delivering: any;
+  current_deliverings: any[] = [];
   potential_delivering: any;
 
   past_deliverings: any[] = [];
@@ -59,19 +59,26 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
   ngOnDestroy() {
   }
 
-  onCurrentDeliveryCompleted() {
-    this.past_deliverings.push(this.current_delivering);
-    this.current_delivering = undefined;
+  removeCurrentDelivery(delivery: any) {
+    const index = this.current_deliverings.findIndex((d) => d.id === delivery.id);
+    if (index > 0) {
+      this.current_deliverings.splice(index, 1);
+    }
   }
 
-  onCurrentDeliveryReturned() {
-    this.current_delivering = undefined;
+  onCurrentDeliveryCompleted(delivery: any) {
+    this.removeCurrentDelivery(delivery);
+    this.past_deliverings.unshift(delivery);
+  }
+
+  onCurrentDeliveryReturned(delivery: any) {
+    this.removeCurrentDelivery(delivery);
   }
 
   getCurrentDelivering() {
     this.deliveryService.getUserDelivering(this.you!.id).subscribe({
       next: (response) => {
-        this.current_delivering = response.data;
+        this.current_deliverings = response.data;
       },
       error: (error: HttpErrorResponse) => {
         this.loading = false;
@@ -157,7 +164,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
       });
   }
 
-  assignDelivery() {
+  assignDelivery(delivery: any) {
     const ask = window.confirm(`Are you sure you want to take this delivery?`);
     if (!ask) {
       return;
@@ -167,7 +174,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
       next: (response) => {
         console.log(response);
         this.alertService.handleResponseSuccessGeneric(response);
-        this.current_delivering = response.data;
+        this.current_deliverings.unshift(response.data);
         this.potential_delivering = undefined;
         this.loading = false;
       },
@@ -181,17 +188,17 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
     });
   }
 
-  unassignDelivery() {
+  unassignDelivery(delivery: any) {
     const ask = window.confirm(`Are you sure you want to cancel this delivery?`);
     if (!ask) {
       return;
     }
     this.loading = true;
-    this.deliveryService.unassignDelivery<any>(this.you!.id, this.current_delivering.id).subscribe({
+    this.deliveryService.unassignDelivery<any>(this.you!.id, delivery.id).subscribe({
       next: (response) => {
         console.log(response);
         this.alertService.handleResponseSuccessGeneric(response);
-        this.current_delivering = null;
+        this.removeCurrentDelivery(delivery);
         this.loading = false;
       },
       error: (error: any) => {
@@ -204,21 +211,17 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
     });
   }
 
-  addTrackingUpdate() {
-
-  }
-
-  markDeliveryAsPickedUp() {
+  markDeliveryAsPickedUp(delivery: any) {
     const ask = window.confirm(`Have you picked up this delivery?`);
     if (!ask) {
       return;
     }
     this.loading = true;
-    this.deliveryService.markDeliveryAsPickedUp<any>(this.you!.id, this.current_delivering.id).subscribe({
+    this.deliveryService.markDeliveryAsPickedUp<any>(this.you!.id, delivery.id).subscribe({
       next: (response) => {
         console.log(response);
         this.alertService.handleResponseSuccessGeneric(response);
-        this.current_delivering = response.data;
+        Object.assign(delivery, response.data);
         this.loading = false;
       },
       error: (error: any) => {
@@ -231,17 +234,17 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
     });
   }
 
-  markDeliveryAsDroppedOff() {
+  markDeliveryAsDroppedOff(delivery: any) {
     const ask = window.confirm(`Have you dropped off this delivery?`);
     if (!ask) {
       return;
     }
     this.loading = true;
-    this.deliveryService.markDeliveryAsDroppedOff<any>(this.you!.id, this.current_delivering.id).subscribe({
+    this.deliveryService.markDeliveryAsDroppedOff<any>(this.you!.id, delivery.id).subscribe({
       next: (response) => {
         console.log(response);
         this.alertService.handleResponseSuccessGeneric(response);
-        this.current_delivering = response.data;
+        Object.assign(delivery, response.data);
         this.loading = false;
       },
       error: (error: any) => {
@@ -254,17 +257,17 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
     });
   }
 
-  markDeliveryAsReturned() {
+  markDeliveryAsReturned(delivery: any) {
     const ask = window.confirm(`Have you returned this delivery?`);
     if (!ask) {
       return;
     }
     this.loading = true;
-    this.deliveryService.markDeliveryAsReturned<any>(this.you!.id, this.current_delivering.id).subscribe({
+    this.deliveryService.markDeliveryAsReturned<any>(this.you!.id, delivery.id).subscribe({
       next: (response) => {
         console.log(response);
         this.alertService.handleResponseSuccessGeneric(response);
-        this.current_delivering = undefined;
+        this.removeCurrentDelivery(delivery);
         this.loading = false;
       },
       error: (error: any) => {

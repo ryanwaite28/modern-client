@@ -4,6 +4,7 @@ import { AlertTypes } from 'projects/_common/src/app/enums/all.enums';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
+import { StripeService } from 'projects/_common/src/app/services/stripe.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
 import { Subscription } from 'rxjs';
 
@@ -48,7 +49,7 @@ const delivery_form_config = [
   styleUrls: ['./delivery-form.component.scss']
 })
 export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('newDeliveryFormElm') newDeliveryFormElm: ElementRef<HTMLFormElement> | any;
+  @ViewChild('deliveryFormElm') deliveryFormElm: ElementRef<HTMLFormElement> | any;
   @ViewChild('fromLocationInput') fromLocationInput: ElementRef<HTMLInputElement> | any;
   @ViewChild('toLocationInput') toLocationInput: ElementRef<HTMLInputElement> | any;
 
@@ -68,11 +69,15 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
   toPlaceData: any = {};
   sizes = sizes;
   payout_min = payout_min;
+  acknowledgement_checked = false;
 
-  newDeliveryForm: FormGroup;
+  deliveryForm: FormGroup;
+
+  chargeFeeData: any;
 
   constructor(
     private userStore: UserStoreService,
+    private stripeService: StripeService,
     private alertService: AlertService,
     private googleMapsService: GoogleMapsService,
   ) {
@@ -80,15 +85,20 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
     for (const config of delivery_form_config) {
       formGroupConfig[config.field] = new FormControl(config.defaultValue, config.validations)
     }
-    this.newDeliveryForm = new FormGroup(formGroupConfig);
+    this.deliveryForm = new FormGroup(formGroupConfig);
+    this.deliveryForm.get('payout')?.valueChanges.subscribe((value) => {
+      if (value) {
+        this.chargeFeeData = this.stripeService.add_on_stripe_processing_fee(value);
+      }
+    });
   }
 
   ngAfterViewInit(): void {
     this.userStore.getChangesObs().subscribe((you) => {
       this.you = you;
-
-      if (this.isEditing && this.delivery && this.newDeliveryForm) {
-        this.newDeliveryForm.setValue({
+      const shouldUpdateForm = this.isEditing && this.delivery && this.deliveryForm;
+      if (shouldUpdateForm) {
+        this.deliveryForm.setValue({
           title: this.delivery.title,
           description: this.delivery.description,
           file: null,
@@ -182,7 +192,7 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
   }
 
   resetForm(
-    newDeliveryFormElm: HTMLFormElement,
+    deliveryFormElm: HTMLFormElement,
     fileInput: HTMLInputElement
   ) {
     if (!this.isEditing) {
@@ -194,23 +204,26 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
       for (const config of delivery_form_config) {
         defaultFormValue[config.field] = config.defaultValue;
       }
-      this.newDeliveryForm.reset(defaultFormValue);
-      // for (const control in this.newDeliveryForm.controls) {
-      //   this.newDeliveryForm.get(control)?.markAsPristine();
-      //   this.newDeliveryForm.get(control)?.clearValidators();
-      //   this.newDeliveryForm.get(control)?.updateValueAndValidity();
+      this.deliveryForm.reset(defaultFormValue);
+      // for (const control in this.deliveryForm.controls) {
+      //   this.deliveryForm.get(control)?.markAsPristine();
+      //   this.deliveryForm.get(control)?.clearValidators();
+      //   this.deliveryForm.get(control)?.updateValueAndValidity();
       // }
 
-      this.fromPlaceData = {};
-      this.toPlaceData = {};
+      for (const key of Object.keys(this.fromPlaceData)) {
+        delete this.fromPlaceData[key];
+        delete this.toPlaceData[key];
+      }
 
       this.fromLocationInput!.nativeElement.value = '';
       this.toLocationInput!.nativeElement.value = '';
+      this.acknowledgement_checked = false;
     }
   }
 
-  onSubmitNewDelivery(
-    newDeliveryFormElm: HTMLFormElement,
+  onSubmitDelivery(
+    deliveryFormElm: HTMLFormElement,
     fileInput: HTMLInputElement
   ) {
     if (!this.isEditing && !this.fromPlaceData.lat) {
@@ -233,9 +246,9 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
       to_lng: this.toPlaceData.lng,
     });
 
-    const formData = new FormData(newDeliveryFormElm);
+    const formData = new FormData(deliveryFormElm);
     const payload = {
-      ...this.newDeliveryForm!.value,
+      ...this.deliveryForm!.value,
 
       from_location: this.fromPlaceData.location,
       from_address: this.fromPlaceData.address,
@@ -264,16 +277,16 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
       file: undefined,
     };
     formData.append(`payload`, JSON.stringify(payload));
-    console.log(newDeliveryFormElm, this);
+    console.log(deliveryFormElm, this);
 
     this.deliveryFormSubmit.emit({
-      formElm: newDeliveryFormElm,
-      form: this.newDeliveryForm,
+      formElm: deliveryFormElm,
+      form: this.deliveryForm,
       formData,
       payload,
       fileInput,
       resetForm: () => {
-        this.resetForm(newDeliveryFormElm, fileInput);
+        this.resetForm(deliveryFormElm, fileInput);
       }
     });
   }

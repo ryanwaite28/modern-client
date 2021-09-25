@@ -4,21 +4,21 @@
 
     <div>
       <form
-        #newDeliveryFormElm
-        [formGroup]="newDeliveryForm!"
-        (ngSubmit)="onSubmitNewDelivery(newDeliveryFormElm, iconInput)"
+        #deliveryFormElm
+        [formGroup]="deliveryForm!"
+        (ngSubmit)="onSubmitDelivery(deliveryFormElm, iconInput)"
       >
         <fieldset class="uk-fieldset">
           <div class="uk-margin">
             <span class="label-info">
-              Title ({{ newDeliveryForm!.value.title.length }}/255)
+              Title ({{ deliveryForm!.value.title.length }}/255)
             </span>
             <input class="uk-input" type="text" placeholder="Enter Delivery Title" formControlName="title" >
           </div>
 
           <div class="uk-margin">
             <span class="label-info">
-              Description ({{ newDeliveryForm!.value.description.length }}/500)
+              Description ({{ deliveryForm!.value.description.length }}/500)
             </span>
             <textarea type="text" class="uk-textarea" placeholder="Enter Delivery Description" rows="5" formControlName="description"></textarea>
           </div>
@@ -179,10 +179,23 @@
           </div>
         </fieldset>
 
+        <div class="uk-margin">
+          <span class="label-info">
+            Acknowledge final price: {{ chargeFeeData ? '$' + (chargeFeeData.new_total | stripeAmountFormatter) : '' }}
+          </span>
+          <br/>
+          <input
+            class="uk-checkbox"
+            type="checkbox"
+            [ngModelOptions]="{standalone: true}"
+            [(ngModel)]="acknowledgement_checked" 
+          />
+        </div>
+
         <button
           type="submit"
           class="uk-button uk-button-primary"
-          [disabled]="newDeliveryForm!.invalid || loading"
+          [disabled]="deliveryForm!.invalid || loading || !acknowledgement_checked"
         >
           Submit
         </button>

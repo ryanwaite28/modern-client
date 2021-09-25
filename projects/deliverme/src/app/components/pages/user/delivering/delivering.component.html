@@ -8,11 +8,64 @@
   </div>
 
   <div *ngSwitchCase="true">
-    
-    
-    <div *ngIf="past_deliverings.length" class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+    <div class="border-grey-1 uk-card uk-card-default margin-bottom-10 border-grey-1">
       <div class="uk-card-body">
-        <p class="uk-text-large">Past Deliveries</p>
+        <p class="uk-text-large">Active Deliveries <small class="text-grey">({{ current_deliverings.length }})</small></p>
+      </div>
+    </div>
+    <div *ngFor="let delivery of current_deliverings" class="border-grey-1 uk-card uk-card-default margin-bottom-10">
+      <div class="uk-card-body">
+        <deliverme-delivery-card
+          [delivery]="delivery"
+          [you]="you"
+          (deliveryCompleted)="onCurrentDeliveryCompleted(delivery)"
+        ></deliverme-delivery-card>
+  
+        <div class="margin-top-20"></div>
+  
+        <div>
+          <span class="margin-right-10">
+            <button
+              *ngIf="!delivery.datetime_picked_up && !delivery.datetime_delivered"
+              type="button"
+              class="uk-button uk-button-small uk-button-secondary"
+              [disabled]="loading"
+              (click)="unassignDelivery(delivery)"
+            >
+              Cancel Delivery
+            </button>
+          </span>
+  
+          <span class="margin-right-10">
+            <button
+              *ngIf="!delivery.datetime_picked_up && !delivery.datetime_delivered"
+              type="button"
+              class="uk-button uk-button-small uk-button-secondary"
+              [disabled]="loading"
+              (click)="markDeliveryAsPickedUp(delivery)"
+            >
+              Mark As Picked Up
+            </button>
+          </span>
+  
+          <span class="margin-right-10">
+            <button
+              *ngIf="delivery.datetime_picked_up && !delivery.datetime_delivered"
+              type="button"
+              class="uk-button uk-button-small uk-button-secondary"
+              [disabled]="loading"
+              (click)="markDeliveryAsDroppedOff(delivery)"
+            >
+              Mark As Dropped Off
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+      <div class="uk-card-body">
+        <p class="uk-text-large">Past Deliveries <small class="text-grey">({{ past_deliverings.length }})</small></p>
       </div>
     </div>
   

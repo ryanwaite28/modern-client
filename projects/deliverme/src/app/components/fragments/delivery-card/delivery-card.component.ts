@@ -94,11 +94,11 @@ export class DeliveryCardComponent implements OnInit {
       const carrierAssignedListener = this.socketEventsService.listenCustom(
         DELIVERME_COMMON_EVENT_TYPES.CARRIER_ASSIGNED,
         (event: any) => {
-          console.log(event);
-          this.alertService.handleResponseSuccessGeneric({
-            message: event.message
-          });
           if (event.data.id === this.delivery.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
             this.delivery.carrier_id = event.user.id;
             this.delivery.carrier = event.user;
             this.delivery.returned = false;
@@ -109,11 +109,11 @@ export class DeliveryCardComponent implements OnInit {
       const carrierUnassignedListener = this.socketEventsService.listenCustom(
         DELIVERME_COMMON_EVENT_TYPES.CARRIER_UNASSIGNED,
         (event: any) => {
-          console.log(event);
-          this.alertService.handleResponseSuccessGeneric({
-            message: event.message
-          });
           if (event.data.id === this.delivery.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
             this.delivery = event.data;
           }
         }
@@ -122,11 +122,11 @@ export class DeliveryCardComponent implements OnInit {
       const markedPickedListener = this.socketEventsService.listenCustom(
         DELIVERME_COMMON_EVENT_TYPES.CARRIER_MARKED_AS_PICKED_UP,
         (event: any) => {
-          console.log(event);
-          this.alertService.handleResponseSuccessGeneric({
-            message: event.message
-          });
           if (event.data.id === this.delivery.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
             this.delivery = event.data;
           }
         }
@@ -135,11 +135,11 @@ export class DeliveryCardComponent implements OnInit {
       const markedDroppedListener = this.socketEventsService.listenCustom(
         DELIVERME_COMMON_EVENT_TYPES.CARRIER_MARKED_AS_DROPPED_OFF,
         (event: any) => {
-          console.log(event);
-          this.alertService.handleResponseSuccessGeneric({
-            message: event.message
-          });
           if (event.data.id === this.delivery.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
             this.delivery = event.data;
           }
         }
@@ -148,11 +148,11 @@ export class DeliveryCardComponent implements OnInit {
       const trackingUpdateListener = this.socketEventsService.listenCustom(
         DELIVERME_COMMON_EVENT_TYPES.DELIVERY_NEW_TRACKING_UPDATE,
         (event: any) => {
-          console.log(event);
-          this.alertService.handleResponseSuccessGeneric({
-            message: event.message
-          });
           if (event.data.delivery_id === this.delivery.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
             const tracking_update = event.data;
             this.delivery.deliverme_delivery_tracking_updates?.unshift(tracking_update);
             this.getLocationForTrackingUpdate(tracking_update);
@@ -163,11 +163,11 @@ export class DeliveryCardComponent implements OnInit {
       const deliveryCompletedListener = this.socketEventsService.listenCustom(
         DELIVERME_COMMON_EVENT_TYPES.DELIVERY_COMPLETED,
         (event: any) => {
-          console.log(event);
-          this.alertService.handleResponseSuccessGeneric({
-            message: event.message
-          });
           if (event.data.id === this.delivery.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
             this.delivery.completed = true;
             this.deliveryCompleted.emit();
           }
@@ -177,11 +177,11 @@ export class DeliveryCardComponent implements OnInit {
       const deliveryReturnedListener = this.socketEventsService.listenCustom(
         DELIVERME_COMMON_EVENT_TYPES.DELIVERY_RETURNED,
         (event: any) => {
-          console.log(event);
-          this.alertService.handleResponseSuccessGeneric({
-            message: event.message
-          });
           if (event.data.id === this.delivery.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
             this.delivery = event.data;
             this.deliveryReturned.emit();
           }
@@ -216,7 +216,7 @@ export class DeliveryCardComponent implements OnInit {
         this.deliveryEventsListeners.push(deliveryMessageListener);
       }
 
-      console.log(`deliveryEventsListeners`, this.deliveryEventsListeners);
+      // console.log(`deliveryEventsListeners`, this.deliveryEventsListeners);
     }
   }
 

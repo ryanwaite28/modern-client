@@ -39,6 +39,7 @@ import { CommonUserFieldsComponent } from './components/pages/user/user-fields/u
 import { CommonVerifyEmailComponent } from './components/pages/verify-email/verify-email.component';
 import { CommonUserVerifyStripeAccountFragmentComponent } from './components/pages/user/verify-stripe-account-fragment/verify-stripe-account-fragment.component';
 import { UserCardComponent } from './components/fragments/user-card/user-card.component';
+import { StripeAmountFormatterPipe } from './pipes/stripe-amount-formatter.pipe';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { UserCardComponent } from './components/fragments/user-card/user-card.co
     CommonVerifyEmailComponent,
     CommonUserVerifyStripeAccountFragmentComponent,
     UserCardComponent,
+    StripeAmountFormatterPipe,
   ],
   imports: [
     BrowserModule,
@@ -99,6 +101,7 @@ import { UserCardComponent } from './components/fragments/user-card/user-card.co
     CommonUserPageCardComponent,
 
     TimeAgoPipe,
+    StripeAmountFormatterPipe,
   ],
   providers: [
     HttpClientModule,
