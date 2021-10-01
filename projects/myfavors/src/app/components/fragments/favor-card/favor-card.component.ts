@@ -172,6 +172,21 @@ export class FavorCardComponent implements OnInit {
         }
       );
 
+      const helperPaidListener = this.socketEventsService.listenCustom(
+        MYFAVORS_EVENT_TYPES.FAVOR_HELPER_PAID,
+        (event: any) => {
+          if (event.data.id === this.favor.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
+            this.favor = event.data;
+            const helper = this.favor.favor_helpers.find((helper: any) => helper.user_id === event.helper_user.id);
+            helper.paid = true;
+          }
+        }
+      );
+
       this.favorEventsListeners = [
         helperAssignedListener,
         helperUnassignedListener,
@@ -179,6 +194,7 @@ export class FavorCardComponent implements OnInit {
         markedStartedListener,
         markedCanceledListener,
         favorFulfilledListener,
+        helperPaidListener,
       ];
 
       if (
