@@ -1,0 +1,17 @@
+<div *ngIf="!!you">
+  <div [ngSwitch]="!!you!.stripe_account_id && !!you!.stripe_account_verified">
+    <div *ngSwitchCase="false" class="uk-card uk-card-default">
+      <div class="uk-card-body">
+        Your stripe account is not connected/valid. 
+        Go back to setting to finish connecting your stripe account. <br/>
+        <a [routerLink]="['/', 'modern', 'users', you.id, 'settings']">Settings</a>
+      </div>
+    </div>
+  
+    <myfavors-favor-form
+      *ngSwitchCase="true"
+      [isEditing]="false"
+      (favorFormSubmit)="onSubmitNewFavor($event)"
+    ></myfavors-favor-form>
+  </div>
+</div>

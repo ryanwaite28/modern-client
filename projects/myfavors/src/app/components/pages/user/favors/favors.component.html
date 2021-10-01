@@ -1,0 +1,65 @@
+<div>
+  <div *ngIf="!favors.length" class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+    <div class="uk-card-body">
+      <p class="uk-text-large">None</p>
+    </div>
+  </div>
+
+  <div *ngFor="let favor of favors" class="border-grey-1 uk-card uk-card-default margin-bottom-10">
+    <div class="uk-card-body">
+      <myfavors-favor-card
+        [favor]="favor"
+        [you]="you"
+        (favorFulfilled)="onCurrentFavorFulfilled($event)"
+      ></myfavors-favor-card>
+
+      <div class="margin-top-20"></div>
+
+      <span class="margin-right-10">
+        <button
+          *ngIf="!favor.datetime_started && (favor.owner_id === you.id)"
+          type="button"
+          class="uk-button uk-button-small uk-button-secondary"
+          [disabled]="loading"
+          (click)="markFavorAsCanceled(favor)"
+        >
+          Cancel Favor
+        </button>
+      </span>
+
+      <span class="margin-right-10">
+        <button
+          *ngIf="favor.canceled && (favor.owner_id === you.id)"
+          type="button"
+          class="uk-button uk-button-small uk-button-secondary"
+          [disabled]="loading"
+          (click)="markFavorAsUncanceled(favor)"
+        >
+          Uncancel Favor
+        </button>
+      </span>
+
+      <span class="margin-right-10">
+        <button
+          *ngIf="favor.datetime_started"
+          type="button"
+          class="uk-button uk-button-small uk-button-secondary"
+          [disabled]="loading"
+          (click)="markFavorAsFulfilled(favor)"
+        >
+          Mark As Fulfilled
+        </button>
+      </span>
+    </div>
+  </div>
+
+  <button
+    *ngIf="!end_reached"
+    type="submit"
+    class="uk-button uk-button-primary"
+    [disabled]="loading"
+    (click)="getFavors()"
+  >
+    Load More
+  </button>
+</div>

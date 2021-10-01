@@ -150,7 +150,7 @@ export class SocketEventsService {
       null,
       true
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         for (const conversation of response.data) {
           this.joinRoom(`conversation-${conversation.id}`);
           

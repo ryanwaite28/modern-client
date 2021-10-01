@@ -42,7 +42,7 @@ export class DeliverMeUserCreateDeliveryFragmentComponent implements OnInit, OnD
     }
     this.loading = true;
     this.deliveryService.create_delivery(params.formData).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.alertService.handleResponseSuccessGeneric(response);
         params.resetForm && params.resetForm();
         this.loading = false;

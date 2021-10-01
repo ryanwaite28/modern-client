@@ -61,7 +61,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
 
   removeCurrentDelivery(delivery: any) {
     const index = this.current_deliverings.findIndex((d) => d.id === delivery.id);
-    if (index > 0) {
+    if (index > -1) {
       this.current_deliverings.splice(index, 1);
     }
   }
@@ -77,7 +77,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
 
   getCurrentDelivering() {
     this.deliveryService.getUserDelivering(this.you!.id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.current_deliverings = response.data;
       },
       error: (error: HttpErrorResponse) => {
@@ -94,7 +94,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
 
     this.loading = true;
     this.deliveryService.getUserPastDeliverings(this.you!.id, min_id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         for (const delivery of response.data) {
           this.past_deliverings.push(delivery);
         }
@@ -149,7 +149,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
         return this.deliveryService.findAvailableDelivery<any>(postData);
       }))
       .subscribe({
-        next: (response) => {
+        next: (response: any) => {
           console.log(response);
           this.potential_delivering = response.data;
           this.loading = false;
@@ -171,7 +171,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
     }
     this.loading = true;
     this.deliveryService.assignDelivery<any>(this.you!.id, this.potential_delivering.id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log(response);
         this.alertService.handleResponseSuccessGeneric(response);
         this.current_deliverings.unshift(response.data);
@@ -195,7 +195,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
     }
     this.loading = true;
     this.deliveryService.unassignDelivery<any>(this.you!.id, delivery.id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log(response);
         this.alertService.handleResponseSuccessGeneric(response);
         this.removeCurrentDelivery(delivery);
@@ -218,7 +218,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
     }
     this.loading = true;
     this.deliveryService.markDeliveryAsPickedUp<any>(this.you!.id, delivery.id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log(response);
         this.alertService.handleResponseSuccessGeneric(response);
         Object.assign(delivery, response.data);
@@ -241,7 +241,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
     }
     this.loading = true;
     this.deliveryService.markDeliveryAsDroppedOff<any>(this.you!.id, delivery.id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log(response);
         this.alertService.handleResponseSuccessGeneric(response);
         Object.assign(delivery, response.data);
@@ -264,7 +264,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
     }
     this.loading = true;
     this.deliveryService.markDeliveryAsReturned<any>(this.you!.id, delivery.id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         console.log(response);
         this.alertService.handleResponseSuccessGeneric(response);
         this.removeCurrentDelivery(delivery);

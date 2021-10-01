@@ -161,7 +161,7 @@ export class DeliverMeUserDeliverySearchFragmentComponent implements OnInit {
     }
     this.loading = true;
     this.deliveryService.assignDelivery<any>(this.you!.id, delivery.id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.loading = false;
         this.alertService.handleResponseSuccessGeneric(response);
         this.router.navigate(['/', 'modern', 'apps', 'deliverme', 'users', this.you!.id, 'delivering']);

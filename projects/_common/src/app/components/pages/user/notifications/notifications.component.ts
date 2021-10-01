@@ -38,7 +38,7 @@ export class CommonUserNotificationsFragmentComponent implements OnInit {
         const notificationSub = this.userService.update_user_last_opened(this.you!.id)
           .pipe(take(1))
           .subscribe({
-            next: (response) => {
+            next: (response: any) => {
               notificationSub.unsubscribe();
               this.unseenService.clear('notifications');
             }
@@ -56,7 +56,7 @@ export class CommonUserNotificationsFragmentComponent implements OnInit {
       this.you!.id,
       min_id,
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         for (const notification of response.data) {
           this.notifications.push(notification);
         }

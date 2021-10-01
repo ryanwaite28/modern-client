@@ -1,0 +1,350 @@
+<div class="uk-card uk-card-default favor-card">
+  <div class="uk-card-header">
+    <div class="uk-grid-small uk-flex-middle" uk-grid>
+      <div class="uk-width-auto">
+        <img class="uk-border-circle" width="40" height="40" [src]="favor.owner.icon_link || './assets/img/anon.png'">
+      </div>
+      <div class="uk-width-expand">
+        <h3 class="uk-card-title uk-margin-remove-bottom">{{ favor.owner.displayname }}</h3>
+        <p class="uk-margin-remove-top">
+          <a [routerLink]="['/', 'modern', 'users', favor.owner_id, 'home']">@{{ favor.owner.username }}</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="uk-card-body">
+    <h3 class="uk-card-title">
+      <a [routerLink]="['/', 'modern', 'apps', 'myfavors', 'favors', favor.id]">{{ favor.title }}</a>
+    </h3>
+    <p>{{ favor.description }}</p>
+    <div class="border-lightgrey-1" uk-alert>
+      {{
+        favor.datetime_fulfilled
+          ? 'Completed'
+          : favor.datetime_started
+            ? 'In Progress'
+            : 'Open'
+      }}
+    </div>
+
+    <div class="uk-margin">
+      <button
+        type="button"
+        class="uk-button uk-button-small uk-button-secondary"
+        [disabled]="loading"
+        (click)="showDetails = !showDetails"
+      >
+        {{ showDetails ? 'Hide' : 'Show' }} Details
+      </button>
+    </div>
+
+    <!-- <div class="" *ngIf="showDetails">
+      <span class="margin-right-10">
+        <button
+          *ngIf="!favor.datetime_started && (favor.owner_id === you.id)"
+          type="button"
+          class="uk-button uk-button-small uk-button-secondary"
+          [disabled]="loading"
+          (click)="unassignFavor()"
+        >
+          Cancel Favor
+        </button>
+      </span>
+
+      <span class="margin-right-10">
+        <button
+          *ngIf="!favor.datetime_started && (favor.owner_id === you.id || isFavorHelperLead(favor))"
+          type="button"
+          class="uk-button uk-button-small uk-button-secondary"
+          [disabled]="loading"
+        >
+          Mark As Started
+        </button>
+      </span>
+
+      <span class="margin-right-10">
+        <button
+          *ngIf="favor.datetime_started && !favor.datetime_fultilled && (favor.owner_id === you.id || isFavorHelperLead(favor))"
+          type="button"
+          class="uk-button uk-button-small uk-button-secondary"
+          [disabled]="loading"
+        >
+          Mark As Dropped Off
+        </button>
+      </span>
+    </div> -->
+    
+    <div *ngIf="showDetails">
+      <br>
+      <hr/>
+      <p>
+        <strong>Favor Created</strong><br/>
+        {{ favor.created_at | date : 'MMM d, y - h:mm a' }}<br/>
+        <small>{{ favor.created_at | timeAgo }}</small>
+      </p>
+  
+      <p>
+        <strong>Info</strong><br/>
+        <small>Favor ID: {{ favor.id }}</small><br/>
+        <small>Payout per helper: ${{ favor.payout_per_helper }}</small><br/>
+      </p>
+  
+      <p>
+        <strong>Location</strong>
+        <br/>{{ favor.location }}<br/>
+        <!-- <small>Phone: {{ favor.person_phone }}</small><br/>
+        <small>Email: {{ favor.person_email }}</small><br/> -->
+      </p>
+
+      <p>
+        <strong>Status</strong>
+        <br/>
+        <small>
+          Started: 
+          {{
+            !favor.datetime_started 
+            ? 'no' 
+            : 'yes, at: ' + (favor.datetime_started | date : 'MMM d, y - h:mm a') + ' (' + (favor.datetime_started | timeAgo) + ')'
+          }}
+        </small>
+        <br/>
+        <small>
+          Fulfilled: 
+          {{
+            !favor.datetime_fulfilled 
+            ? 'no' 
+            : 'yes, at: ' + (favor.datetime_fulfilled | date : 'MMM d, y - h:mm a') + ' (' + (favor.datetime_fulfilled | timeAgo) + ')'
+          }}
+        </small>
+        <br/>
+      </p>
+    </div>
+  </div>
+
+  <div class="uk-card-footer" *ngIf="isFavorOwner && !favor.datetime_started">
+    <!-- <a class="uk-button uk-button-text" (click)="isEditing = !isEditing;">{{ isEditing ? 'Cancel Edit' : 'Edit' }}</a> -->
+    <a class="uk-button uk-button-text" (click)="deleteFavor()">Delete</a>
+  </div>
+
+  <div class="uk-card-footer" *ngIf="favor.favor_helpers.length && showDetails">
+    <p class="uk-card-title">Helper(s)</p>
+
+    <div class="">
+      <div class="border-grey-1 padding-10 margin-bottom-5" *ngFor="let helper of favor.favor_helpers">
+        <div class="uk-grid-small uk-flex-middle" uk-grid>
+          <div class="uk-width-auto">
+            <img class="uk-border-circle" width="40" height="40" [src]="helper.helper.icon_link || './assets/img/anon.png'">
+          </div>
+          <div class="uk-width-expand">
+            <h3 class="uk-text-medium uk-margin-remove-bottom">{{ helper.helper.displayname }}</h3>
+            <p class="uk-margin-remove-top">
+              <a [routerLink]="['/', 'modern', 'users', helper.helper.id, 'home']">@{{ helper.helper.username }}</a>
+            </p>
+          </div>
+        </div>
+
+        <div class="margin-top-5" *ngIf="favor.datetime_fulfilled && helper.paid">
+          <button
+            type="button"
+            class="uk-button uk-button-small uk-button-secondary"
+            [disabled]="true"
+          >
+            Paid!
+          </button>
+        </div>
+
+        <div class="margin-top-5" *ngIf="favor.datetime_fulfilled && !helper.paid">
+          <button
+            type="button"
+            class="uk-button uk-button-small uk-button-secondary"
+            [disabled]="loading || !!helper.payment_client_secret"
+            (click)="payHelper(helper)"
+          >
+            Pay Helper
+          </button>
+
+          <div class="margin-top-10 padding-10" [ngClass]="{ 'ghost': !helper.payment_client_secret }">
+            <form [attr.id]="'payment-form-helper-' + helper.id" >
+              <div [attr.id]="'card-element-helper-' + helper.id" class="card-element">
+                <!-- Elements will create input elements here -->
+              </div>
+            
+              <!-- We'll put the error messages in this element -->
+              <div [attr.id]="'card-errors-helper-' + helper.id" role="alert"></div>
+            
+              <button [disabled]="loading" [attr.id]="'card-submit-button-helper-' + helper.id" class="submit">Pay</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="uk-card-footer" *ngIf="isFavorOwner && !favor.carrier_id">
+    <div>
+      <button
+        type="submit"
+        title="Message this user"
+        class="uk-button uk-button-small uk-button-secondary"
+        (click)="isEditing = !isEditing"
+        [disabled]="loading"
+      >
+        <i class="fas fa-{{ isEditing ? 'cancel' : 'pencil' }}"></i>
+        {{ isEditing ? 'Cancel Edit' : 'Edit' }}
+      </button>
+    </div>
+
+    <div *ngIf="isEditing" class="margin-top-10">
+      <myfavors-favor-form
+        [isEditing]="isEditing"
+        [favor]="favor"
+        (favorFormSubmit)="onSubmitEditFavor($event)"
+      ></myfavors-favor-form>
+    </div>
+  </div> -->
+  
+  <div class="uk-card-footer" *ngIf="showDetails">
+    <p class="uk-text-large">
+      Favor Updates
+    </p>
+
+    <div class="uk-margin" *ngIf="!!you && isFavorHelper && !favor.datetime_fulfilled">
+      <form
+        #newFavorUpdateFormElm
+        [formGroup]="newFavorUpdateForm"
+        (ngSubmit)="onSubmitNewFavorUpdate(newFavorUpdateFormElm, iconInput)"
+      >
+        <textarea
+          type="text"
+          class="uk-textarea"
+          placeholder="Enter Favor  Update"
+          rows="3"
+          formControlName="message"
+        ></textarea>
+        <div class="uk-margin">
+          <span class="label-info">
+            Image
+          </span>
+          <br/>
+          <input
+            #iconInput
+            type="file"
+            class=""
+            name="update_image"
+            formControlName="file"
+          />
+        </div>
+        <span class="margin-right-10">
+          <button
+            type="submit"
+            class="uk-button uk-button-small uk-button-secondary"
+            [disabled]="newFavorUpdateForm.invalid || loading"
+          >
+            Add Update
+          </button>
+        </span>
+      </form>
+      <br>
+    </div>
+
+    <div class="">
+      <p *ngIf="!favor.favor_updates.length">None yet...</p>
+      <div class="tracking-update-item" *ngFor="let update of favor.favor_updates">
+        <p>
+          <strong>{{ update.message }}</strong><br/>
+          {{ update.created_at | date : 'MMM d, y - h:mm a' }}<br/>
+          <small>{{ update.created_at | timeAgo }}</small>
+          <ng-container *ngIf="update.placeData">
+            <br/>
+            <small>{{ update.placeData.city }}, {{ update.placeData.state }} {{ update.placeData.zipcode }}</small>
+          </ng-container>
+        </p>
+        <img class="margin-bottom-10" *ngIf="update.icon_link" [src]="update.icon_link" [alt]="update.message">
+      </div>
+    </div>
+  </div>
+
+  <div class="uk-card-footer" *ngIf="showDetails">
+    <p class="uk-text-large">Messages</p>
+
+    <div>
+      <!-- <div class="messages-item transition" *ngIf="!messages_list_end">
+        <button
+          (click)="getMessages()"
+          title="Load more"
+          class="uk-button uk-button-small uk-button-primary"
+          [disabled]="loading"
+        >
+          <i class="fas fa-sync"></i>
+          Load More
+        </button>
+      </div> -->
+
+      <div class="messages-item transition" *ngFor="let m of favor.favor_messages">
+        <div class="messages-item-inner">
+          <div class="user-icon-container-{{ m.user.id === you!.id ? 'right' : 'left' }}">
+            <img
+              class="user-icon-circle"
+              [src]="(m.user.icon_link) || './assets/img/anon.png'"
+            />
+          </div>
+          <div class="message-text-{{ m.user.id === you!.id ? 'right' : 'left' }}">
+            <p>
+              <a [routerLink]="['/', 'modern', 'users', m.user.id, 'home']">
+               {{ m.user.firstname + ' ' + m.user.lastname }}
+              </a>
+              <br/>
+              <span class="lead" [innerHTML]="m.body"></span>
+              <br/>
+              <small class="text-grey">
+                <em>{{ m.created_at | date : 'MMM d, y (h:mm a)' }}</em>
+              </small>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form *ngIf="!!you && (isFavorHelper || isFavorOwner) && !favor.datetime_fulfilled" class="well" [formGroup]="messageForm" (ngSubmit)="sendFavorMessage()">
+      <div class="uk-margin">
+        <span class="label-info">
+          Body ({{ messageForm.value.body.length }}/{{ MSG_MAX_LENGTH }})
+        </span>
+        <textarea
+          type="text"
+          class="uk-textarea"
+          placeholder="Enter message..."
+          rows="3"
+          formControlName="body"
+        ></textarea>
+      </div>
+      <div>
+        <button
+          type="submit"
+          title="Message this user"
+          class="uk-button uk-button-small uk-button-secondary"
+          [disabled]="loading || messageForm.invalid"
+        >
+          <i class="fas fa-paper-plane"></i>
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="uk-card-footer" *ngIf="showDetails && !!favor.datetime_delivered && !!you && favor.owner_id === you.id && !favor.completed">
+    <!-- <a class="uk-button uk-button-text" (click)="payCarrier()">Pay Carrier</a> -->
+
+    <!-- <button
+      type="button"
+      class="uk-button uk-button-small uk-button-secondary"
+      [disabled]="loading"
+      (click)="markFavorAsCompleted()"
+    >
+      Mark as Paid and Complete
+    </button> -->
+
+    
+  </div>
+</div>

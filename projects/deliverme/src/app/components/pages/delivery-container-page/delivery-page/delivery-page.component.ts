@@ -49,7 +49,7 @@ export class DeliverMeDeliveryPageComponent implements OnInit {
 
   onDeleteDelivery(delivery: any) {
     this.deliveryService.delete_delivery(delivery.id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.alertService.handleResponseSuccessGeneric(response);
         this.router.navigate(['/', 'modern', 'apps', 'deliverme', 'users', this.you!.id, 'deliveries']);
       },

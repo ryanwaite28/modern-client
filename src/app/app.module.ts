@@ -16,6 +16,7 @@ import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps
 import { catchError, flatMap, map, retry, take } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { ContenderAppModule } from 'projects/contender/src/app/app.module';
+import { MyfavorsAppModule } from 'projects/myfavors/src/app/app.module';
 
 function APP_INITIALIZER_FACTORY(
   clientService: ClientService,
@@ -81,6 +82,7 @@ function APP_INITIALIZER_FACTORY(
     TravellrsAppModule,
     ContenderAppModule,
     HotspotAppModule,
+    MyfavorsAppModule,
 
     
     AppRoutingModule,

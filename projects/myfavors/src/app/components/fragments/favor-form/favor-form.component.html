@@ -1,0 +1,105 @@
+<div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+  <div class="uk-card-body">
+    <p class="uk-text-large">{{ isEditing ? 'Editing' : 'Create a Favor' }}</p>
+
+    <div>
+      <form
+        #favorFormElm
+        [formGroup]="favorForm!"
+        (ngSubmit)="onSubmitFavor(favorFormElm, iconInput)"
+      >
+        <fieldset class="uk-fieldset">
+          <div class="uk-margin">
+            <span class="label-info">
+              Title ({{ favorForm!.value.title.length }}/255)
+            </span>
+            <input class="uk-input" type="text" placeholder="Enter Favor Title" formControlName="title" >
+          </div>
+
+          <div class="uk-margin">
+            <span class="label-info">
+              Description ({{ favorForm!.value.description.length }})
+            </span>
+            <textarea type="text" class="uk-textarea" placeholder="Enter Favor Description" rows="5" formControlName="description"></textarea>
+          </div>
+
+          <!-- <div class="uk-margin">
+            <span class="label-info">
+              Category
+            </span>
+            <select class="uk-select" formControlName="size">
+              <option *ngFor="let size of sizes" [value]="size">{{ size }}</option>
+            </select>
+          </div> -->
+
+          <div class="uk-margin">
+            <span class="label-info">
+              Image
+            </span>
+            <br/>
+            <input
+              #iconInput
+              type="file"
+              class=""
+              name="favor_image"
+              formControlName="file"
+            />
+          </div>
+
+          <div class="uk-margin">
+            <span class="label-info">
+              Helpers wanted <span><small>(how much people you need to help)</small></span>
+            </span>
+            <input class="uk-input" type="number" placeholder="Enter amount of helpers wanted" formControlName="helpers_wanted" />
+          </div>
+
+          <div class="uk-margin">
+            <span class="label-info">
+              Payout per helper <span><small>how much you are paying for each helper of the favor (minimum = ${{ payout_per_helper_min }} each)</small></span>
+            </span>
+            <input class="uk-input" type="number" placeholder="Enter Favor Payout" formControlName="payout_per_helper" />
+          </div>
+
+          <div class="uk-margin">
+            <span class="label-info">
+              Date & Time Needed <small>(optional)</small>
+            </span>
+            <br/>
+            <input type="date" formControlName="date_needed" />
+            <input type="time" formControlName="time_needed" />
+          </div>
+
+          <div class="margin-top-50"></div>
+
+          <span class="uk-text-medium">
+            <strong>Location</strong>
+          </span>
+          <div class="uk-margin">
+            <input #locationInput type="text" class="uk-input" placeholder="Enter Favor Location" />
+          </div>
+        </fieldset>
+
+        <div class="uk-margin">
+          <span class="label-info">
+            Acknowledge final price: {{ chargeFeeData ? '$' + (chargeFeeData.final_total | stripeAmountFormatter) : '' }}
+          </span>
+          <br/>
+          <input
+            class="uk-checkbox"
+            type="checkbox"
+            [ngModelOptions]="{standalone: true}"
+            [(ngModel)]="acknowledgement_checked" 
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="uk-button uk-button-primary"
+          [disabled]="favorForm!.invalid || loading || !acknowledgement_checked"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

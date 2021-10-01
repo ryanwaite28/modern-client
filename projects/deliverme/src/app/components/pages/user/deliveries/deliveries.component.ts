@@ -44,7 +44,7 @@ export class DeliverMeUserDeliveriesFragmentComponent implements AfterViewInit, 
 
     this.loading = true;
     this.deliveryService.getUserDeliveries(this.you!.id, min_id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         for (const delivery of response.data) {
           this.deliveries.push(delivery);
         }
@@ -62,7 +62,7 @@ export class DeliverMeUserDeliveriesFragmentComponent implements AfterViewInit, 
   onDeleteDelivery(delivery: any) {
     this.loading = true;
     this.deliveryService.delete_delivery(delivery.id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         const index = this.deliveries.indexOf(delivery);
         this.deliveries.splice(index, 1);
         this.loading = false;

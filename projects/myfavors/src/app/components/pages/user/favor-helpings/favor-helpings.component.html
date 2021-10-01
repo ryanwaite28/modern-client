@@ -1,0 +1,91 @@
+<div [ngSwitch]="!!you!.stripe_account_id && !!you!.stripe_account_verified">
+  <div *ngSwitchCase="false" class="uk-card uk-card-default">
+    <div class="uk-card-body">
+      Your stripe account is not connected/valid. 
+      Go back to setting to finish connecting your stripe account. <br/>
+      <a [routerLink]="['/', 'modern', 'users', you.id, 'settings']">Settings</a>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="true">
+    <div class="border-grey-1 uk-card uk-card-default margin-bottom-10 border-grey-1">
+      <div class="uk-card-body">
+        <p class="uk-text-large">Active Favors <small class="text-grey">({{ current_favor_helpings.length }})</small></p>
+      </div>
+    </div>
+    
+    <div *ngFor="let favor_helping of current_favor_helpings" class="border-grey-1 uk-card uk-card-default margin-bottom-10">
+      <div class="uk-card-body">
+        <myfavors-favor-card
+          [favor]="favor_helping.favor"
+          [you]="you"
+          (favorFulfilled)="onCurrentFavorFulfilled(favor_helping.favor)"
+        ></myfavors-favor-card>
+  
+        <div class="margin-top-20"></div>
+  
+        <div>
+          <span class="margin-right-10">
+            <button
+              *ngIf="!favor_helping.favor.datetime_started"
+              type="button"
+              class="uk-button uk-button-small uk-button-secondary"
+              [disabled]="loading"
+              (click)="unassignFavor(favor_helping.favor)"
+            >
+              Leave Favor
+            </button>
+          </span>
+  
+          <span class="margin-right-10">
+            <button
+              *ngIf="!favor_helping.favor.datetime_started && (favor_helping.favor.owner_id === you.id || (favor_helping.is_lead && favor_helping.user_id === you.id))"
+              type="button"
+              class="uk-button uk-button-small uk-button-secondary"
+              [disabled]="loading"
+              (click)="markFavorAsStarted(favor_helping.favor)"
+            >
+              Mark As Started
+            </button>
+          </span>
+
+          <!-- <span class="margin-right-10">
+            <button
+              *ngIf="favor_helping.favor.datetime_started && (favor_helping.favor.owner_id === you.id || (favor_helping.is_lead && favor_helping.user_id === you.id))"
+              type="button"
+              class="uk-button uk-button-small uk-button-secondary"
+              [disabled]="loading"
+              (click)="markFavorAsStarted(favor_helping.favor)"
+            >
+              Mark As Fulfilled
+            </button>
+          </span> -->
+  
+          <!-- <span class="margin-right-10">
+            <button
+              *ngIf="favor_helping.favor.datetime_started && !favor_helping.favor.datetime_fultilled && (favor_helping.favor.owner_id === you.id || (favor_helping.is_lead && favor_helping.user_id === you.id))"
+              type="button"
+              class="uk-button uk-button-small uk-button-secondary"
+              [disabled]="loading"
+            >
+              Mark As Dropped Off
+            </button>
+          </span> -->
+        </div>
+      </div>
+    </div>
+    
+    <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+      <div class="uk-card-body">
+        <p class="uk-text-large">Past Favors <small class="text-grey">({{ past_favor_helpings.length }})</small></p>
+      </div>
+    </div>
+  
+    <div *ngFor="let favor_helping of past_favor_helpings" class="margin-bottom-10">
+      <myfavors-favor-card
+        [favor]="favor_helping.favor"
+        [you]="you"
+      ></myfavors-favor-card>
+    </div>  
+  </div>
+</div>

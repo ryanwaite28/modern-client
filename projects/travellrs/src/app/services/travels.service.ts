@@ -87,7 +87,7 @@ export class TravelsService {
 //       to alloq multiple areas of the app to be notified if/when needed.
 //     */
 //     this.sendRequest<T>(`/travellrs/`, `POST`, data).subscribe({
-//       next: (response) => {
+//       next: (response: any) => {
 //         this.newTravelCreatedStream.next(response);
 //       },
 //       error: (error) => {

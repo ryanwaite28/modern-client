@@ -154,7 +154,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
       null,
       true
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         for (const conversation of response.data) {
           this.conversations_list.unshift(conversation);
           this.conversations_map[conversation.id] = conversation;
@@ -349,7 +349,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
       this.currentConversationSelected.id,
       min_id
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         for (const message of response.data) {
           this.conversation_messages_list.unshift(message);
           this.markMessageAsSeen(message);
@@ -371,7 +371,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
       this.currentConversationSelected.id,
       message.id
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         message.seen = true;
       },
       error: (error: HttpErrorResponse) => {
@@ -411,7 +411,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
       undefined,
       true
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.conversation_members_list = response.data;
       },
       error: (error: HttpErrorResponse) => {
@@ -430,7 +430,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
       this.you.id,
       formData
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.conversations_list.unshift(response.data);
         this.conversations_map[response.data.id] = response.data;
         this.usersTypingMap[response.data.id] = [];
@@ -461,7 +461,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
       this.currentConversationSelected.id,
       formData
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.currentConversationSelected.title = response.data.title;
         this.currentConversationSelected.icon_link = response.data.icon_link;
         this.currentConversationSelected.icon_id = response.data.icon_id;
@@ -495,7 +495,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
       this.you.id,
       this.currentConversationSelected.id
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         const index = this.conversations_list.findIndex((c) => c.id === this.currentConversationSelected.id);
         if (index !== -1) {
           this.conversations_list.splice(index, 1);
@@ -528,7 +528,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
       this.currentConversationSelected.id,
       query_term
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.search_results = response.data;
       },
       error: (error: HttpErrorResponse) => {
@@ -547,7 +547,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
       this.currentConversationSelected.id,
       user.id
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         const index = this.search_results.indexOf(user);
         if (index !== -1) {
           this.search_results.splice(index, 1);
@@ -576,7 +576,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
       this.currentConversationSelected.id,
       member.user.id
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         if (this.conversations_map[this.currentConversationSelected.id].hasOwnProperty('members_count')) {
           this.conversations_map[this.currentConversationSelected.id].members_count--;
         }
@@ -604,7 +604,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
       this.you.id,
       this.currentConversationSelected.id
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         const index = this.conversations_list.findIndex((c) => c.id === this.currentConversationSelected.id);
         if (index !== -1) {
           this.conversations_list.splice(index, 1);
@@ -667,7 +667,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
       this.currentConversationSelected.id,
       this.messageForm.value
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.messageForm.setValue({ body: '' });
         this.messageForm.get('body')!.markAsPristine();
         this.loading = false;

@@ -13,7 +13,7 @@ const routes: Routes = [
   {
     path: 'modern/apps/travellrs',
     component: AppComponent,
-    // redirectTo: `modern/apps/deliverme/welcome`,
+    // redirectTo: `modern/apps/travellrs/welcome`,
     children: [
       {
         path: '',

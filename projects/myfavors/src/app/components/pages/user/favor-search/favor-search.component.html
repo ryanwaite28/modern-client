@@ -1,0 +1,85 @@
+<div [ngSwitch]="!!you!.stripe_account_id && !!you!.stripe_account_verified">
+  <div *ngSwitchCase="false" class="uk-card uk-card-default">
+    <div class="uk-card-body">
+      Your stripe account is not connected/valid. 
+      Go back to setting to finish connecting your stripe account. <br/>
+      <a [routerLink]="['/', 'modern', 'users', you.id, 'settings']">Settings</a>
+    </div>
+  </div>
+
+  <div *ngSwitchCase="true">
+    <div>
+      <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+        <div class="uk-card-body">
+          <p class="uk-text-large">Search Favors</p>
+        </div>
+      </div>
+    
+      <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+        <div class="uk-card-body">
+          <div class="uk-margin">
+            <span class="label-info">
+              Location 
+            </span>
+            <input #locationInput type="text" class="uk-input" placeholder="Enter City, State" />
+          </div>
+    
+          <button
+            type="button"
+            class="uk-button uk-button-small uk-button-secondary"
+            [disabled]="loading || searchFavorsForm.invalid"
+            (click)="onSubmitSearchFavorsForm()"
+          >
+            Search
+          </button>
+        </div>
+      </div>
+    
+      <div *ngIf="!firstSearch && !search_favors_results.length" class="uk-card uk-card-default margin-bottom-10 border-grey-1">
+        <div class="uk-card-body">
+          <p class="uk-text-large">{{ searchError || 'No results' }}</p>
+        </div>
+      </div>
+    
+      <div *ngFor="let favor of search_favors_results" class="uk-card uk-card-default favor-card margin-bottom-10">
+        <div class="uk-card-body">
+          <h3 class="uk-card-title">{{ favor.title }}</h3>
+          <p>{{ favor.description }}</p>
+          
+          <div>
+            <p>
+              <strong>Favor Created</strong><br/>
+              {{ favor.created_at | date : 'MMM d, y - h:mm a' }}<br/>
+              <small>{{ favor.created_at | timeAgo }}</small>
+            </p>
+        
+            <p>
+              <strong>Info</strong><br/>
+              <small>Favor ID: {{ favor.id }}</small><br/>
+              <small>Helpers wanted: {{ favor.helpers_wanted }}</small><br/>
+              <small>Payout per helper: ${{ favor.payout_per_helper }}</small><br/>
+            </p>
+        
+            <p>
+              <strong>Location</strong><br/>
+              <small>City: {{ favor.city }}</small><br/>
+              <small>State: {{ favor.state }}</small><br/>
+            </p>
+    
+            <p>
+              Take this favor? 
+              <button
+                type="submit"
+                class="uk-button uk-button-small uk-button-secondary"
+                [disabled]="loading"
+                (click)="assignFavor(favor)"
+              >
+                Take Favor!
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

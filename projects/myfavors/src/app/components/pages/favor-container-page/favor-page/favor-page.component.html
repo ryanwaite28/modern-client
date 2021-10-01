@@ -1,0 +1,17 @@
+<div class="uk-container margin-bottom-20">
+  <div class="uk-card uk-card-default" *ngIf="!favor" class="margin-bottom-20">
+    <div class="uk-card-body">
+      <p>No Favor Found</p>
+    </div>
+  </div>
+
+  <div *ngIf="favor" class="margin-bottom-20">
+    <myfavors-favor-card
+      [favor]="favor"
+      [you]="you"
+      (favorDelete)="onDeleteFavor(favor)"
+      (favorCompleted)="onCurrentFavorCompleted()"
+      (favorReturned)="onCurrentFavorReturned()"
+    ></myfavors-favor-card>
+  </div>
+</div>

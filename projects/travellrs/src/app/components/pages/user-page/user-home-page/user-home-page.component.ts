@@ -193,7 +193,7 @@ export class TravellrsUserHomePageComponent implements OnInit, AfterViewInit, On
     this.changeDetectorRef.detectChanges();
 
     this.travelsService.createTravel(formData, this.you!.id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.alertService.handleResponseSuccessGeneric(response);
         this.newMarkerForm.reset();
         if (fileInput) {

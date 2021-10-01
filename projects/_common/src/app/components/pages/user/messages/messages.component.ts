@@ -104,7 +104,7 @@ export class CommonMessagesFragmentComponent implements OnInit, OnDestroy {
       this.messagings_list.length &&
       this.messagings_list[0].updated_at;
     this.userService.get_user_messagings(this.you!.id, undefined, true).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         for (const messaging of response.data) {
           this.messagings_list.unshift(messaging);
         }
@@ -192,7 +192,7 @@ export class CommonMessagesFragmentComponent implements OnInit, OnDestroy {
       other_user.id,
       min_id
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         let read_count = 0;
         for (const message of response.data) {
           this.messages_list.unshift(message);
@@ -234,7 +234,7 @@ export class CommonMessagesFragmentComponent implements OnInit, OnDestroy {
       other_user.id,
       this.messageForm.value
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         // this.messages_list.push(response.data);
         this.messageForm.setValue({ body: '' });
         this.messageForm.get('body')!.markAsPristine();

@@ -1018,7 +1018,7 @@
         }
       }
     },
-    "my-favors": {
+    "myfavors": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -1028,25 +1028,25 @@
           "strict": true
         }
       },
-      "root": "projects/my-favors",
-      "sourceRoot": "projects/my-favors/src",
-      "prefix": "my-favors",
+      "root": "projects/myfavors",
+      "sourceRoot": "projects/myfavors/src",
+      "prefix": "myfavors",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/my-favors",
-            "index": "projects/my-favors/src/index.html",
-            "main": "projects/my-favors/src/main.ts",
-            "polyfills": "projects/my-favors/src/polyfills.ts",
-            "tsConfig": "projects/my-favors/tsconfig.app.json",
+            "outputPath": "dist/myfavors",
+            "index": "projects/myfavors/src/index.html",
+            "main": "projects/myfavors/src/main.ts",
+            "polyfills": "projects/myfavors/src/polyfills.ts",
+            "tsConfig": "projects/myfavors/tsconfig.app.json",
             "aot": true,
             "assets": [
-              "projects/my-favors/src/favicon.ico",
-              "projects/my-favors/src/assets"
+              "projects/myfavors/src/favicon.ico",
+              "projects/myfavors/src/assets"
             ],
             "styles": [
-              "projects/my-favors/src/styles.scss"
+              "projects/myfavors/src/styles.scss"
             ],
             "scripts": []
           },
@@ -1054,8 +1054,8 @@
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "projects/my-favors/src/environments/environment.ts",
-                  "with": "projects/my-favors/src/environments/environment.prod.ts"
+                  "replace": "projects/myfavors/src/environments/environment.ts",
+                  "with": "projects/myfavors/src/environments/environment.prod.ts"
                 }
               ],
               "optimization": true,
@@ -1083,33 +1083,33 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "my-favors:build"
+            "browserTarget": "myfavors:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "my-favors:build:production"
+              "browserTarget": "myfavors:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "my-favors:build"
+            "browserTarget": "myfavors:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/my-favors/src/test.ts",
-            "polyfills": "projects/my-favors/src/polyfills.ts",
-            "tsConfig": "projects/my-favors/tsconfig.spec.json",
-            "karmaConfig": "projects/my-favors/karma.conf.js",
+            "main": "projects/myfavors/src/test.ts",
+            "polyfills": "projects/myfavors/src/polyfills.ts",
+            "tsConfig": "projects/myfavors/tsconfig.spec.json",
+            "karmaConfig": "projects/myfavors/karma.conf.js",
             "assets": [
-              "projects/my-favors/src/favicon.ico",
-              "projects/my-favors/src/assets"
+              "projects/myfavors/src/favicon.ico",
+              "projects/myfavors/src/assets"
             ],
             "styles": [
-              "projects/my-favors/src/styles.scss"
+              "projects/myfavors/src/styles.scss"
             ],
             "scripts": []
           }
@@ -1118,9 +1118,9 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "projects/my-favors/tsconfig.app.json",
-              "projects/my-favors/tsconfig.spec.json",
-              "projects/my-favors/e2e/tsconfig.json"
+              "projects/myfavors/tsconfig.app.json",
+              "projects/myfavors/tsconfig.spec.json",
+              "projects/myfavors/e2e/tsconfig.json"
             ],
             "exclude": [
               "**/node_modules/**"
@@ -1130,12 +1130,12 @@
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
-            "protractorConfig": "projects/my-favors/e2e/protractor.conf.js",
-            "devServerTarget": "my-favors:serve"
+            "protractorConfig": "projects/myfavors/e2e/protractor.conf.js",
+            "devServerTarget": "myfavors:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "my-favors:serve:production"
+              "devServerTarget": "myfavors:serve:production"
             }
           }
         }

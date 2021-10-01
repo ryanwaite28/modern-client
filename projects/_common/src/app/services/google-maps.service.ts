@@ -336,6 +336,11 @@ export class GoogleMapsService {
   getLocationViaCoordinates(lat: number, lng: number) {
     // https://developers.google.com/maps/documentation/javascript/geocoding#ReverseGeocoding
     return new Observable((observer) => {
+      if (!lat || !lng) {
+        observer.error({ message: 'both lat and lng arguments are required.' });
+        observer.complete();
+        return;
+      }
       const geocoder = new this.google.maps.Geocoder();
       geocoder.geocode({ location: { lat, lng } }).then((response: any) => {
         // console.log(response);

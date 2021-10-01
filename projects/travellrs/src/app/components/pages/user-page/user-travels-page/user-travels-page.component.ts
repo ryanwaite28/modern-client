@@ -101,7 +101,7 @@ export class TravellrsUserTravelsPageComponent implements OnInit {
 
     this.loading = true;
     this.travelsService.getUserTravels(this.user!.id, min_id).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         for (const travel of response.data) {
           this.travels.push(travel);
           this.addMarker(travel);

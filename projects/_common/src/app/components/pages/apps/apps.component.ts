@@ -21,6 +21,12 @@ export class CommonAppsComponent implements OnInit {
       link: ['/', 'modern', 'apps', 'deliverme']
     },
     {
+      name: 'MyFavors',
+      icon: ``,
+      desc: ``,
+      link: ['/', 'modern', 'apps', 'myfavors']
+    },
+    {
       name: 'Contender',
       icon: ``,
       desc: ``,

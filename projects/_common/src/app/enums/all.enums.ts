@@ -43,6 +43,15 @@ export enum USER_RECORDS {
   MARKERS = 'markers',
   
   // world news
+
+
+
+  // my favors
+  FAVORS = 'favors',
+  FAVOR_HELPINGS_ACTIVE = 'favor-helpings-active',
+  FAVOR_HELPINGS_PAST = 'favor-helpings-past',
+
+
   
   // chef city
   RECIPES = 'recipes',
@@ -54,6 +63,7 @@ export enum MODERN_APPS {
   DELIVERME = 'deliverme',
   TRAVELLRS = 'travellrs',
   WORLDNEWS = 'worldnews',
+  MYFAVORS = 'myfavors',
 }
 
 export enum REACTIONS {

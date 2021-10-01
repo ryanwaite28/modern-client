@@ -10,7 +10,7 @@ import { UserStoreService } from 'projects/_common/src/app/stores/user-store.ser
 import { getUserFullName } from 'projects/_common/src/app/_misc/chamber';
 import { Subscription } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
-import { DELIVERME_COMMON_EVENT_TYPES } from '../../../enums/deliverme.enum';
+import { DELIVERME_EVENT_TYPES } from '../../../enums/deliverme.enum';
 import { DeliveryService } from '../../../services/delivery.service';
 
 @Component({
@@ -85,14 +85,14 @@ export class DeliveryCardComponent implements OnInit {
     for (const listener of this.deliveryEventsListeners) {
       listener.off && listener.off();
     }
-    const deliveryRoom = `${DELIVERME_COMMON_EVENT_TYPES.TO_DELIVERY}:${this.delivery.id}`;
+    const deliveryRoom = `${DELIVERME_EVENT_TYPES.TO_DELIVERY}:${this.delivery.id}`;
     this.socketEventsService.leaveRoom(deliveryRoom);
   }
 
   startEventListener() {
     if (this.delivery) {
       const carrierAssignedListener = this.socketEventsService.listenCustom(
-        DELIVERME_COMMON_EVENT_TYPES.CARRIER_ASSIGNED,
+        DELIVERME_EVENT_TYPES.CARRIER_ASSIGNED,
         (event: any) => {
           if (event.data.id === this.delivery.id) {
             console.log(event);
@@ -107,7 +107,7 @@ export class DeliveryCardComponent implements OnInit {
       );
 
       const carrierUnassignedListener = this.socketEventsService.listenCustom(
-        DELIVERME_COMMON_EVENT_TYPES.CARRIER_UNASSIGNED,
+        DELIVERME_EVENT_TYPES.CARRIER_UNASSIGNED,
         (event: any) => {
           if (event.data.id === this.delivery.id) {
             console.log(event);
@@ -120,7 +120,7 @@ export class DeliveryCardComponent implements OnInit {
       );
 
       const markedPickedListener = this.socketEventsService.listenCustom(
-        DELIVERME_COMMON_EVENT_TYPES.CARRIER_MARKED_AS_PICKED_UP,
+        DELIVERME_EVENT_TYPES.CARRIER_MARKED_AS_PICKED_UP,
         (event: any) => {
           if (event.data.id === this.delivery.id) {
             console.log(event);
@@ -133,7 +133,7 @@ export class DeliveryCardComponent implements OnInit {
       );
 
       const markedDroppedListener = this.socketEventsService.listenCustom(
-        DELIVERME_COMMON_EVENT_TYPES.CARRIER_MARKED_AS_DROPPED_OFF,
+        DELIVERME_EVENT_TYPES.CARRIER_MARKED_AS_DROPPED_OFF,
         (event: any) => {
           if (event.data.id === this.delivery.id) {
             console.log(event);
@@ -146,7 +146,7 @@ export class DeliveryCardComponent implements OnInit {
       );
 
       const trackingUpdateListener = this.socketEventsService.listenCustom(
-        DELIVERME_COMMON_EVENT_TYPES.DELIVERY_NEW_TRACKING_UPDATE,
+        DELIVERME_EVENT_TYPES.DELIVERY_NEW_TRACKING_UPDATE,
         (event: any) => {
           if (event.data.delivery_id === this.delivery.id) {
             console.log(event);
@@ -161,7 +161,7 @@ export class DeliveryCardComponent implements OnInit {
       );
 
       const deliveryCompletedListener = this.socketEventsService.listenCustom(
-        DELIVERME_COMMON_EVENT_TYPES.DELIVERY_COMPLETED,
+        DELIVERME_EVENT_TYPES.DELIVERY_COMPLETED,
         (event: any) => {
           if (event.data.id === this.delivery.id) {
             console.log(event);
@@ -175,7 +175,7 @@ export class DeliveryCardComponent implements OnInit {
       );
 
       const deliveryReturnedListener = this.socketEventsService.listenCustom(
-        DELIVERME_COMMON_EVENT_TYPES.DELIVERY_RETURNED,
+        DELIVERME_EVENT_TYPES.DELIVERY_RETURNED,
         (event: any) => {
           if (event.data.id === this.delivery.id) {
             console.log(event);
@@ -203,7 +203,7 @@ export class DeliveryCardComponent implements OnInit {
         this.you!.id === this.delivery.owner_id ||
         this.you!.id === this.delivery.carrier_id
       ) {
-        const deliveryRoom = `${DELIVERME_COMMON_EVENT_TYPES.TO_DELIVERY}:${this.delivery.id}`;
+        const deliveryRoom = `${DELIVERME_EVENT_TYPES.TO_DELIVERY}:${this.delivery.id}`;
         this.socketEventsService.joinRoom(deliveryRoom);
 
         const deliveryMessageListener = this.socketEventsService.listenCustom(deliveryRoom,
@@ -222,7 +222,7 @@ export class DeliveryCardComponent implements OnInit {
 
   handleToDeliveryEvents(event: any) {
     switch (event.event) {
-      case DELIVERME_COMMON_EVENT_TYPES.DELIVERY_NEW_MESSAGE: {
+      case DELIVERME_EVENT_TYPES.DELIVERY_NEW_MESSAGE: {
         this.alertService.handleResponseSuccessGeneric({
           message: event.message
         });
@@ -267,7 +267,7 @@ export class DeliveryCardComponent implements OnInit {
           this.delivery.id,
           formData
         ).subscribe({
-          next: (response) => {
+          next: (response: any) => {
             this.alertService.handleResponseSuccessGeneric(response);
             this.loading = false;
             const tracking_update = response.data;
@@ -327,7 +327,7 @@ export class DeliveryCardComponent implements OnInit {
       this.you!.id,
       this.delivery.id,
     ).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.alertService.handleResponseSuccessGeneric(response);
         this.loading = false;
         this.delivery.completed = true;
@@ -445,7 +445,7 @@ export class DeliveryCardComponent implements OnInit {
                       this.you!.id,
                       this.delivery.id,
                     ).subscribe({
-                      next: (response) => {
+                      next: (response: any) => {
                         this.alertService.handleResponseSuccessGeneric(response);
                         this.loading = false;
                         this.delivery.completed = true;
