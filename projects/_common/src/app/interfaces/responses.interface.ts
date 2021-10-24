@@ -10,12 +10,6 @@ export interface CommonMessageResponse {
   message: string;
 }
 
-export interface SignOutResponse {
-  online: boolean;
-  successful: boolean;
-  message: string;
-}
-
 export interface ErrorResponse {
   error: boolean;
   message: string;
@@ -24,15 +18,29 @@ export interface ErrorResponse {
 
 /** GET Responses */
 
+export interface GenericApiResponse<T = any> {
+  message?: string;
+  data?: T;
+}
+
+export interface UserUpdatedResponse extends GenericApiResponse {
+  data: {
+    token: string,
+    you: IUser,
+  }
+}
+
 export interface GetRecordResponse<T> {
   data: T;
 }
 
 export interface GetSessionResponse {
-  error: boolean;
-  status: HttpStatusCode;
-  message: string;
-  you: IUser | null;
+  message: string,
+  data: {
+    online: boolean;
+    token: string | null;
+    you: IUser | null;
+  }
 }
 
 export interface GetUserFieldsResponse {
@@ -58,11 +66,12 @@ export interface PostRecordResponse<T> {
 }
 
 export interface SignUpResponse {
-  online: boolean;
-  you: IUser;
   message: string;
-  token: string;
-  session_id: string;
+  data: {
+    online: boolean;
+    you: IUser;
+    token: string;
+  }
 }
 
 export interface PostUserFieldResponse {
@@ -73,18 +82,18 @@ export interface PostUserFieldResponse {
 /** PUT Responses */
 
 export interface PutRecordResponse<T> {
+  message: string;
   updates: any;
   data: Partial<T>;
-  message: string;
-  token: string;
 }
 
 export interface SignInResponse {
-  online: boolean;
-  you: IUser;
   message: string;
-  token: string;
-  session_id: string;
+  data: {
+    online: boolean;
+    you: IUser;
+    token: string;
+  }
 }
 
 export interface PutUserProfileSettingsResponse {

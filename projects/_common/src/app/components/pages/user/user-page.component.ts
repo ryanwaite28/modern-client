@@ -33,10 +33,12 @@ export class CommonUserPageComponent implements OnInit {
 
   ngOnInit() {
     this.userStore.getChangesObs().subscribe(you => {
+      console.log({ you });
       this.you = you;
     });
 
     this.route.data.subscribe((data) => {
+      console.log({ data });
       this.user = data.user;
     });
   }

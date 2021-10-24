@@ -35,7 +35,7 @@ export class GoogleMapsService {
   loadGoogleMaps() {
     return this.clientService.sendRequest<{ data: string }>(`/common/utils/get-google-api-key`, 'POST')
       .pipe(flatMap((response: any, index: number) => {
-        return this.getGoogleMaps(response.data);
+        return this.getGoogleMaps(response.data.key);
       }))
   }
 

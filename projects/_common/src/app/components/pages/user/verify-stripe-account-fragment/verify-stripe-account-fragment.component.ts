@@ -39,8 +39,8 @@ export class CommonUserVerifyStripeAccountFragmentComponent implements OnInit {
         console.log(response);
         this.results = response;
         if (response.token) {
-          window.localStorage.setItem('rmw-modern-apps-jwt', response.token);
-          this.userStore.setState(response.you);
+          window.localStorage.setItem('rmw-modern-apps-jwt', response.data.token);
+          this.userStore.setState(response.data.you);
         }
       },
       error: (error: HttpErrorResponse) => {

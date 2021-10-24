@@ -202,7 +202,10 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
     }
   }
 
-  handleResponseSuccess(response: { message: string }) {
+  handleResponseSuccess(response: { message?: string }) {
+    if (!response.message) {
+      return;
+    }
     this.alertService.addAlert({
       type: AlertTypes.SUCCESS,
       message: response.message
@@ -367,8 +370,8 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
         .subscribe(
           (response: any) => {
             this.loading = false;
-            window.localStorage.setItem('rmw-modern-apps-jwt', response.token);
-            this.userStore.setState(response.you);
+            window.localStorage.setItem('rmw-modern-apps-jwt', response.data.token);
+            this.userStore.setState(response.data.you);
             this.verification_requested_successfully = false;
             this.sms_results = undefined;
             this.sms_request_id = undefined;
@@ -403,8 +406,8 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
       (response: any) => {
         this.loading = false;
         this.phone_is_verified = true;
-        window.localStorage.setItem('rmw-modern-apps-jwt', response.token);
-        this.userStore.setState(response.you);
+        window.localStorage.setItem('rmw-modern-apps-jwt', response.data.token);
+        this.userStore.setState(response.data.you);
         this.handleResponseSuccess(response);
       },
       (error: HttpErrorResponse) => {

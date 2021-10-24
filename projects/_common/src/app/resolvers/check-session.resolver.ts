@@ -23,8 +23,8 @@ export class InitialCheckSessionResolver implements Resolve<IUser> {
   ): ResolveType<IUser> {
     return this.userService.checkUserSession().pipe(
       map((response: GetSessionResponse) => {
-        // this.userStore.setState(response.you);
-        return response.you;
+        // this.userStore.setState(response.data.you);
+        return response.data.you;
       })
     );
   }

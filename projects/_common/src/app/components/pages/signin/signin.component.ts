@@ -55,7 +55,7 @@ export class CommonUserSigninComponent implements OnInit {
     this.userService.sign_in(this.signinForm.value)
       .subscribe(
         (response) => {
-          this.router.navigate(['/', 'modern', 'users', response.you.id]);
+          this.router.navigate(['/', 'modern', 'users', response.data.you.id]);
         },
         (error: HttpErrorResponse) => {
           this.alertService.handleResponseErrorGeneric(error);
@@ -74,7 +74,7 @@ export class CommonUserSigninComponent implements OnInit {
       const user = await this.userService.get_user_by_phone(phone)
         .toPromise()
         .then((response) => {
-          return response && response.user;
+          return response && response.data;
         })
         .catch((error) => {
           // console.log(error);
@@ -121,9 +121,9 @@ export class CommonUserSigninComponent implements OnInit {
         this.alertService.handleResponseSuccessGeneric(response);
         this.loading = false;
         this.phone_is_verified = true;
-        window.localStorage.setItem('rmw-modern-apps-jwt', response.token);
-        this.userStore.setState(response.you);
-        this.router.navigate(['/', 'modern', 'users', response.you.id]);
+        window.localStorage.setItem('rmw-modern-apps-jwt', response.data.token);
+        this.userStore.setState(response.data.you);
+        this.router.navigate(['/', 'modern', 'users', response.data.you.id]);
       },
       (error: HttpErrorResponse) => {
         this.alertService.handleResponseErrorGeneric(error);

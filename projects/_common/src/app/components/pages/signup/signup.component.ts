@@ -62,7 +62,7 @@ export class CommonUserSignupComponent implements OnInit {
       const user = await this.userService.get_user_by_phone(phone)
         .toPromise()
         .then((response) => {
-          return response && response.user;
+          return response && response.data;
         })
         .catch((error: HttpErrorResponse) => {
           // console.log(error);
@@ -130,7 +130,7 @@ export class CommonUserSignupComponent implements OnInit {
     }).subscribe(
       (response) => {
         this.alertService.handleResponseSuccessGeneric(response);
-        this.router.navigate(['/', 'modern', 'users', response.you.id]);
+        this.router.navigate(['/', 'modern', 'users', response.data.you.id]);
       },
       (error: HttpErrorResponse) => {
         this.alertService.handleResponseErrorGeneric(error);

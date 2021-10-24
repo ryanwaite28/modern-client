@@ -10,7 +10,7 @@ import { UserStoreService } from "../stores/user-store.service";
 @Injectable({
   providedIn: 'root'
 })
-export class UserResolver implements Resolve<IUser> {
+export class UserResolver implements Resolve<IUser | null> {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -21,11 +21,11 @@ export class UserResolver implements Resolve<IUser> {
   resolve(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot,
-  ): ResolveType<IUser> {
+  ): ResolveType<IUser | null> {
     // console.log({ state, route });
     return this.userService.get_user_by_id(route.params.user_id).pipe(
       map((response) => {
-        return response.user;
+        return response.data || null;
       })
     )
   }

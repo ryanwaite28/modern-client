@@ -1,6 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
 
 
+/* TailWind Guides/Links
+
+  https://www.angularjswiki.com/angular/angular-tailwind-css/
+  https://dev.to/angular/setup-tailwindcss-in-angular-the-easy-way-1i5l
+*/
+@import "node_modules/tailwindcss/base";
+@import "node_modules/tailwindcss/components";
+@import "node_modules/tailwindcss/utilities";
+
 
 
 
