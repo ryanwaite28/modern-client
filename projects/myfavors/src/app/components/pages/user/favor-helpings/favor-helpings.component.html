@@ -22,7 +22,7 @@
           (favorFulfilled)="onCurrentFavorFulfilled(favor_helping.favor)"
         ></myfavors-favor-card>
   
-        <div class="margin-top-20"></div>
+        <!-- <div class="margin-top-20"></div> -->
   
         <div>
           <span class="margin-right-10">
@@ -39,7 +39,7 @@
   
           <span class="margin-right-10">
             <button
-              *ngIf="!favor_helping.favor.datetime_started && (favor_helping.favor.owner_id === you.id || (favor_helping.is_lead && favor_helping.user_id === you.id))"
+              *ngIf="!favor_helping.favor.datetime_started && !favor_helping.favor.datetime_fulfilled && (favor_helping.favor.owner_id === you.id || (favor_helping.is_lead && favor_helping.user_id === you.id))"
               type="button"
               class="uk-button uk-button-small uk-button-secondary"
               [disabled]="loading"
@@ -51,7 +51,7 @@
 
           <span class="margin-right-10">
             <button
-              *ngIf="favor_helping.favor.datetime_started && (favor_helping.favor.owner_id === you.id || (favor_helping.is_lead && favor_helping.user_id === you.id))"
+              *ngIf="favor_helping.favor.datetime_started && !favor_helping.favor.datetime_fulfilled && (favor_helping.favor.owner_id === you.id || (favor_helping.is_lead && favor_helping.user_id === you.id))"
               type="button"
               class="uk-button uk-button-small uk-button-secondary"
               [disabled]="loading"

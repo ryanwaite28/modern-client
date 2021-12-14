@@ -13,7 +13,7 @@
         (favorFulfilled)="onCurrentFavorFulfilled($event)"
       ></myfavors-favor-card>
 
-      <div class="margin-top-20"></div>
+      <!-- <div class="margin-top-20"></div> -->
 
       <span class="margin-right-10">
         <button
@@ -41,7 +41,7 @@
 
       <span class="margin-right-10">
         <button
-          *ngIf="favor.datetime_started"
+          *ngIf="!favor.datetime_started"
           type="button"
           class="uk-button uk-button-small uk-button-secondary"
           [disabled]="loading"
