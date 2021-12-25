@@ -70,6 +70,21 @@ export class AppComponent implements OnInit {
             title: 'DeliverMe Search Deliveries Page',
             class: '',
             requiresAuth: true
+          },
+
+          {
+            name: 'Recent',
+            value: ['/', 'modern', 'apps', this.appPath, 'deliveries', 'browse-recent'],
+            title: 'DeliverMe Browse (Recent) Deliveries Page',
+            class: '',
+            requiresAuth: true
+          },
+          {
+            name: 'Map',
+            value: ['/', 'modern', 'apps', this.appPath, 'deliveries', 'browse-map'],
+            title: 'DeliverMe Browse (Map) Deliveries Page',
+            class: '',
+            requiresAuth: true
           }
         ];
       }

@@ -1,8 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { UserAuthGuard } from 'projects/_common/src/app/guards/auth.guard';
+import { SignedInGuard } from 'projects/_common/src/app/guards/signed-in.guard';
 import { UserResolver } from 'projects/_common/src/app/resolvers/user.resolver';
 import { AppComponent } from './app.component';
+import { DeliverMeDeliveryBrowseFeaturedPageComponent } from './components/pages/delivery-browse-featured/delivery-browse-featured.component';
+import { DeliverMeDeliveryBrowseMapPageComponent } from './components/pages/delivery-browse-map/delivery-browse-map.component';
+import { DeliverMeDeliveryBrowseRecentPageComponent } from './components/pages/delivery-browse-recent/delivery-browse-recent.component';
 import { DeliverMeDeliveryContainerPageComponent } from './components/pages/delivery-container-page/delivery-container-page.component';
 import { DeliverMeDeliveryPageComponent } from './components/pages/delivery-container-page/delivery-page/delivery-page.component';
 import { DeliveryPaymentCancelPageComponent } from './components/pages/delivery-container-page/delivery-payment-cancel-page/delivery-payment-cancel-page.component';
@@ -26,6 +30,25 @@ const routes: Routes = [
       {
         path: '',
         component: DeliverMeWelcomeComponent,
+      },
+
+      // {
+      //   path: 'deliveries/browse-featured',
+      //   component: DeliverMeDeliveryBrowseFeaturedPageComponent,
+      //   canActivate: [UserAuthGuard],
+      //   data: { authParamsProp: 'user_id' }
+      // },
+      {
+        path: 'deliveries/browse-recent',
+        component: DeliverMeDeliveryBrowseRecentPageComponent,
+        canActivate: [],
+        data: { authParamsProp: 'user_id' }
+      },
+      {
+        path: 'deliveries/browse-map',
+        component: DeliverMeDeliveryBrowseMapPageComponent,
+        canActivate: [],
+        data: { authParamsProp: 'user_id' }
       },
 
       {

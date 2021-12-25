@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MODERN_APPS, USER_RECORDS } from 'projects/_common/src/app/enums/all.enums';
+import { ServiceMethodResults } from 'projects/_common/src/app/interfaces/_common.interface';
 import { ClientService } from 'projects/_common/src/app/services/client.service';
 import { UserService } from 'projects/_common/src/app/services/user.service';
 
@@ -134,11 +135,18 @@ export class DeliveryService {
     return this.clientService.sendRequest<T>(`/deliverme/deliveries/search`, `POST`, data);
   }
 
-  sendDeliveryMessage<T>(data: any) {
+  sendDeliveryMessage<T = any>(data: any) {
     return this.clientService.sendRequest<T>(`/deliverme/deliveries/${data.delivery_id}/message`, `POST`, data);
   }
 
-  createCheckoutSession<T>(delivery_id: number) {
+  createCheckoutSession<T = any>(delivery_id: number) {
     return this.clientService.sendRequest<T>(`/deliverme/deliveries/${delivery_id}/create-checkout-session`, `POST`);
+  }
+
+  browseRecent<T = any>(delivery_id?: number) {
+    const endpoint = delivery_id
+      ? `/deliverme/deliveries/browse-recent/${delivery_id}`
+      : `/deliverme/deliveries/browse-recent`;
+    return this.clientService.sendRequest<T>(`/deliverme/deliveries/browse-recent`, `POST`, null);
   }
 }

@@ -129,7 +129,7 @@ export class CommonUserSignupComponent implements OnInit {
       ...this.signupForm.value,
     }).subscribe(
       (response) => {
-        this.alertService.handleResponseSuccessGeneric(response);
+        this.alertService.handleResponseSuccessGeneric({ message: response.message! });
         this.router.navigate(['/', 'modern', 'users', response.data.you.id]);
       },
       (error: HttpErrorResponse) => {

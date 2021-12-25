@@ -9,7 +9,6 @@ import {
   SignInResponse,
   GenericApiResponse,
   GetVerifySmsCode,
-  UserUpdatedResponse,
 } from '../interfaces/responses.interface';
 import {
   PlainObject
@@ -65,7 +64,7 @@ export class UserService {
         }
       });
     }
-    return this.clientService.sendRequest<GenericApiResponse>(
+    return this.clientService.sendRequest<any>(
       '/common/users/check-session',
       `GET`,
       null,
@@ -73,7 +72,7 @@ export class UserService {
       map((response) => {
         this.session = response;
         this.sessionChecked = true;
-        this.userStore.setState(response.data.you);
+        this.userStore.setState(response.data!.you);
         return response;
       })
     );
@@ -123,7 +122,7 @@ export class UserService {
 
   send_feedback(you_id: number, data: PlainObject) {
     const endpoint = `/common/users/${you_id}/feedback`;
-    return this.clientService.sendRequest<GenericApiResponse<any>>(endpoint, `POST`, data).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `POST`, data).pipe(
       map((response: any) => {
         return response;
       })
@@ -134,7 +133,7 @@ export class UserService {
 
   get_user_by_id(id: number) {
     const endpoint = '/common/users/id/' + id;
-    return this.clientService.sendRequest<GenericApiResponse<IUser>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<IUser>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -143,7 +142,7 @@ export class UserService {
 
   get_user_by_phone(phone: string) {
     const endpoint = '/common/users/phone/' + phone;
-    return this.clientService.sendRequest<GenericApiResponse<IUser>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<IUser>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -152,7 +151,7 @@ export class UserService {
 
   check_user_follows(you_id: number, user_id: number) {
     const endpoint = `/common/users/${you_id}/follows/${user_id}`;
-    return this.clientService.sendRequest<GenericApiResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -161,7 +160,7 @@ export class UserService {
 
   get_user_followers_count(user_id: number) {
     const endpoint = `/common/users/${user_id}/followers-count`;
-    return this.clientService.sendRequest<GenericApiResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -170,7 +169,7 @@ export class UserService {
 
   get_user_followings_count(user_id: number) {
     const endpoint = `/common/users/${user_id}/followings-count`;
-    return this.clientService.sendRequest<GenericApiResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -183,7 +182,7 @@ export class UserService {
       : messagings_timestamp
         ? '/common/users/' + you_id + '/messagings/' + messagings_timestamp
         : '/common/users/' + you_id + '/messagings';
-    return this.clientService.sendRequest<GenericApiResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -194,7 +193,7 @@ export class UserService {
     const endpoint = min_id
       ? '/common/users/' + you_id + '/messages/' + user_id + '/' + min_id
       : '/common/users/' + you_id + '/messages/' + user_id;
-    return this.clientService.sendRequest<GenericApiResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -203,7 +202,7 @@ export class UserService {
 
   get_unseen_counts(you_id: number) {
     const endpoint = `/common/users/${you_id}/unseen-counts`;
-    return this.clientService.sendRequest<GenericApiResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -242,7 +241,7 @@ export class UserService {
     cause: string = '',
   ) {
     const endpoint = `/common/users/${you_id}/random?model_name=${model_name}&industry=${industry}&gallup_strength=${gallup_strength}&pred_ref_profile=${pred_ref_profile}&cause=${cause}`;
-    return this.clientService.sendRequest<GenericApiResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -253,7 +252,7 @@ export class UserService {
     const endpoint = min_id
       ? `/common/users/${you_id}/feed/${min_id}?feed_type=${feed_type}`
       : `/common/users/${you_id}/feed?feed_type=${feed_type}`;
-    return this.clientService.sendRequest<GenericApiResponse<any>>(endpoint, `GET`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -287,7 +286,7 @@ export class UserService {
   /** POST */
 
   sign_up(data: PlainObject) {
-    return this.clientService.sendRequest<SignUpResponse>('/common/users', `POST`, data).pipe(
+    return this.clientService.sendRequest<any>('/common/users', `POST`, data).pipe(
       map((response) => {
         window.localStorage.setItem('rmw-modern-apps-jwt', response.data.token);
         this.userStore.setState(response.data.you);
@@ -306,7 +305,7 @@ export class UserService {
 
   follow_user(you_id: number, user_id: number) {
     const endpoint = `/common/users/${you_id}/follows/${user_id}`;
-    return this.clientService.sendRequest<GenericApiResponse<any>>(endpoint, `POST`).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `POST`).pipe(
       map((response) => {
         return response;
       })
@@ -314,7 +313,7 @@ export class UserService {
   }
 
   send_user_message(you_id: number, user_id: number, data: PlainObject) {
-    return this.clientService.sendRequest<GenericApiResponse<any>>(`/common/users/${you_id}/send-message/${user_id}`, `POST`, data).pipe(
+    return this.clientService.sendRequest<any>(`/common/users/${you_id}/send-message/${user_id}`, `POST`, data).pipe(
       map((response) => {
         return response;
       })
@@ -322,7 +321,7 @@ export class UserService {
   }
 
   update_user_last_opened(you_id: number) {
-    return this.clientService.sendRequest<GenericApiResponse<any>>(`/common/users/${you_id}/notifications/update-last-opened`, `POST`).pipe(
+    return this.clientService.sendRequest<any>(`/common/users/${you_id}/notifications/update-last-opened`, `POST`).pipe(
       map((response: any) => {
         window.localStorage.setItem('rmw-modern-apps-jwt', response.data.token);
         this.userStore.setState(response.data.you);
@@ -332,7 +331,7 @@ export class UserService {
   }
 
   update_conversation_last_opened(you_id: number, conversation_id: number) {
-    return this.clientService.sendRequest<GenericApiResponse<any>>(`/common/users/${you_id}/conversations/${conversation_id}/update-last-opened`, `PUT`).pipe(
+    return this.clientService.sendRequest<any>(`/common/users/${you_id}/conversations/${conversation_id}/update-last-opened`, `PUT`).pipe(
       map((response: any) => {
         return response;
       })
@@ -363,7 +362,7 @@ export class UserService {
   }
 
   sign_in(data: PlainObject) {
-    return this.clientService.sendRequest<SignInResponse>('/common/users', `PUT`, data).pipe(
+    return this.clientService.sendRequest<any>('/common/users', `PUT`, data).pipe(
       map((response) => {
         window.localStorage.setItem('rmw-modern-apps-jwt', response.data.token);
         this.userStore.setState(response.data.you);
@@ -374,7 +373,7 @@ export class UserService {
 
   update_info(id: number, data: PlainObject) {
     const endpoint = `/common/users/${id}/info`;
-    return this.clientService.sendRequest<UserUpdatedResponse>(endpoint, `PUT`, data).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `PUT`, data).pipe(
       map((response) => {
         window.localStorage.setItem('rmw-modern-apps-jwt', response.data.token);
         this.userStore.mergeState(response.data.you);
@@ -385,7 +384,7 @@ export class UserService {
 
   update_password(id: number, data: PlainObject) {
     const endpoint = `/common/users/${id}/password`;
-    return this.clientService.sendRequest<UserUpdatedResponse>(endpoint, `PUT`, data).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `PUT`, data).pipe(
       map((response) => {
         window.localStorage.setItem('rmw-modern-apps-jwt', response.data.token);
         this.userStore.mergeState(response.data.you);
@@ -396,7 +395,7 @@ export class UserService {
 
   update_phone(id: number, data: PlainObject) {
     const endpoint = `/common/users/${id}/phone`;
-    return this.clientService.sendRequest<UserUpdatedResponse>(endpoint, `PUT`, data).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `PUT`, data).pipe(
       map((response) => {
         window.localStorage.setItem('rmw-modern-apps-jwt', response.data.token);
         this.userStore.mergeState(response.data.you);
@@ -407,7 +406,7 @@ export class UserService {
 
   update_icon(id: number, formData: FormData) {
     const endpoint = `/common/users/${id}/icon`;
-    return this.clientService.sendRequest<UserUpdatedResponse>(endpoint, `PUT`, formData).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `PUT`, formData).pipe(
       map((response) => {
         window.localStorage.setItem('rmw-modern-apps-jwt', response.data.token);
         this.userStore.mergeState(response.data.you);
@@ -418,7 +417,7 @@ export class UserService {
 
   update_wallpaper(id: number, formData: FormData) {
     const endpoint = `/common/users/${id}/wallpaper`;
-    return this.clientService.sendRequest<UserUpdatedResponse>(endpoint, `PUT`, formData).pipe(
+    return this.clientService.sendRequest<any>(endpoint, `PUT`, formData).pipe(
       map((response) => {
         window.localStorage.setItem('rmw-modern-apps-jwt', response.data.token);
         this.userStore.mergeState(response.data.you);
@@ -429,7 +428,7 @@ export class UserService {
 
   update_user_field(you_id: number, id: number, data: PlainObject) {
     const endpoint = `/common/users/${you_id}/user-field/${id}`;
-    return this.clientService.sendRequest<GenericApiResponse<IUserField>>(endpoint, `PUT`, data).pipe(
+    return this.clientService.sendRequest<IUserField>(endpoint, `PUT`, data).pipe(
       map((response) => {
         return response;
       })

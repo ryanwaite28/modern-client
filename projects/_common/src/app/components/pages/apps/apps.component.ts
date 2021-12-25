@@ -9,12 +9,6 @@ export class CommonAppsComponent implements OnInit {
 
   apps = [
     {
-      name: 'Travellrs',
-      icon: ``,
-      desc: ``,
-      link: ['/', 'modern', 'apps', 'travellrs']
-    },
-    {
       name: 'DeliverMe',
       icon: ``,
       desc: ``,
@@ -27,16 +21,22 @@ export class CommonAppsComponent implements OnInit {
       link: ['/', 'modern', 'apps', 'myfavors']
     },
     {
-      name: 'Contender',
-      icon: ``,
-      desc: ``,
-      link: ['/', 'modern', 'apps', 'contender']
-    },
-    {
       name: 'HotSpot',
       icon: ``,
       desc: ``,
       link: ['/', 'modern', 'apps', 'hotspot']
+    },
+    {
+      name: 'Travellrs',
+      icon: ``,
+      desc: ``,
+      link: ['/', 'modern', 'apps', 'travellrs']
+    },
+    {
+      name: 'Contender',
+      icon: ``,
+      desc: ``,
+      link: ['/', 'modern', 'apps', 'contender']
     },
   ];
 

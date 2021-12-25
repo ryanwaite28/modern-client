@@ -20,6 +20,9 @@ import { DeliverMeDeliveryContainerPageComponent } from './components/pages/deli
 import { DeliverMeDeliveryPageComponent } from './components/pages/delivery-container-page/delivery-page/delivery-page.component';
 import { DeliveryPaymentSuccessPageComponent } from './components/pages/delivery-container-page/delivery-payment-success-page/delivery-payment-success-page.component';
 import { DeliveryPaymentCancelPageComponent } from './components/pages/delivery-container-page/delivery-payment-cancel-page/delivery-payment-cancel-page.component';
+import { DeliverMeDeliveryBrowseRecentPageComponent } from './components/pages/delivery-browse-recent/delivery-browse-recent.component';
+import { DeliverMeDeliveryBrowseMapPageComponent } from './components/pages/delivery-browse-map/delivery-browse-map.component';
+import { DeliverMeDeliveryBrowseFeaturedPageComponent } from './components/pages/delivery-browse-featured/delivery-browse-featured.component';
 
 
 
@@ -42,6 +45,9 @@ import { DeliveryPaymentCancelPageComponent } from './components/pages/delivery-
     DeliverMeDeliveryPageComponent,
     DeliveryPaymentSuccessPageComponent,
     DeliveryPaymentCancelPageComponent,
+    DeliverMeDeliveryBrowseRecentPageComponent,
+    DeliverMeDeliveryBrowseMapPageComponent,
+    DeliverMeDeliveryBrowseFeaturedPageComponent,
   ],
   imports: [
     BrowserModule,

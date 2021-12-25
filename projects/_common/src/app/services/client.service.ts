@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { ServiceMethodResultsInfo } from '../interfaces/_common.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -29,19 +30,12 @@ export class ClientService {
   }
 
   getXsrfToken() {
-    if (this.xsrf_token) {
-      return of(this.xsrf_token);
-    }
     return this.sendRequest<any>(`/common/utils/get-xsrf-token-pair`, 'GET')
       .pipe(
         map((response) => {
-          this.xsrf_token = response.xsrf_token;
-          this.xsrf_token_ready.next(this.xsrf_token);
-          return this.xsrf_token;
+          return response;
         }),
         catchError((error: HttpErrorResponse) => {
-          this.xsrf_token = '';
-          this.xsrf_token_ready.error(null);
           throw error;
         })
       );
@@ -53,7 +47,7 @@ export class ClientService {
     data?: object | FormData | null,
     customHeaders?: HttpHeaders,
     report_progress: boolean = false,
-  ): Observable<T> {
+  ): Observable<ServiceMethodResultsInfo<T>> {
     const api_url = this.API_PREFIX + route;
     const jwt = window.localStorage.getItem('rmw-modern-apps-jwt') || '';
     const httpOptions = {
@@ -71,23 +65,23 @@ export class ClientService {
       httpOptions.headers = httpOptions.headers.set('x-xsrf-token', this.xsrf_token);
     }
 
-    let requestObservable: Observable<T>;
+    let requestObservable: Observable<ServiceMethodResultsInfo<T>>;
 
     switch (method) {
       case 'GET': {
-        requestObservable = (<any> this.http.get(api_url, httpOptions)) as Observable<T>;
+        requestObservable = (<any> this.http.get(api_url, httpOptions)) as Observable<ServiceMethodResultsInfo<T>>;
         break;
       }
       case 'POST': {
-        requestObservable = (<any> this.http.post(api_url, data, httpOptions)) as Observable<T>;
+        requestObservable = (<any> this.http.post(api_url, data, httpOptions)) as Observable<ServiceMethodResultsInfo<T>>;
         break;
       }
       case 'PUT': {
-        requestObservable = (<any> this.http.put(api_url, data, httpOptions)) as Observable<T>;
+        requestObservable = (<any> this.http.put(api_url, data, httpOptions)) as Observable<ServiceMethodResultsInfo<T>>;
         break;
       }
       case 'DELETE': {
-        requestObservable = (<any> this.http.delete(api_url, httpOptions)) as Observable<T>;
+        requestObservable = (<any> this.http.delete(api_url, httpOptions)) as Observable<ServiceMethodResultsInfo<T>>;
         break;
       }
     }
