@@ -37,8 +37,6 @@
     "@fortawesome/free-brands-svg-icons": "^5.14.0",
     "@fortawesome/free-solid-svg-icons": "^5.14.0",
     "@ngneat/tailwind": "^6.0.3",
-    "@ngrx/effects": "^10.0.0",
-    "@ngrx/store": "^10.0.0",
     "@stripe/terminal-js": "^0.8.0",
     "@types/google.maps": "^3.45.6",
     "@types/socket.io-client": "^1.4.33",
