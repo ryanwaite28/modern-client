@@ -10,7 +10,7 @@ import { UserStoreService } from 'projects/_common/src/app/stores/user-store.ser
 import { getUserFullName } from 'projects/_common/src/app/_misc/chamber';
 import { Subscription } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
-import { DELIVERME_EVENT_TYPES } from '../../../enums/deliverme.enum';
+import { DELIVERME_EVENT_TYPES, DeliveryCardDisplayMode } from '../../../enums/deliverme.enum';
 import { DeliveryService } from '../../../services/delivery.service';
 
 @Component({
@@ -24,6 +24,8 @@ export class DeliveryCardComponent implements OnInit {
   
   @Input() you: IUser | any;
   @Input() delivery: any;
+  @Input() deliveryCardDisplayMode: DeliveryCardDisplayMode = DeliveryCardDisplayMode.DEFAULT;
+  @Input() showEmbededContent: boolean = false;
 
   @Output() deliveryDelete = new EventEmitter<any>();
   @Output() deliveryCompleted = new EventEmitter<any>();
@@ -34,6 +36,7 @@ export class DeliveryCardComponent implements OnInit {
   showDetails: boolean = false;
   deliveryEventsListeners: any[] = [];
   payment_client_secret: any;
+  DeliveryCardDisplayMode = DeliveryCardDisplayMode;
 
   newDeliveryTrackingUpdateForm = new FormGroup({
     message: new FormControl('', [Validators.required]),
@@ -94,14 +97,12 @@ export class DeliveryCardComponent implements OnInit {
       const carrierAssignedListener = this.socketEventsService.listenCustom(
         DELIVERME_EVENT_TYPES.CARRIER_ASSIGNED,
         (event: any) => {
-          if (event.data.id === this.delivery.id) {
+          if (event.data.delivery.id === this.delivery.id) {
             console.log(event);
             this.alertService.handleResponseSuccessGeneric({
               message: event.message
             });
-            this.delivery.carrier_id = event.user.id;
-            this.delivery.carrier = event.user;
-            this.delivery.returned = false;
+            this.delivery = event.data.delivery;
           }
         }
       );
@@ -109,12 +110,12 @@ export class DeliveryCardComponent implements OnInit {
       const carrierUnassignedListener = this.socketEventsService.listenCustom(
         DELIVERME_EVENT_TYPES.CARRIER_UNASSIGNED,
         (event: any) => {
-          if (event.data.id === this.delivery.id) {
+          if (event.data.delivery.id === this.delivery.id) {
             console.log(event);
             this.alertService.handleResponseSuccessGeneric({
               message: event.message
             });
-            this.delivery = event.data;
+            this.delivery = event.data.delivery;
           }
         }
       );
@@ -122,12 +123,12 @@ export class DeliveryCardComponent implements OnInit {
       const markedPickedListener = this.socketEventsService.listenCustom(
         DELIVERME_EVENT_TYPES.CARRIER_MARKED_AS_PICKED_UP,
         (event: any) => {
-          if (event.data.id === this.delivery.id) {
+          if (event.data.delivery.id === this.delivery.id) {
             console.log(event);
             this.alertService.handleResponseSuccessGeneric({
               message: event.message
             });
-            this.delivery = event.data;
+            this.delivery = event.data.delivery;
           }
         }
       );
@@ -135,12 +136,12 @@ export class DeliveryCardComponent implements OnInit {
       const markedDroppedListener = this.socketEventsService.listenCustom(
         DELIVERME_EVENT_TYPES.CARRIER_MARKED_AS_DROPPED_OFF,
         (event: any) => {
-          if (event.data.id === this.delivery.id) {
+          if (event.data.delivery.id === this.delivery.id) {
             console.log(event);
             this.alertService.handleResponseSuccessGeneric({
               message: event.message
             });
-            this.delivery = event.data;
+            this.delivery = event.data.delivery;
           }
         }
       );
@@ -163,7 +164,7 @@ export class DeliveryCardComponent implements OnInit {
       const deliveryCompletedListener = this.socketEventsService.listenCustom(
         DELIVERME_EVENT_TYPES.DELIVERY_COMPLETED,
         (event: any) => {
-          if (event.data.id === this.delivery.id) {
+          if (event.data.delivery.id === this.delivery.id) {
             console.log(event);
             this.alertService.handleResponseSuccessGeneric({
               message: event.message
@@ -177,12 +178,12 @@ export class DeliveryCardComponent implements OnInit {
       const deliveryReturnedListener = this.socketEventsService.listenCustom(
         DELIVERME_EVENT_TYPES.DELIVERY_RETURNED,
         (event: any) => {
-          if (event.data.id === this.delivery.id) {
+          if (event.data.delivery.id === this.delivery.id) {
             console.log(event);
             this.alertService.handleResponseSuccessGeneric({
               message: event.message
             });
-            this.delivery = event.data;
+            this.delivery = event.data.delivery;
             this.deliveryReturned.emit();
           }
         }
@@ -383,10 +384,10 @@ export class DeliveryCardComponent implements OnInit {
       },
       next: (response: any) => {
         this.loading = false;
-        if (response.payment_client_secret) {
-          this.payment_client_secret = response.payment_client_secret;
+        if (response.data.payment_client_secret) {
+          this.payment_client_secret = response.data.payment_client_secret;
           this.alertService.handleResponseSuccessGeneric(response);
-          const stripe = (<any> window).Stripe(response.stripe_pk, {
+          const stripe = (<any> window).Stripe(response.data.stripe_pk, {
             // stripeAccount: this.you!.stripe_account_id
           });
           var elements = stripe.elements();
@@ -439,7 +440,7 @@ export class DeliveryCardComponent implements OnInit {
                   // post-payment actions.
                   this.alertService.handleResponseSuccessGeneric({ message: `Payment successful!` });
                   
-                  // wait a second to check if the server processed the payment.succeeded webhook
+                  // wait a second to check if the server processed the payment.succeeded via stripe webhook
                   setTimeout(() => {
                     this.deliveryService.markDeliveryAsCompleted(
                       this.you!.id,
@@ -452,6 +453,7 @@ export class DeliveryCardComponent implements OnInit {
                       },
                       error: (error: HttpErrorResponse) => {
                         this.loading = false;
+                        console.log(error);
                         // this.alertService.handleResponseErrorGeneric(error);
                       },
                       complete: () => {
@@ -459,8 +461,6 @@ export class DeliveryCardComponent implements OnInit {
                       }
                     });
                   }, 1000);
-
-                  
                 }
               }
             });

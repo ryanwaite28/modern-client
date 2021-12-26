@@ -11,7 +11,6 @@ import { TravellrsAppModule } from 'projects/travellrs/src/app/app.module';
 import { ClientService } from 'projects/_common/src/app/services/client.service';
 import { UserService } from 'projects/_common/src/app/services/user.service';
 import { CommonModule } from '@angular/common';
-import { XsrfTokenInterceptor } from 'projects/_common/src/app/http-interceptors/xsrf-token.http-interceptor';
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
 import { catchError, flatMap, map, retry, take } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -88,11 +87,6 @@ function APP_INITIALIZER_FACTORY(
     AppRoutingModule,
   ],
   providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: XsrfTokenInterceptor,
-      multi: true,
-    },
     {
       provide: APP_INITIALIZER,
       multi: true,

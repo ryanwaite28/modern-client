@@ -83,6 +83,7 @@ export class UserService {
       map(() => {
         this.userStore.setState(null);
         window.localStorage.removeItem('rmw-modern-apps-jwt');
+        console.log(`signed out`);
       })
     );
   }

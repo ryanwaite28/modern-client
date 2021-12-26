@@ -35,7 +35,7 @@ export class CommonNavbarPartialComponent implements OnInit {
   }
 
   onSignout() {
-    this.userService.sign_out().subscribe((response) => {
+    this.userService.sign_out().subscribe(() => {
       this.router.navigate(['/modern']);
     });
   }

@@ -181,7 +181,7 @@
 
         <div class="uk-margin">
           <span class="label-info">
-            Acknowledge final price: {{ chargeFeeData ? '$' + (chargeFeeData.new_total | stripeAmountFormatter) : '' }}
+            Acknowledge final price: {{ chargeFeeData ? '$' + (chargeFeeData.final_total | stripeAmountFormatter) : '' }}
           </span>
           <br/>
           <input

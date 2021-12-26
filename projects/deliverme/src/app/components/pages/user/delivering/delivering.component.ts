@@ -174,7 +174,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
       next: (response: any) => {
         console.log(response);
         this.alertService.handleResponseSuccessGeneric(response);
-        this.current_deliverings.unshift(response.data);
+        this.current_deliverings.unshift(response.data.delivery);
         this.potential_delivering = undefined;
         this.loading = false;
       },
@@ -221,7 +221,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
       next: (response: any) => {
         console.log(response);
         this.alertService.handleResponseSuccessGeneric(response);
-        Object.assign(delivery, response.data);
+        Object.assign(delivery, response.data.delivery);
         this.loading = false;
       },
       error: (error: any) => {
@@ -244,7 +244,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
       next: (response: any) => {
         console.log(response);
         this.alertService.handleResponseSuccessGeneric(response);
-        Object.assign(delivery, response.data);
+        Object.assign(delivery, response.data.delivery);
         this.loading = false;
       },
       error: (error: any) => {

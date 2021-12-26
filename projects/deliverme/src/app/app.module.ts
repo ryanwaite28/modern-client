@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
@@ -57,7 +57,9 @@ import { DeliverMeDeliveryBrowseFeaturedPageComponent } from './components/pages
   ],
   exports: [
   ],
-  providers: [],
+  providers: [
+    DecimalPipe
+  ],
   bootstrap: [AppComponent]
 })
 export class DeliverMeAppModule { }

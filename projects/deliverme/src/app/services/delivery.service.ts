@@ -147,6 +147,15 @@ export class DeliveryService {
     const endpoint = delivery_id
       ? `/deliverme/deliveries/browse-recent/${delivery_id}`
       : `/deliverme/deliveries/browse-recent`;
-    return this.clientService.sendRequest<T>(`/deliverme/deliveries/browse-recent`, `POST`, null);
+    return this.clientService.sendRequest<T>(endpoint, `POST`, null);
+  }
+
+  browseMap<T = any>(params: {
+    northEast: { lat: number, lng: number },
+    southWest: { lat: number, lng: number },
+  }) {
+    const { northEast, southWest } = params;
+    const endpoint = `/deliverme/deliveries/browse-map/swlat/${southWest.lat}/swlng/${southWest.lng}/nelat/${northEast.lat}/nelng/${northEast.lng}`;
+    return this.clientService.sendRequest<T>(endpoint, `POST`, null);
   }
 }
