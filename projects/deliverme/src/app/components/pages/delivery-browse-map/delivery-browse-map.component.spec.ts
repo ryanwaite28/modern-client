@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DeliveryBrowseMapComponent } from './delivery-browse-map.component';
+import { DeliverMeDeliveryBrowseMapPageComponent } from './delivery-browse-map.component';
 
-describe('DeliveryBrowseMapComponent', () => {
-  let component: DeliveryBrowseMapComponent;
-  let fixture: ComponentFixture<DeliveryBrowseMapComponent>;
+describe('DeliverMeDeliveryBrowseMapPageComponent', () => {
+  let component: DeliverMeDeliveryBrowseMapPageComponent;
+  let fixture: ComponentFixture<DeliverMeDeliveryBrowseMapPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DeliveryBrowseMapComponent ]
+      declarations: [ DeliverMeDeliveryBrowseMapPageComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DeliveryBrowseMapComponent);
+    fixture = TestBed.createComponent(DeliverMeDeliveryBrowseMapPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MODERN_APPS, USER_RECORDS } from 'projects/_common/src/app/enums/all.enums';
-import { ServiceMethodResults } from 'projects/_common/src/app/interfaces/_common.interface';
+import { IModelRating, ServiceMethodResults } from 'projects/_common/src/app/interfaces/_common.interface';
 import { ClientService } from 'projects/_common/src/app/services/client.service';
 import { UserService } from 'projects/_common/src/app/services/user.service';
+import { IDelivery } from '../interfaces/deliverme.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -131,31 +132,38 @@ export class DeliveryService {
     return this.clientService.sendRequest<T>(`/deliverme/users/${you_id}/settings`, `POST`, data);
   }
 
-  searchDeliveries<T = any>(data: any) {
-    return this.clientService.sendRequest<T>(`/deliverme/deliveries/search`, `POST`, data);
+  searchDeliveries(data: any) {
+    return this.clientService.sendRequest<IDelivery[]>(`/deliverme/deliveries/search`, `POST`, data);
   }
 
   sendDeliveryMessage<T = any>(data: any) {
     return this.clientService.sendRequest<T>(`/deliverme/deliveries/${data.delivery_id}/message`, `POST`, data);
   }
 
-  createCheckoutSession<T = any>(delivery_id: number) {
-    return this.clientService.sendRequest<T>(`/deliverme/deliveries/${delivery_id}/create-checkout-session`, `POST`);
+  createPaymentIntent<T = any>(delivery_id: number) {
+    return this.clientService.sendRequest<T>(`/deliverme/deliveries/${delivery_id}/create-payment-intent`, `POST`);
   }
 
-  browseRecent<T = any>(delivery_id?: number) {
+  browseRecent(delivery_id?: number) {
     const endpoint = delivery_id
       ? `/deliverme/deliveries/browse-recent/${delivery_id}`
       : `/deliverme/deliveries/browse-recent`;
-    return this.clientService.sendRequest<T>(endpoint, `POST`, null);
+    return this.clientService.sendRequest<IDelivery[]>(endpoint, `POST`, null);
   }
 
-  browseMap<T = any>(params: {
+  browseMap(params: {
     northEast: { lat: number, lng: number },
     southWest: { lat: number, lng: number },
   }) {
     const { northEast, southWest } = params;
     const endpoint = `/deliverme/deliveries/browse-map/swlat/${southWest.lat}/swlng/${southWest.lng}/nelat/${northEast.lat}/nelng/${northEast.lng}`;
-    return this.clientService.sendRequest<T>(endpoint, `POST`, null);
+    return this.clientService.sendRequest<IDelivery[]>(endpoint, `POST`, null);
+  }
+
+  getUserStats(user_id: number) {
+    return this.clientService.sendRequest<{
+      user_ratings_info: IModelRating | null,
+      writer_ratings_info: IModelRating | null,
+    }>(`/deliverme/users/${user_id}/stats`, `GET`, null);
   }
 }

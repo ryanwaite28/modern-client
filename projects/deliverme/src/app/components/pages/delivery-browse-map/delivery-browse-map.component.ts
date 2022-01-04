@@ -4,6 +4,7 @@ import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } fr
 import { Router } from '@angular/router';
 import { PlainObject } from 'projects/_common/src/app/interfaces/json-object.interface';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
+import { ServiceMethodResultsInfo } from 'projects/_common/src/app/interfaces/_common.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
@@ -119,8 +120,8 @@ export class DeliverMeDeliveryBrowseMapPageComponent implements OnInit, AfterVie
         </p>
         </div>`;
         // <p><strong>Miles:</strong><br>${this.decimalPipe.transform(delivery.distance_miles)}</p>
-        // <p><strong>Payout:</strong><br>$${delivery.payout}</p>
-        // <p><strong>Penalty:</strong><br>$${delivery.penalty}</p>
+        // <p><strong>Payout:</strong><br>${delivery.payout}</p>
+        // <p><strong>Penalty:</strong><br>${delivery.penalty}</p>
       const marker = new this.google.maps.Marker({
         position: { lat: delivery.from_lat, lng: delivery.from_lng },
         animation: this.google.maps.Animation.DROP,
@@ -194,11 +195,17 @@ export class DeliverMeDeliveryBrowseMapPageComponent implements OnInit, AfterVie
     this.clearBrowseData();
 
     this.loading = true;
-    this.deliveryService.browseMap<IDelivery[]>(useCoordinates).subscribe({
-      next: (response) => {
+    this.deliveryService.browseMap(useCoordinates).subscribe({
+      next: (response: ServiceMethodResultsInfo<IDelivery[]>) => {
         this.loading = false;
         console.log({ response });
-        this.setBrowseData(response.data!);
+        if (!response.data!.length) {
+          this.alertService.showWarningMessage(`No results...`);
+          return;
+        }
+        else {
+          this.setBrowseData(response.data!);
+        }
       },
       error: (error: HttpErrorResponse) => {
         this.loading = false;

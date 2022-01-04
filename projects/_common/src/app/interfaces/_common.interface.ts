@@ -93,13 +93,14 @@ export interface IUserPageView extends ICommonModel {
   seen_id:             number,
 }
 
-export interface IUserRating extends ICommonModel {
+export interface IModelRating extends ICommonModel {
   user_id:             number,
   writer_id:           number,
   rating:              number,
   title:               string,
   summary:             string,
 }
+export interface IUserRating extends IModelRating {}
 
 export interface IUserReaction extends ICommonModel {
   owner_id:            number,

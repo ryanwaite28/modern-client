@@ -44,16 +44,17 @@
             <small>ID Required: {{ delivery.to_person_id_required ? 'yes' : 'no' }}</small><br/>
             <small>Signature Required: {{ delivery.to_person_sig_required ? 'yes' : 'no' }}</small>
           </p>
+
+          <p>
+            <strong>Payout</strong>: {{ delivery.payout | currency }}<br/>
+            <strong>Penalty</strong>: {{ delivery.penalty | currency }}
+          </p>
       
           <p>
             <strong>Distance</strong><br/>
             {{ delivery.distance_miles | number }} Miles
           </p>
         </div>
-      </div>
-
-      <div *ngIf="showEmbededContent" class="uk-card-footer">
-        <ng-content></ng-content>
       </div>
     </div>
 
@@ -130,6 +131,11 @@
             <small>Email: {{ delivery.to_person_email }}</small><br/>
             <small>ID Required: {{ delivery.to_person_id_required ? 'yes' : 'no' }}</small><br/>
             <small>Signature Required: {{ delivery.to_person_sig_required ? 'yes' : 'no' }}</small>
+          </p>
+
+          <p>
+            <strong>Payout</strong>: {{ delivery.payout | currency }}<br/>
+            <strong>Penalty</strong>: {{ delivery.penalty | currency }}
           </p>
       
           <p>
@@ -389,6 +395,17 @@
           </form>
         </div>
       </div>
+
+      <!--  
+        https://stackoverflow.com/questions/38816157/content-projection-with-ngif-not-work-fine
+      -->
+      <!-- <div *ngIf="showEmbeddedContent" class="uk-card-footer embedded-content">
+        <ng-content></ng-content>
+      </div> -->
+    </div>
+
+    <div *ngIf="showEmbeddedContent" class="uk-card-footer embedded-content">
+      <ng-content></ng-content>
     </div>
   </ng-container>
 </div>

@@ -59,6 +59,13 @@ export class AlertService {
     }, true);
   }
 
+  showWarningMessage(message: string) {
+    this.addAlert({
+      type: this.AlertTypes.WARNING,
+      message,
+    }, true);
+  }
+
   handleResponseSuccessGeneric(response: { message: string }) {
     this.addAlert({
       type: this.AlertTypes.SUCCESS,

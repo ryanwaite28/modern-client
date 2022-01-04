@@ -10,19 +10,17 @@
   <div *ngSwitchCase="true">
     <div class="border-grey-1 uk-card uk-card-default margin-bottom-10 border-grey-1">
       <div class="uk-card-body">
-        <p class="uk-text-large">Active Deliveries <small class="text-grey">({{ current_deliverings.length }})</small></p>
+        <p class="uk-text-large">Active Deliveries</p>
       </div>
     </div>
     <div *ngFor="let delivery of current_deliverings" class="border-grey-1 uk-card uk-card-default margin-bottom-10">
-      <div class="uk-card-body">
-        <deliverme-delivery-card
-          [delivery]="delivery"
-          [you]="you"
-          (deliveryCompleted)="onCurrentDeliveryCompleted(delivery)"
-        ></deliverme-delivery-card>
-  
-        <div class="margin-top-20"></div>
-  
+      <deliverme-delivery-card
+        [delivery]="delivery"
+        [you]="you"
+        [showEmbeddedContent]="true"
+        [deliveryCardDisplayMode]="DeliveryCardDisplayMode.DEFAULT"
+        (deliveryCompleted)="onCurrentDeliveryCompleted(delivery)"
+      >
         <div>
           <span class="margin-right-10">
             <button
@@ -60,20 +58,28 @@
             </button>
           </span>
         </div>
-      </div>
+      </deliverme-delivery-card>
     </div>
     
     <div class="uk-card uk-card-default margin-bottom-10 border-grey-1">
       <div class="uk-card-body">
-        <p class="uk-text-large">Past Deliveries <small class="text-grey">({{ past_deliverings.length }})</small></p>
+        <p class="uk-text-large">Past Deliveries</p>
       </div>
     </div>
-  
     <div *ngFor="let delivery of past_deliverings" class="margin-bottom-10">
       <deliverme-delivery-card
         [delivery]="delivery"
         [you]="you"
       ></deliverme-delivery-card>
-    </div>  
+    </div>
+    <button
+      *ngIf="!end_reached_past"
+      type="submit"
+      class="uk-button uk-button-primary"
+      [disabled]="loading"
+      (click)="getDeliverings()"
+    >
+      Load More
+    </button>
   </div>
 </div>

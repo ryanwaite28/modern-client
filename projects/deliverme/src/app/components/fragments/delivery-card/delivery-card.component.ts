@@ -25,7 +25,7 @@ export class DeliveryCardComponent implements OnInit {
   @Input() you: IUser | any;
   @Input() delivery: any;
   @Input() deliveryCardDisplayMode: DeliveryCardDisplayMode = DeliveryCardDisplayMode.DEFAULT;
-  @Input() showEmbededContent: boolean = false;
+  @Input() showEmbeddedContent: boolean = false;
 
   @Output() deliveryDelete = new EventEmitter<any>();
   @Output() deliveryCompleted = new EventEmitter<any>();
@@ -377,7 +377,7 @@ export class DeliveryCardComponent implements OnInit {
     }
     
     this.loading = true;
-    this.deliveryService.createCheckoutSession(this.delivery.id).subscribe({
+    this.deliveryService.createPaymentIntent(this.delivery.id).subscribe({
       error: (error: HttpErrorResponse) => {
         this.loading = false;
         this.alertService.handleResponseErrorGeneric(error);

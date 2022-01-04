@@ -19,22 +19,18 @@
         <deliverme-delivery-card
           [delivery]="delivery"
           [deliveryCardDisplayMode]="DeliveryCardDisplayMode.BROWSE"
-          [showEmbededContent]="true"
+          [showEmbeddedContent]="true"
           [you]="you"
-          (deliveryDelete)="onDeleteDelivery(delivery)"
         >
-          <div>
-            <p>
-              Take this delivery? 
-              <button
-                type="submit"
-                class="uk-button uk-button-small uk-button-secondary"
-                [disabled]="loading"
-                (click)="assignDelivery(delivery)"
-              >
-                Take Delivery!
-              </button>
-            </p>
+          <div class="delivery-card-content-container">
+            <button
+              type="submit"
+              class="uk-button uk-button-small uk-button-secondary"
+              [disabled]="loading"
+              (click)="assignDelivery(delivery)"
+            >
+              Take Delivery!
+            </button>
           </div>
         </deliverme-delivery-card>
       </div>

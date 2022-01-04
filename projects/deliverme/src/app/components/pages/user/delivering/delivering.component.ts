@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { DeliveryCardDisplayMode } from 'projects/deliverme/src/app/enums/deliverme.enum';
 import { DeliveryService } from 'projects/deliverme/src/app/services/delivery.service';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
@@ -30,9 +31,10 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
   you: any;
   current_deliverings: any[] = [];
   potential_delivering: any;
+  DeliveryCardDisplayMode = DeliveryCardDisplayMode;
 
   past_deliverings: any[] = [];
-  end_reached: boolean = true;
+  end_reached_past: boolean = true;
   loading: boolean = false;
 
   searchCriteriaCtrl = new FormControl(searchCriterias[2].value, []);
@@ -98,7 +100,7 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
         for (const delivery of response.data) {
           this.past_deliverings.push(delivery);
         }
-        this.end_reached = response.data.length < 5;
+        this.end_reached_past = response.data.length < 5;
         this.loading = false;
         this.changeDetectorRef.detectChanges();
       },
