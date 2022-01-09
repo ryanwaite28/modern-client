@@ -6,6 +6,7 @@ import { AlertTypes } from 'projects/_common/src/app/enums/all.enums';
 import { PlainObject } from 'projects/_common/src/app/interfaces/json-object.interface';
 import { IUserField } from 'projects/_common/src/app/interfaces/user-field.interface';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
+import { IApiKey, ServiceMethodResultsInfo } from 'projects/_common/src/app/interfaces/_common.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
 import { ClientService } from 'projects/_common/src/app/services/client.service';
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
@@ -26,7 +27,7 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
   infoData: PlainObject = {};
   locationInfo: PlainObject = {};
   loadingPath = '';
-
+  apiKey: IApiKey | undefined;
   cityQuery?: string;
   zipcodeQuery?: string;
   placeData: PlainObject = {};
@@ -102,9 +103,10 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.userStore.getChangesObs().subscribe(you => {
-      this.you = you;
-      this.setFormsInitialState();
+    this.userStore.getChangesObs().subscribe({
+      next: (you: IUser | null) => {
+        this.initSettings(you);
+      }
     });
   }
 
@@ -124,6 +126,19 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  initSettings(you: IUser | null) {
+    this.you = you;
+    this.setFormsInitialState();
+
+    if (you) {
+      this.userService.get_user_api_key(you.id).subscribe({
+        next: (response: ServiceMethodResultsInfo<IApiKey>) => {
+          this.apiKey = response.data;
+        }
+      });
+    }
   }
 
   initGoogle(google: any) {

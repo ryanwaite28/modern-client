@@ -19,6 +19,7 @@ import { IUserField } from '../interfaces/user-field.interface';
 import { MODERN_APPS, USER_RECORDS } from '../enums/all.enums';
 import { HttpStatusCode } from '../enums/http-codes.enum';
 import { UtilityService } from './utility.service';
+import { IApiKey } from '../interfaces/_common.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -204,6 +205,15 @@ export class UserService {
   get_unseen_counts(you_id: number) {
     const endpoint = `/common/users/${you_id}/unseen-counts`;
     return this.clientService.sendRequest<any>(endpoint, `GET`).pipe(
+      map((response) => {
+        return response;
+      })
+    );
+  }
+
+  get_user_api_key(you_id: number) {
+    const endpoint = `/common/users/${you_id}/api-key`;
+    return this.clientService.sendRequest<IApiKey>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })

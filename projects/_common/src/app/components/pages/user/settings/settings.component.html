@@ -187,7 +187,9 @@
     <div class="uk-card-body">
       <h3>API Key</h3>
       
-      
+      <p *ngIf="apiKey">
+        Your API Key: {{ apiKey.key }}
+      </p>
     </div>
   </div>
 </div>

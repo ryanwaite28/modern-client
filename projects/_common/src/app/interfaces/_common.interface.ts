@@ -3,6 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { REACTION_TYPES } from '../enums/all.enums';
 import { HttpStatusCode } from '../enums/http-codes.enum';
 import { PlainObject } from './json-object.interface';
+import { IUser } from './user.interface';
 
 
 
@@ -314,6 +315,41 @@ export interface IToken extends ICommonModel {
   user_agent:              string,
   date_created:            string,
   date_last_used:          string,
+}
+
+export interface IApiKey extends ICommonModel {
+  user_id:             number | null,
+  key:                 string,
+  firstname:           string,
+  middlename:          string,
+  lastname:            string,
+  email:               string,
+  phone:               string,
+  website:             string,
+  subscription_plan:   string,
+
+  user?: IUser;
+}
+
+export interface ApiKeyInvoice extends ICommonModel {
+  key_id:              number,
+  invoice_id:          number,
+  status:              string,
+}
+
+export interface IApiKeyAllowedOrigin extends ICommonModel {
+  key_id:              number,
+  origin:              string,
+}
+
+export interface IApiKeyRequest extends ICommonModel {
+  key_id:              number,
+  request_url:         string,
+  request_headers:     string,
+  request_body:        string,
+  resource:            string,
+  response:            number,
+  results:             string,
 }
 
 
