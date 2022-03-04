@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MODERN_APPS, USER_RECORDS } from 'projects/_common/src/app/enums/all.enums';
 import { ClientService } from 'projects/_common/src/app/services/client.service';
-import { UserService } from 'projects/_common/src/app/services/user.service';
+import { UsersService } from 'projects/_common/src/app/services/users.service';
 import { Subject } from 'rxjs';
 
 @Injectable({
@@ -13,7 +13,7 @@ export class TravelsService {
   
   constructor(
     private http: HttpClient,
-    private userService: UserService,
+    private userService: UsersService,
     private clientService: ClientService,
   ) {}
 

@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FavorsService } from 'projects/myfavors/src/app/services/favors.service';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
-import { UserService } from 'projects/_common/src/app/services/user.service';
+import { UsersService } from 'projects/_common/src/app/services/users.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
 
 @Component({
@@ -18,7 +18,7 @@ export class MyfavorsFavorPageComponent implements OnInit {
 
   constructor(
     private userStore: UserStoreService,
-    private userService: UserService,
+    private userService: UsersService,
     private alertService: AlertService,
     private router: Router,
     private route: ActivatedRoute,

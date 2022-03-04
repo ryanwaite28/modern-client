@@ -63,6 +63,7 @@ export class DeliverMeUserDeliveriesFragmentComponent implements AfterViewInit, 
     this.loading = true;
     this.deliveryService.delete_delivery(delivery.id).subscribe({
       next: (response: any) => {
+        this.alertService.handleResponseSuccessGeneric(response);
         const index = this.deliveries.indexOf(delivery);
         this.deliveries.splice(index, 1);
         this.loading = false;

@@ -7,7 +7,7 @@ import { IUserField } from 'projects/_common/src/app/interfaces/user-field.inter
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
-import { UserService } from 'projects/_common/src/app/services/user.service';
+import { UsersService } from 'projects/_common/src/app/services/users.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
 import { Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
@@ -43,7 +43,7 @@ export class TravellrsUserTravelsPageComponent implements OnInit {
 
   constructor(
     private userStore: UserStoreService,
-    private userService: UserService,
+    private userService: UsersService,
     private router: Router,
     private route: ActivatedRoute,
     private googleMapsService: GoogleMapsService,

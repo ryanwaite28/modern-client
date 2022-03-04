@@ -7,7 +7,7 @@ import {
 } from '@angular/router';
 import { map } from 'rxjs/operators';
 import { CanActivateReturn } from './_guard';
-import { UserService } from '../services/user.service';
+import { UsersService } from '../services/users.service';
 import { IUser } from '../interfaces/user.interface';
 
 
@@ -16,7 +16,7 @@ import { IUser } from '../interfaces/user.interface';
 })
 export class SignedOutGuard implements CanActivate {
   constructor(
-    private userService: UserService,
+    private userService: UsersService,
     private router: Router,
   ) {}
 

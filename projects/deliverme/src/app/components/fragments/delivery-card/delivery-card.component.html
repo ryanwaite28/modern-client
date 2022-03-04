@@ -63,12 +63,12 @@
       <div *ngIf="isDeliveryOwner || isDeliveryCarrier" class="uk-card-header">
         <div class="uk-grid-small uk-flex-middle" uk-grid>
           <div class="uk-width-auto">
-            <img class="uk-border-circle" width="40" height="40" [src]="delivery.owner.icon_link || './assets/img/anon.png'">
+            <img class="uk-border-circle" width="40" height="40" [src]="delivery.owner!.icon_link || './assets/img/anon.png'">
           </div>
           <div class="uk-width-expand">
-            <h3 class="uk-card-title uk-margin-remove-bottom">{{ delivery.owner.displayname }}</h3>
+            <h3 class="uk-card-title uk-margin-remove-bottom">{{ delivery.owner!.displayname }}</h3>
             <p class="uk-margin-remove-top">
-              <a [routerLink]="['/', 'modern', 'users', delivery.owner_id, 'home']">@{{ delivery.owner.username }}</a>
+              <a [routerLink]="['/', 'modern', 'users', delivery.owner_id, 'home']">@{{ delivery.owner!.username }}</a>
             </p>
           </div>
         </div>
@@ -164,12 +164,12 @@
     
         <div class="uk-grid-small uk-flex-middle" uk-grid>
           <div class="uk-width-auto">
-            <img class="uk-border-circle" width="40" height="40" [src]="delivery.carrier.icon_link || './assets/img/anon.png'">
+            <img class="uk-border-circle" width="40" height="40" [src]="delivery.carrier!.icon_link || './assets/img/anon.png'">
           </div>
           <div class="uk-width-expand">
-            <h3 class="uk-text-medium uk-margin-remove-bottom">{{ delivery.carrier.displayname }}</h3>
+            <h3 class="uk-text-medium uk-margin-remove-bottom">{{ delivery.carrier!.displayname }}</h3>
             <p class="uk-margin-remove-top">
-              <a [routerLink]="['/', 'modern', 'users', delivery.carrier_id, 'home']">@{{ delivery.carrier.username }}</a>
+              <a [routerLink]="['/', 'modern', 'users', delivery.carrier_id, 'home']">@{{ delivery.carrier!.username }}</a>
             </p>
           </div>
         </div>
@@ -197,15 +197,15 @@
           <br/>
         </p>
     
-        <p *ngIf="(isDeliveryOwner || isDeliveryCarrier) && delivery.carrier.deliverme_settings">
+        <p *ngIf="(isDeliveryOwner || isDeliveryCarrier) && delivery.carrier!.deliverme_settings">
           <strong>Carrier Contact/Payment Options</strong>
           <br/>
-          <small>Phone: {{ delivery.carrier.deliverme_settings.phone }}</small><br>
-          <small>Email: {{ delivery.carrier.deliverme_settings.email }}</small><br>
-          <small>CashApp: {{ delivery.carrier.deliverme_settings.cashapp_tag }}</small><br>
-          <small>Venmo: {{ delivery.carrier.deliverme_settings.venmo_id }}</small><br>
-          <small>PayPal: {{ delivery.carrier.deliverme_settings.paypal_me }}</small><br>
-          <small>Google Pay: {{ delivery.carrier.deliverme_settings.google_pay }}</small><br>
+          <small>Phone: {{ delivery.carrier!.deliverme_settings.phone }}</small><br>
+          <small>Email: {{ delivery.carrier!.deliverme_settings.email }}</small><br>
+          <small>CashApp: {{ delivery.carrier!.deliverme_settings.cashapp_tag }}</small><br>
+          <small>Venmo: {{ delivery.carrier!.deliverme_settings.venmo_id }}</small><br>
+          <small>PayPal: {{ delivery.carrier!.deliverme_settings.paypal_me }}</small><br>
+          <small>Google Pay: {{ delivery.carrier!.deliverme_settings.google_pay }}</small><br>
         </p>
       </div>
     
@@ -277,7 +277,7 @@
         </div>
     
         <div class="">
-          <p *ngIf="!delivery.deliverme_delivery_tracking_updates.length">None yet...</p>
+          <p *ngIf="!delivery.deliverme_delivery_tracking_updates!.length">None yet...</p>
           <div class="tracking-update-item" *ngFor="let tracking_update of delivery.deliverme_delivery_tracking_updates">
             <p>
               <strong>{{ tracking_update.message }}</strong><br/>
@@ -311,16 +311,16 @@
     
           <div class="messages-item transition" *ngFor="let m of delivery.delivery_messages">
             <div class="messages-item-inner">
-              <div class="user-icon-container-{{ m.user.id === you!.id ? 'right' : 'left' }}">
+              <div class="user-icon-container-{{ m.user!.id === you!.id ? 'right' : 'left' }}">
                 <img
                   class="user-icon-circle"
-                  [src]="(m.user.icon_link) || './assets/img/anon.png'"
+                  [src]="(m.user!.icon_link) || './assets/img/anon.png'"
                 />
               </div>
-              <div class="message-text-{{ m.user.id === you!.id ? 'right' : 'left' }}">
+              <div class="message-text-{{ m.user!.id === you!.id ? 'right' : 'left' }}">
                 <p>
-                  <a [routerLink]="['/', 'modern', 'users', m.user.id, 'home']">
-                   {{ m.user.firstname + ' ' + m.user.lastname }}
+                  <a [routerLink]="['/', 'modern', 'users', m.user!.id, 'home']">
+                   {{ m.user!.firstname + ' ' + m.user!.lastname }}
                   </a>
                   <br/>
                   <span class="lead" [innerHTML]="m.body"></span>

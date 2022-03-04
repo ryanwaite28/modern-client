@@ -4,7 +4,9 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
+import '@themesberg/flowbite';
 import '@stripe/terminal-js';
+import '@stripe/stripe-js';
 
 if (environment.production) {
   enableProdMode();

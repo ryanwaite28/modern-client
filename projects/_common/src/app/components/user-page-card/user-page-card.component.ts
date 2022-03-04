@@ -3,7 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AlertService } from '../../services/alert.service';
 import { ConnectionsService } from '../../services/connections.service';
 import { SocketEventsService } from '../../services/socket-events.service';
-import { UserService } from '../../services/user.service';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'common-user-page-card',
@@ -48,7 +48,7 @@ export class CommonUserPageCardComponent implements OnInit {
   });
 
   constructor(
-    private userService: UserService,
+    private userService: UsersService,
     private alertService: AlertService,
     private connectionsService: ConnectionsService,
     private socketEventsService: SocketEventsService,
@@ -120,10 +120,7 @@ export class CommonUserPageCardComponent implements OnInit {
       this.messageForm.value
     ).subscribe({
       next: (response: any) => {
-        this.alertService.addAlert({
-          type: this.alertService.AlertTypes.SUCCESS,
-          message: response.message
-        }, true);
+        this.alertService.showSuccessMessage(response.message);
         this.messageForm.setValue({ body: '' });
         this.messageFormIsOpen = false;
         this.loading = false;

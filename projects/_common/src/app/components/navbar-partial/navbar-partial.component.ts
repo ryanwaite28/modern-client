@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { IUser } from '../../interfaces/user.interface';
 import { IUnseen, UnseenService } from '../../services/unseen.service';
-import { UserService } from '../../services/user.service';
+import { UsersService } from '../../services/users.service';
 
 @Component({
   selector: 'common-navbar-partial',
@@ -21,7 +21,7 @@ export class CommonNavbarPartialComponent implements OnInit {
   constructor(
     private router: Router,
     private unseenService: UnseenService,
-    private userService: UserService,
+    private userService: UsersService,
   ) { }
 
   ngOnInit(): void {
@@ -35,8 +35,7 @@ export class CommonNavbarPartialComponent implements OnInit {
   }
 
   onSignout() {
-    this.userService.sign_out().subscribe(() => {
-      this.router.navigate(['/modern']);
-    });
+    this.userService.sign_out();
+    this.router.navigate(['/modern']);
   }
 }

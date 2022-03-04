@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { IUser } from './interfaces/user.interface';
-import { UserService } from './services/user.service';
+import { UsersService } from './services/users.service';
 import { UserStoreService } from './stores/user-store.service';
 
 @Component({
@@ -18,7 +18,7 @@ export class CommonAppComponent {
 
   constructor(
     private userStore: UserStoreService,
-    private userService: UserService,
+    private userService: UsersService,
     private router: Router,
     private route: ActivatedRoute,
   ) { }

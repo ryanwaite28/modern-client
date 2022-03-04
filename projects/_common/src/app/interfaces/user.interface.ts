@@ -11,6 +11,7 @@ export interface IUser extends ICommonModel {
   password?:                   string,
   paypal:                      string,
   paypal_verified:             boolean,
+  stripe_customer_account_id:  string,
   stripe_account_id:           string,
   stripe_account_verified:     boolean,
   phone:                       string,

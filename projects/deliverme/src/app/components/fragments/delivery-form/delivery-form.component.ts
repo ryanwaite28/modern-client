@@ -1,10 +1,12 @@
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, EventEmitter, Output, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { PaymentMethod } from '@stripe/stripe-js';
 import { AlertTypes } from 'projects/_common/src/app/enums/all.enums';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
 import { StripeService } from 'projects/_common/src/app/services/stripe.service';
+import { UsersService } from 'projects/_common/src/app/services/users.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
 import { Subscription } from 'rxjs';
 
@@ -22,23 +24,24 @@ const delivery_form_config = [
   { field: 'title', defaultValue: '', validations: [Validators.required, Validators.minLength(10)] },
   { field: 'description', defaultValue: '', validations: [Validators.required, Validators.minLength(10)] },
   { field: 'file', defaultValue: null, validations: [] },
-
+  
   { field: 'from_person', defaultValue: '', validations: [Validators.required] },
   { field: 'from_person_phone', defaultValue: '', validations: [] },
   { field: 'from_person_email', defaultValue: '', validations: [] },
   { field: 'from_person_id_required', defaultValue: false, validations: [] },
   { field: 'from_person_sig_required', defaultValue: false, validations: [] },
-
+  
   { field: 'to_person', defaultValue: '', validations: [Validators.required] },
   { field: 'to_person_phone', defaultValue: '', validations: [] },
   { field: 'to_person_email', defaultValue: '', validations: [] },
   { field: 'to_person_id_required', defaultValue: false, validations: [] },
   { field: 'to_person_sig_required', defaultValue: false, validations: [] },
-
+  
   { field: 'size', defaultValue: sizes[1], validations: [Validators.required] },
   { field: 'weight', defaultValue: 0, validations: [Validators.required, Validators.min(0)] },
   { field: 'payout', defaultValue: 0, validations: [Validators.required, Validators.min(payout_min)] },
   { field: 'penalty', defaultValue: 0, validations: [Validators.required, Validators.min(0)] },
+  { field: 'payment_method_id', defaultValue: '', validations: [Validators.required] },
   { field: 'auto_accept_anyone', defaultValue: true, validations: [] },
   { field: 'urgent', defaultValue: false, validations: [] },
 ];
@@ -70,6 +73,7 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
   sizes = sizes;
   payout_min = payout_min;
   acknowledgement_checked = false;
+  payment_methods: PaymentMethod[] | null = null;
 
   deliveryForm: FormGroup;
 
@@ -80,6 +84,7 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
     private stripeService: StripeService,
     private alertService: AlertService,
     private googleMapsService: GoogleMapsService,
+    private userService: UsersService,
   ) {
     const formGroupConfig: { [key:string]: FormControl } = {};
     for (const config of delivery_form_config) {
@@ -119,6 +124,12 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
           urgent: false,
         });
       }
+      
+      this.userService.get_user_customer_cards_payment_methods(this.you.id).subscribe({
+        next: (response) => {
+          this.payment_methods = response.data;
+        }
+      });
     });
 
     this.googleSub = this.googleMapsService.isReady().subscribe(
@@ -219,6 +230,7 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
       this.fromLocationInput!.nativeElement.value = '';
       this.toLocationInput!.nativeElement.value = '';
       this.acknowledgement_checked = false;
+      this.chargeFeeData = undefined;
     }
   }
 
@@ -227,16 +239,10 @@ export class DeliveryFormComponent implements AfterViewInit, OnDestroy {
     fileInput: HTMLInputElement
   ) {
     if (!this.isEditing && !this.fromPlaceData.lat) {
-      return this.alertService.addAlert({
-        type: AlertTypes.DANGER,
-        message: `From Location is required`
-      }, true);
+      return this.alertService.showErrorMessage(`From Location is required`);
     }
     if (!this.isEditing && !this.toPlaceData.lat) {
-      return this.alertService.addAlert({
-        type: AlertTypes.DANGER,
-        message: `To Location is required`
-      }, true);
+      return this.alertService.showErrorMessage(`To Location is required`);
     }
 
     const distance = this.googleMapsService.get_distance_spherical_api({

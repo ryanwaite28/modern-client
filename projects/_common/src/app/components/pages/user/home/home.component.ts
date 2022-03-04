@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { IUserField } from 'projects/_common/src/app/interfaces/user-field.interface';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
-import { UserService } from 'projects/_common/src/app/services/user.service';
+import { UsersService } from 'projects/_common/src/app/services/users.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
 
 @Component({
@@ -26,7 +26,7 @@ export class CommonUserHomeFragmentComponent implements OnInit {
 
   constructor(
     private userStore: UserStoreService,
-    private userService: UserService,
+    private userService: UsersService,
     private router: Router,
     private route: ActivatedRoute,
   ) { }

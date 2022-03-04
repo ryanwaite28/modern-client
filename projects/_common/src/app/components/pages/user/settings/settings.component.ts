@@ -1,7 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute, Params } from '@angular/router';
+import { PaymentMethod, PaymentMethodResult, StripeCardElement } from '@stripe/stripe-js';
 import { AlertTypes } from 'projects/_common/src/app/enums/all.enums';
 import { PlainObject } from 'projects/_common/src/app/interfaces/json-object.interface';
 import { IUserField } from 'projects/_common/src/app/interfaces/user-field.interface';
@@ -10,9 +11,10 @@ import { IApiKey, ServiceMethodResultsInfo } from 'projects/_common/src/app/inte
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
 import { ClientService } from 'projects/_common/src/app/services/client.service';
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
-import { UserService } from 'projects/_common/src/app/services/user.service';
+import { StripeService } from 'projects/_common/src/app/services/stripe.service';
+import { UsersService } from 'projects/_common/src/app/services/users.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
-import { capitalize } from 'projects/_common/src/app/_misc/chamber';
+import { capitalize, getUserFullName } from 'projects/_common/src/app/_misc/chamber';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -20,14 +22,15 @@ import { Subscription } from 'rxjs';
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
-export class CommonUserSettingsFragmentComponent implements OnInit {
-  you: IUser | any;
+export class CommonUserSettingsFragmentComponent implements OnInit, AfterViewInit, OnDestroy {
+  you: IUser | null = null;
   loading: boolean = false;
   initState = false;
   infoData: PlainObject = {};
   locationInfo: PlainObject = {};
   loadingPath = '';
   apiKey: IApiKey | undefined;
+  payment_methods: PaymentMethod[] = [];
   cityQuery?: string;
   zipcodeQuery?: string;
   placeData: PlainObject = {};
@@ -91,15 +94,29 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
   googleIsReadySub?: Subscription;
   autocomplete?: any;
   manage: PlainObject = {};
+  stripe: any;
+  cardElement?: StripeCardElement;
+  cardFormHasErrors = true;
+  cardChangeHandler = (event: any) => {
+    const displayError = document.getElementById('card-errors');
+    if (event.error) {
+      displayError!.textContent = event.error.message;
+      this.cardFormHasErrors = true;
+    } else {
+      displayError!.textContent = '';
+      this.cardFormHasErrors = false;
+    }
+  }
 
   constructor(
     private userStore: UserStoreService,
-    private userService: UserService,
+    private userService: UsersService,
     private alertService: AlertService,
     private clientService: ClientService,
     private router: Router,
     private route: ActivatedRoute,
     private googleService: GoogleMapsService,
+    private stripeService: StripeService,
   ) { }
 
   ngOnInit() {
@@ -128,6 +145,10 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
     );
   }
 
+  ngOnDestroy(): void {
+    this.cardElement?.off && this.cardElement?.off("change");
+  }
+
   initSettings(you: IUser | null) {
     this.you = you;
     this.setFormsInitialState();
@@ -138,7 +159,31 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
           this.apiKey = response.data;
         }
       });
+
+      this.userService.get_user_customer_cards_payment_methods(you.id).subscribe({
+        next: (response) => {
+          this.payment_methods = response.data;
+        }
+      });
+
+      this.createStripeCustomerCardElement();
     }
+  }
+
+  createStripeCustomerCardElement() {
+    const stripe = this.stripeService.getStripe();
+    const elements = stripe.elements();
+    const style = {
+      base: {
+        color: "#32325d",
+      }
+    };
+    const card = elements.create("card", { style: style });
+    const cardId = '#new-card-payment-container';
+    card.mount(cardId);
+
+    card.on('change', this.cardChangeHandler);
+    this.cardElement = card;
   }
 
   initGoogle(google: any) {
@@ -217,21 +262,8 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
     }
   }
 
-  handleResponseSuccess(response: { message?: string }) {
-    if (!response.message) {
-      return;
-    }
-    this.alertService.addAlert({
-      type: AlertTypes.SUCCESS,
-      message: response.message
-    }, true);
-  }
-
   handleResponseError(error: HttpErrorResponse) {
-    this.alertService.addAlert({
-      type: AlertTypes.DANGER,
-      message: error.error.message
-    }, true);
+    this.alertService.showErrorMessage(error.error.message);
     this.loading = false;
   }
 
@@ -255,7 +287,7 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
     this.userService.update_info(this.you!.id, data)
       .subscribe(
         (response) => {
-          this.handleResponseSuccess(response);
+          this.alertService.showSuccessMessage(response.message);
           this.loading = false;
         },
         (error: HttpErrorResponse) => {
@@ -270,7 +302,7 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
     this.userService.update_password(this.you!.id, this.userPasswordForm.value)
       .subscribe(
         (response) => {
-          this.handleResponseSuccess(response);
+          this.alertService.showSuccessMessage(response.message);
           this.userPasswordForm.reset({
             oldPassword: '',
             password: '',
@@ -305,7 +337,7 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
     this.userService.update_icon(this.you!.id, formData)
       .subscribe(
         (response) => {
-          this.handleResponseSuccess(response);
+          this.alertService.showSuccessMessage(response.message);
           this.userIconForm.reset();
           if (fileInput) {
             fileInput.value = '';
@@ -339,7 +371,7 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
     this.userService.update_wallpaper(this.you!.id, formData)
       .subscribe(
         (response) => {
-          this.handleResponseSuccess(response);
+          this.alertService.showSuccessMessage(response.message);
           this.userWallpaperForm.reset();
           if (fileInput) {
             fileInput.value = '';
@@ -423,7 +455,7 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
         this.phone_is_verified = true;
         window.localStorage.setItem('rmw-modern-apps-jwt', response.data.token);
         this.userStore.setState(response.data.you);
-        this.handleResponseSuccess(response);
+        this.alertService.showSuccessMessage(response.message);
       },
       (error: HttpErrorResponse) => {
         this.loading = false;
@@ -443,6 +475,70 @@ export class CommonUserSettingsFragmentComponent implements OnInit {
         this.loading = false;
         this.handleResponseError(error);
       }
-    );
+      );
+    }
+    
+  createPaymentMethod() {
+    const stripe = this.stripeService.getStripe();
+      
+    this.loading = true;
+
+    stripe.createPaymentMethod({
+      type: 'card',
+      card: this.cardElement!,
+      billing_details: {
+        name: getUserFullName(this.you!),
+        email: this.you!.email,
+        phone: this.you!.phone,
+      },
+    })
+    .then((result: PaymentMethodResult) => {
+      // Handle result.error or result.paymentMethod
+      
+      if (result.error) {
+        this.loading = false;
+        this.alertService.showErrorMessage(result.error.message);
+        return;
+      }
+
+      // no error
+      this.userService.add_card_payment_method_to_user_customer(this.you!.id, result.paymentMethod.id).subscribe({
+        next: (response) => {
+          this.loading = false;
+          this.alertService.handleResponseSuccessGeneric({ message: response.message || '' });
+          this.payment_methods.unshift(response.data!);
+          this.cardElement!.clear();
+          this.cardFormHasErrors = true;
+        },
+        error: (error: HttpErrorResponse) => {
+          this.loading = false;
+          this.alertService.handleResponseErrorGeneric(error);
+        },
+      });
+    });
+  }
+
+  removePaymentMethod(paymentMethod: PaymentMethod) {
+    const askMsg = `Remove ${paymentMethod.card!.brand.toUpperCase()} card ending in ${paymentMethod.card!.last4}?`;
+    const ask = window.confirm(askMsg);
+    if (!ask) {
+      return;
+    }
+
+    this.loading = true;
+
+    this.userService.remove_card_payment_method_to_user_customer(this.you!.id, paymentMethod.id).subscribe({
+      next: (response) => {
+        this.loading = false;
+        this.alertService.handleResponseSuccessGeneric({ message: response.message || '' });
+
+        const index = this.payment_methods.indexOf(paymentMethod);
+        this.payment_methods.splice(index, 1);
+      },
+      error: (error: HttpErrorResponse) => {
+        this.loading = false;
+        this.alertService.handleResponseErrorGeneric(error);
+      },
+    });
   }
 }

@@ -4,7 +4,7 @@ import { map } from "rxjs/operators";
 import { ResolveType } from "../guards/_guard";
 import { GetSessionResponse } from "../interfaces/responses.interface";
 import { IUser } from "../interfaces/user.interface";
-import { UserService } from "../services/user.service";
+import { UsersService } from "../services/users.service";
 import { UserStoreService } from "../stores/user-store.service";
 
 @Injectable({
@@ -13,7 +13,7 @@ import { UserStoreService } from "../stores/user-store.service";
 export class InitialCheckSessionResolver implements Resolve<IUser> {
   constructor(
     private router: Router,
-    private userService: UserService,
+    private userService: UsersService,
     private userStore: UserStoreService,
   ) {}
 

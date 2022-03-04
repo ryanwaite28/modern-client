@@ -22,6 +22,7 @@
         <ng-container [ngSwitch]="!!you">
           <ng-container *ngSwitchCase="true">
             <li><a [routerLink]="['/', 'modern', 'users', you!.id]">Home</a></li>
+            <li><a [routerLink]="['/', 'modern', 'apps']">Apps</a></li>
             <li><a [routerLink]="['/', 'modern', 'users', you!.id, 'settings']">Settings</a></li>
             <li><a [routerLink]="['/', 'modern', 'users', you!.id, 'messages']">
               Messages 

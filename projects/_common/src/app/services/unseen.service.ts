@@ -7,7 +7,7 @@ import { UserStoreService } from '../stores/user-store.service';
 import { getUserFullName } from '../_misc/chamber';
 import { AlertService } from './alert.service';
 import { SocketEventsService } from './socket-events.service';
-import { UserService } from './user.service';
+import { UsersService } from './users.service';
 
 /**
  * Get and tracks user's unseen information (global state/store), this includes:
@@ -49,7 +49,7 @@ export class UnseenService {
   constructor(
     private alertService: AlertService,
     private userStore: UserStoreService,
-    private userService: UserService,
+    private userService: UsersService,
     private socketEventsService: SocketEventsService,
     private route: ActivatedRoute,
   ) {
@@ -99,17 +99,17 @@ export class UnseenService {
     ];
 
     notification_events.forEach((event_type) => {
-      this.socketEventsService.listen(event_type).subscribe((event: any) => {
+      this.socketEventsService.listenToObservableEventStream(event_type).subscribe((event: any) => {
         console.log(event);
         this.increment('notifications', 1);
       });
     });
 
-    this.socketEventsService.listen(COMMON_EVENT_TYPES.NEW_MESSAGE).subscribe((event: any) => {
+    this.socketEventsService.listenToObservableEventStream(COMMON_EVENT_TYPES.NEW_MESSAGE).subscribe((event: any) => {
       this.increment('messages', 1);
     });
 
-    this.socketEventsService.listen(COMMON_EVENT_TYPES.NEW_CONVERSATION_MESSAGE).subscribe((event: any) => {
+    this.socketEventsService.listenToObservableEventStream(COMMON_EVENT_TYPES.NEW_CONVERSATION_MESSAGE).subscribe((event: any) => {
       if (event.data.user_id !== this.you!.id) {
         this.increment('conversations', 1);
       }

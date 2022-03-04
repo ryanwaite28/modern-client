@@ -6,11 +6,13 @@ import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
 import { SocketEventsService } from 'projects/_common/src/app/services/socket-events.service';
+import { StripeService } from 'projects/_common/src/app/services/stripe.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
 import { getUserFullName } from 'projects/_common/src/app/_misc/chamber';
 import { Subscription } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 import { DELIVERME_EVENT_TYPES, DeliveryCardDisplayMode } from '../../../enums/deliverme.enum';
+import { IDelivery } from '../../../interfaces/deliverme.interface';
 import { DeliveryService } from '../../../services/delivery.service';
 
 @Component({
@@ -23,7 +25,7 @@ export class DeliveryCardComponent implements OnInit {
   @ViewChild('paymentFormElm') paymentFormElm: ElementRef<HTMLFormElement> | any;
   
   @Input() you: IUser | any;
-  @Input() delivery: any;
+  @Input() delivery: IDelivery;
   @Input() deliveryCardDisplayMode: DeliveryCardDisplayMode = DeliveryCardDisplayMode.DEFAULT;
   @Input() showEmbeddedContent: boolean = false;
 
@@ -72,10 +74,11 @@ export class DeliveryCardComponent implements OnInit {
     private googleMapsService: GoogleMapsService,
     private changeDetectorRef: ChangeDetectorRef,
     private socketEventsService: SocketEventsService,
+    private stripeService: StripeService,
   ) { }
 
   ngOnInit(): void {
-    this.messages_list_end = !!this.delivery && this.delivery.delivery_messages.length < 5;
+    this.messages_list_end = !!this.delivery && this.delivery.delivery_messages!.length < 5;
     if (this.delivery && this.delivery.deliverme_delivery_tracking_updates) {
       for (const tracking_update of this.delivery.deliverme_delivery_tracking_updates) {
         this.getLocationForTrackingUpdate(tracking_update);
@@ -89,12 +92,13 @@ export class DeliveryCardComponent implements OnInit {
       listener.off && listener.off();
     }
     const deliveryRoom = `${DELIVERME_EVENT_TYPES.TO_DELIVERY}:${this.delivery.id}`;
+    console.log(`Leaving ${deliveryRoom}`);
     this.socketEventsService.leaveRoom(deliveryRoom);
   }
 
   startEventListener() {
     if (this.delivery) {
-      const carrierAssignedListener = this.socketEventsService.listenCustom(
+      const carrierAssignedListener = this.socketEventsService.listenSocketCustom(
         DELIVERME_EVENT_TYPES.CARRIER_ASSIGNED,
         (event: any) => {
           if (event.data.delivery.id === this.delivery.id) {
@@ -107,7 +111,7 @@ export class DeliveryCardComponent implements OnInit {
         }
       );
 
-      const carrierUnassignedListener = this.socketEventsService.listenCustom(
+      const carrierUnassignedListener = this.socketEventsService.listenSocketCustom(
         DELIVERME_EVENT_TYPES.CARRIER_UNASSIGNED,
         (event: any) => {
           if (event.data.delivery.id === this.delivery.id) {
@@ -120,7 +124,7 @@ export class DeliveryCardComponent implements OnInit {
         }
       );
 
-      const markedPickedListener = this.socketEventsService.listenCustom(
+      const markedPickedListener = this.socketEventsService.listenSocketCustom(
         DELIVERME_EVENT_TYPES.CARRIER_MARKED_AS_PICKED_UP,
         (event: any) => {
           if (event.data.delivery.id === this.delivery.id) {
@@ -133,7 +137,7 @@ export class DeliveryCardComponent implements OnInit {
         }
       );
 
-      const markedDroppedListener = this.socketEventsService.listenCustom(
+      const markedDroppedListener = this.socketEventsService.listenSocketCustom(
         DELIVERME_EVENT_TYPES.CARRIER_MARKED_AS_DROPPED_OFF,
         (event: any) => {
           if (event.data.delivery.id === this.delivery.id) {
@@ -146,7 +150,7 @@ export class DeliveryCardComponent implements OnInit {
         }
       );
 
-      const trackingUpdateListener = this.socketEventsService.listenCustom(
+      const trackingUpdateListener = this.socketEventsService.listenSocketCustom(
         DELIVERME_EVENT_TYPES.DELIVERY_NEW_TRACKING_UPDATE,
         (event: any) => {
           if (event.data.delivery_id === this.delivery.id) {
@@ -161,7 +165,7 @@ export class DeliveryCardComponent implements OnInit {
         }
       );
 
-      const deliveryCompletedListener = this.socketEventsService.listenCustom(
+      const deliveryCompletedListener = this.socketEventsService.listenSocketCustom(
         DELIVERME_EVENT_TYPES.DELIVERY_COMPLETED,
         (event: any) => {
           if (event.data.delivery.id === this.delivery.id) {
@@ -175,7 +179,7 @@ export class DeliveryCardComponent implements OnInit {
         }
       );
 
-      const deliveryReturnedListener = this.socketEventsService.listenCustom(
+      const deliveryReturnedListener = this.socketEventsService.listenSocketCustom(
         DELIVERME_EVENT_TYPES.DELIVERY_RETURNED,
         (event: any) => {
           if (event.data.delivery.id === this.delivery.id) {
@@ -201,13 +205,16 @@ export class DeliveryCardComponent implements OnInit {
 
       if (
         !this.delivery.completed &&
-        this.you!.id === this.delivery.owner_id ||
-        this.you!.id === this.delivery.carrier_id
+        (
+          this.you!.id === this.delivery.owner_id ||
+          this.you!.id === this.delivery.carrier_id
+        )
       ) {
         const deliveryRoom = `${DELIVERME_EVENT_TYPES.TO_DELIVERY}:${this.delivery.id}`;
+        console.log(`Joining ${deliveryRoom}`);
         this.socketEventsService.joinRoom(deliveryRoom);
 
-        const deliveryMessageListener = this.socketEventsService.listenCustom(deliveryRoom,
+        const deliveryMessageListener = this.socketEventsService.listenSocketCustom(deliveryRoom,
           (event: any) => {
             console.log(event);
             this.handleToDeliveryEvents(event);
@@ -228,14 +235,19 @@ export class DeliveryCardComponent implements OnInit {
           message: event.message
         });
         if (event.data.delivery_id === this.delivery.id) {
-          this.delivery.delivery_messages.push(event.data);
+          this.delivery.delivery_messages!.push(event.data);
         }
       }
     }
   }
 
   deleteDelivery() {
-    const ask = window.confirm(`Are you sure you want to delete this delivery? This action cannot be undone.`);
+    const chargeFeeData = this.stripeService.add_on_stripe_processing_fee(this.delivery.payout);
+    const refund_amount = chargeFeeData.final_total  - chargeFeeData.app_fee;
+    const refund_amount_formatted = `$` + `${refund_amount}`;
+    const ask = window.confirm(
+      `Are you sure you want to delete this delivery? This action cannot be undone. You will be refunded ${refund_amount_formatted}`
+    );
     if (!ask) {
       return;
     }
@@ -357,10 +369,7 @@ export class DeliveryCardComponent implements OnInit {
       delivery_id: this.delivery.id
     }).subscribe({
       next: (response: any) => {
-        this.alertService.addAlert({
-          type: this.alertService.AlertTypes.SUCCESS,
-          message: response.message
-        }, true);
+        this.alertService.showSuccessMessage(response.message);
         // this.delivery.delivery_messages.unshift(response.data);
         this.messageForm.setValue({ body: '' });
         this.loading = false;
@@ -369,6 +378,28 @@ export class DeliveryCardComponent implements OnInit {
   }
 
   payCarrier() {
+    // https://stripe.com/docs/connect/collect-then-transfer-guide
+
+    const ask = window.confirm(`Are you ready to pay the carrier?`);
+    if (!ask) {
+      return;
+    }
+    
+    this.loading = true;
+    this.deliveryService.payCarrier(this.you!.id, this.delivery.id).subscribe({
+      error: (error: HttpErrorResponse) => {
+        this.loading = false;
+        this.alertService.handleResponseErrorGeneric(error);
+      },
+      next: (response: any) => {
+        this.loading = false;
+        this.delivery.completed = true;
+        this.alertService.handleResponseSuccessGeneric(response);
+      }
+    });
+  }
+
+  oldpayCarrier() {
     // https://stripe.com/docs/connect/collect-then-transfer-guide
 
     const ask = window.confirm(`Are you ready to pay the carrier?`);
@@ -387,6 +418,7 @@ export class DeliveryCardComponent implements OnInit {
         if (response.data.payment_client_secret) {
           this.payment_client_secret = response.data.payment_client_secret;
           this.alertService.handleResponseSuccessGeneric(response);
+          
           const stripe = (<any> window).Stripe(response.data.stripe_pk, {
             // stripeAccount: this.you!.stripe_account_id
           });
@@ -418,9 +450,9 @@ export class DeliveryCardComponent implements OnInit {
               payment_method: {
                 card: card,
                 billing_details: {
-                  email: this.delivery.owner.email,
-                  name: getUserFullName(this.delivery.owner),
-                  phone: this.delivery.owner.phone,
+                  email: this.delivery.owner!.email,
+                  name: getUserFullName(this.delivery.owner!),
+                  phone: this.delivery.owner!.phone,
                 }
               }
             }).then((result: any) => {

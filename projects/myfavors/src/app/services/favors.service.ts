@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { MODERN_APPS, USER_RECORDS } from 'projects/_common/src/app/enums/all.enums';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
 import { ClientService } from 'projects/_common/src/app/services/client.service';
-import { UserService } from 'projects/_common/src/app/services/user.service';
+import { UsersService } from 'projects/_common/src/app/services/users.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FavorsService {
   constructor(
-    private userService: UserService,
+    private userService: UsersService,
     private clientService: ClientService,
   ) {}
 

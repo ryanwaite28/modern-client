@@ -48,6 +48,7 @@
               "node_modules/uikit/dist/js/uikit.min.js",
               "node_modules/uikit/dist/js/uikit-icons.min.js",
               "node_modules/slick-carousel/slick/slick.min.js",
+              "node_modules/flowbite/dist/flowbite.js",
               "local/js/parallax.min.js"
             ],
             "vendorChunk": true,

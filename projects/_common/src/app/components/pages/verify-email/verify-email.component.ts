@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { UserService } from '../../../services/user.service';
+import { UsersService } from '../../../services/users.service';
 
 @Component({
   selector: 'app-verify-email',
@@ -12,7 +12,7 @@ export class CommonVerifyEmailComponent implements OnInit {
   message: string = '';
 
   constructor(
-    private userService: UserService,
+    private userService: UsersService,
     private router: Router,
     private route: ActivatedRoute,
   ) { }

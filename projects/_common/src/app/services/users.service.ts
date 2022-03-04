@@ -24,7 +24,7 @@ import { IApiKey } from '../interfaces/_common.interface';
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class UsersService {
   session: GenericApiResponse | any;
   sessionChecked: boolean = false;
 
@@ -74,19 +74,26 @@ export class UserService {
         this.session = response;
         this.sessionChecked = true;
         this.userStore.setState(response.data!.you);
+        if (response.data!.token) {
+          window.localStorage.setItem('rmw-modern-apps-jwt', response.data!.token);
+        }
         return response;
       })
     );
   }
 
   sign_out() {
-    return of().pipe(
-      map(() => {
-        this.userStore.setState(null);
-        window.localStorage.removeItem('rmw-modern-apps-jwt');
-        console.log(`signed out`);
-      })
-    );
+    // return of().pipe(
+    //   map(() => {
+    //     this.userStore.setState(null);
+    //     window.localStorage.removeItem('rmw-modern-apps-jwt');
+    //     console.log(`signed out`);
+    //   })
+    // );
+
+    this.userStore.setState(null);
+    window.localStorage.removeItem('rmw-modern-apps-jwt');
+    console.log(`signed out`);
   }
 
   verify_email(uuid: string): Observable<GenericApiResponse> {
@@ -214,6 +221,15 @@ export class UserService {
   get_user_api_key(you_id: number) {
     const endpoint = `/common/users/${you_id}/api-key`;
     return this.clientService.sendRequest<IApiKey>(endpoint, `GET`).pipe(
+      map((response) => {
+        return response;
+      })
+    );
+  }
+
+  get_user_customer_cards_payment_methods(you_id: number) {
+    const endpoint = `/common/users/${you_id}/customer-cards-payment-methods`;
+    return this.clientService.sendRequest<any>(endpoint, `GET`).pipe(
       map((response) => {
         return response;
       })
@@ -349,6 +365,14 @@ export class UserService {
     );
   }
 
+  add_card_payment_method_to_user_customer(you_id: number, payment_method_id: string) {
+    const endpoint = `/common/users/${you_id}/customer-cards-payment-methods/${payment_method_id}`;
+    return this.clientService.sendRequest<any>(endpoint, `POST`).pipe(
+      map((response) => {
+        return response;
+      })
+    );
+  }
   
   /** PUT */
   
@@ -460,6 +484,15 @@ export class UserService {
   unfollow_user(you_id: number, user_id: number) {
     const endpoint = `/common/users/${you_id}/follows/${user_id}`;
     return this.clientService.sendRequest<GenericApiResponse>(endpoint, `DELETE`).pipe(
+      map((response) => {
+        return response;
+      })
+    );
+  }
+
+  remove_card_payment_method_to_user_customer(you_id: number, payment_method_id: string) {
+    const endpoint = `/common/users/${you_id}/customer-cards-payment-methods/${payment_method_id}`;
+    return this.clientService.sendRequest<any>(endpoint, `DELETE`).pipe(
       map((response) => {
         return response;
       })

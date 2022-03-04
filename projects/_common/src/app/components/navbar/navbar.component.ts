@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Router, NavigationExtras } from '@angular/router';
 import { IUser } from '../../interfaces/user.interface';
 import { IUnseen, UnseenService } from '../../services/unseen.service';
-import { UserService } from '../../services/user.service';
+import { UsersService } from '../../services/users.service';
 import { UserStoreService } from '../../stores/user-store.service';
 
 @Component({
@@ -27,7 +27,7 @@ export class CommonNavbarComponent implements OnInit {
   constructor(
     private unseenService: UnseenService,
     private userStore: UserStoreService,
-    private userService: UserService,
+    private userService: UsersService,
     private router: Router,
   ) { }
 

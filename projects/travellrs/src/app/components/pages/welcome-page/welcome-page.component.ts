@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
-import { UserService } from 'projects/_common/src/app/services/user.service';
+import { UsersService } from 'projects/_common/src/app/services/users.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
 import { Subscription } from 'rxjs/internal/Subscription';
 // import * as world_wallpaper from '../../../../assets/img/world-wallpaper.png';
@@ -29,7 +29,7 @@ export class TravellrsWelcomePageComponent implements OnInit {
   constructor(
     private googleService: GoogleMapsService,
     private userStore: UserStoreService,
-    private userService: UserService,
+    private userService: UsersService,
   ) { }
 
   ngOnInit() {

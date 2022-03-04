@@ -186,6 +186,8 @@ export interface IDeliveryMessage extends ICommonModel  {
   user_id:            number,
   body:               string,
   opened:             boolean,
+
+  user?:              IUser;
 }
 
 export interface IDeliveryPayoutAttempts extends ICommonModel  {
@@ -227,4 +229,6 @@ export interface IDeliveryTrackingUpdate extends ICommonModel  {
   carrier_lng:       number
   icon_link:         string,
   icon_id:           string,
+
+  placeData:         any;
 }

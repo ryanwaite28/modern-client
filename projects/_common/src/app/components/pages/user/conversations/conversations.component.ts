@@ -9,7 +9,7 @@ import { AlertService } from 'projects/_common/src/app/services/alert.service';
 import { ConversationsService } from 'projects/_common/src/app/services/conversations.service';
 import { SocketEventsService } from 'projects/_common/src/app/services/socket-events.service';
 import { UnseenService } from 'projects/_common/src/app/services/unseen.service';
-import { UserService } from 'projects/_common/src/app/services/user.service';
+import { UsersService } from 'projects/_common/src/app/services/users.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
 import { Subscription, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -76,7 +76,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private userStore: UserStoreService,
-    private userService: UserService,
+    private userService: UsersService,
     private alertService: AlertService,
     private socketEventsService: SocketEventsService,
     private conversationsService: ConversationsService,
@@ -99,10 +99,10 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
       this.searchUsersInputChanged.next(value);
     });
 
-    this.newConversationSub = this.socketEventsService.listen(COMMON_EVENT_TYPES.CONVERSATION_MEMBER_ADDED).subscribe((event: any) => {
+    this.newConversationSub = this.socketEventsService.listenToObservableEventStream(COMMON_EVENT_TYPES.CONVERSATION_MEMBER_ADDED).subscribe((event: any) => {
       this.handleMemberAddedEvent(event);
     });
-    this.removedSub = this.socketEventsService.listen(COMMON_EVENT_TYPES.CONVERSATION_MEMBER_REMOVED).subscribe((event: any) => {
+    this.removedSub = this.socketEventsService.listenToObservableEventStream(COMMON_EVENT_TYPES.CONVERSATION_MEMBER_REMOVED).subscribe((event: any) => {
       this.handleMemberRemovedEvent(event);
     });
 
@@ -198,7 +198,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
   addListeners(conversation_id: number) {
     this.socketEventsService.joinRoom(`conversation-${conversation_id}`);
 
-    this.socketTypingEmittersMap[conversation_id] = this.socketEventsService.listenCustom(
+    this.socketTypingEmittersMap[conversation_id] = this.socketEventsService.listenSocketCustom(
       COMMON_EVENT_TYPES.CONVERSATION_MESSAGE_TYPING,
       (event) => {
         console.log('member is typing...');
@@ -213,7 +213,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
         }
       }
     );
-    this.socketTypingStoppedEmittersMap[conversation_id] = this.socketEventsService.listenCustom(
+    this.socketTypingStoppedEmittersMap[conversation_id] = this.socketEventsService.listenSocketCustom(
       COMMON_EVENT_TYPES.CONVERSATION_MESSAGE_TYPING_STOPPED,
       (event) => {
         console.log('member stopped typing...');
@@ -223,7 +223,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
         }
       }
     );
-    this.socketMemberAddedEmittersMap[conversation_id] = this.socketEventsService.listenCustom(
+    this.socketMemberAddedEmittersMap[conversation_id] = this.socketEventsService.listenSocketCustom(
       COMMON_EVENT_TYPES.CONVERSATION_MEMBER_ADDED,
       (event) => {
         console.log(event);
@@ -232,7 +232,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
         }
       }
     );
-    this.socketMemberRemovedEmittersMap[conversation_id] = this.socketEventsService.listenCustom(
+    this.socketMemberRemovedEmittersMap[conversation_id] = this.socketEventsService.listenSocketCustom(
       COMMON_EVENT_TYPES.CONVERSATION_MEMBER_REMOVED,
       (event) => {
         console.log(event);
@@ -246,13 +246,13 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
         }
       }
     );
-    this.socketNewMessageEmittersMap[conversation_id] = this.socketEventsService.listenCustom(
+    this.socketNewMessageEmittersMap[conversation_id] = this.socketEventsService.listenSocketCustom(
       COMMON_EVENT_TYPES.NEW_CONVERSATION_MESSAGE,
       (event) => {
         this.handleMessageEvent(event);
       }
     );
-    this.socketConversationDeletedEmittersMap[conversation_id] = this.socketEventsService.listenCustom(
+    this.socketConversationDeletedEmittersMap[conversation_id] = this.socketEventsService.listenSocketCustom(
       COMMON_EVENT_TYPES.CONVERSATION_DELETED,
       (event) => {
         const index = this.conversations_list.findIndex((c) => c.id === event.data.conversation_id);
@@ -439,10 +439,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
         this.conversationForm.reset({
           title: ''
         });
-        this.alertService.addAlert({
-          type: this.alertService.AlertTypes.SUCCESS,
-          message: response.message
-        }, true);
+        this.alertService.showSuccessMessage(response.message);
       },
       error: (error: HttpErrorResponse) => {
         this.alertService.handleResponseErrorGeneric(error);
@@ -470,10 +467,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
         this.conversationForm.reset({
           title: ''
         });
-        this.alertService.addAlert({
-          type: this.alertService.AlertTypes.SUCCESS,
-          message: response.message
-        }, true);
+        this.alertService.showSuccessMessage(response.message);
         this.isEditingCurrentConversationSelected = false;
       },
       error: (error: HttpErrorResponse) => {
@@ -503,10 +497,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
         this.removeListeners(this.currentConversationSelected.id);
 
         this.currentConversationSelected = null;
-        this.alertService.addAlert({
-          type: this.alertService.AlertTypes.SUCCESS,
-          message: response.message
-        }, true);
+        this.alertService.showSuccessMessage(response.message);
       },
       error: (error: HttpErrorResponse) => {
         this.alertService.handleResponseErrorGeneric(error);
@@ -555,10 +546,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
         if (this.conversations_map[this.currentConversationSelected.id].hasOwnProperty('members_count')) {
           this.conversations_map[this.currentConversationSelected.id].members_count++;
         }
-        this.alertService.addAlert({
-          type: this.alertService.AlertTypes.SUCCESS,
-          message: response.message
-        }, true);
+        this.alertService.showSuccessMessage(response.message);
       },
       error: (error: HttpErrorResponse) => {
         this.alertService.handleResponseErrorGeneric(error);
@@ -580,10 +568,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
         if (this.conversations_map[this.currentConversationSelected.id].hasOwnProperty('members_count')) {
           this.conversations_map[this.currentConversationSelected.id].members_count--;
         }
-        this.alertService.addAlert({
-          type: this.alertService.AlertTypes.SUCCESS,
-          message: response.message
-        }, true);
+        this.alertService.showSuccessMessage(response.message);
       },
       error: (error: HttpErrorResponse) => {
         this.alertService.handleResponseErrorGeneric(error);
@@ -612,10 +597,7 @@ export class CommonConversationsComponent implements OnInit, OnDestroy {
         this.removeListeners(this.currentConversationSelected.id);
 
         this.currentConversationSelected = null;
-        this.alertService.addAlert({
-          type: this.alertService.AlertTypes.SUCCESS,
-          message: response.message
-        }, true);
+        this.alertService.showSuccessMessage(response.message);
       },
       error: (error: HttpErrorResponse) => {
         this.alertService.handleResponseErrorGeneric(error);

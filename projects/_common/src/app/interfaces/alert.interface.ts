@@ -1,6 +1,7 @@
 import { AlertTypes } from '../enums/all.enums';
 
 export interface IAlert {
-  type: AlertTypes;
-  message: string;
+  timestamp: number, // Date.now()
+  type: AlertTypes,
+  message: string,
 }

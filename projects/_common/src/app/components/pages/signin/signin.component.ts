@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Validators, FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertService } from '../../../services/alert.service';
-import { UserService } from '../../../services/user.service';
+import { UsersService } from '../../../services/users.service';
 import { UserStoreService } from '../../../stores/user-store.service';
 
 @Component({
@@ -40,7 +40,7 @@ export class CommonUserSigninComponent implements OnInit {
   phone_is_verified: boolean = false;
 
   constructor(
-    private userService: UserService,
+    private userService: UsersService,
     private userStore: UserStoreService,
     private alertService: AlertService,
     private router: Router

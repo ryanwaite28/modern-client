@@ -214,10 +214,7 @@ export class FavorFormComponent implements AfterViewInit, OnDestroy {
     fileInput: HTMLInputElement
   ) {
     if (!this.isEditing && !this.placeData.lat) {
-      return this.alertService.addAlert({
-        type: AlertTypes.DANGER,
-        message: `Location is required`
-      }, true);
+      return this.alertService.showErrorMessage(`Location is required`);
     }
 
     const formData = new FormData(favorFormElm);

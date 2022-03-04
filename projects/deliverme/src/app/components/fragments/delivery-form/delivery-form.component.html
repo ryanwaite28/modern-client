@@ -177,11 +177,33 @@
               formControlName="to_person_email" 
             />
           </div>
+
+          <div class="uk-margin">
+            <span class="label-info">
+              Payment Method
+            </span>
+            <p *ngIf="!!payment_methods && !payment_methods.length" class="font-bold">
+              You do not have any payment methods (debit/credit card) linked to your account. Please go to your setting and add one.
+            </p>
+            <select *ngIf="!!payment_methods && !!payment_methods.length" class="uk-select" formControlName="payment_method_id">
+              <option *ngFor="let pm of payment_methods" [value]="pm.id">
+                {{ pm.card!.brand | uppercase }} ending in {{ pm.card!.last4 }} (expires: {{ pm.card!.exp_month }}/{{ pm.card!.exp_year }})
+              </option>
+            </select>
+          </div>
         </fieldset>
 
         <div class="uk-margin">
+          <p class="label-info">
+            Delivery payout: {{ chargeFeeData ? '$' + (chargeFeeData.total | stripeAmountFormatter) : '' }}<br/>
+            Application fee: {{ chargeFeeData ? '$' + (chargeFeeData.app_fee | stripeAmountFormatter) : '' }}<br/>
+            Processing fee: {{ chargeFeeData ? '$' + (chargeFeeData.stripe_processing_fee | stripeAmountFormatter) : '' }}<br/>
+            Refund amount: {{ chargeFeeData ? '$' + ((chargeFeeData.final_total  - chargeFeeData.app_fee) | stripeAmountFormatter) : '' }}<br/>
+            <span class="font-bold">Final total</span>: {{ chargeFeeData ? '$' + (chargeFeeData.final_total | stripeAmountFormatter) : '' }}<br/>
+          </p>
+
           <span class="label-info">
-            Acknowledge final price: {{ chargeFeeData ? '$' + (chargeFeeData.final_total | stripeAmountFormatter) : '' }}
+            Acknowledge final price and terms:
           </span>
           <br/>
           <input

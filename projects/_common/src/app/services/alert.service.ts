@@ -26,55 +26,80 @@ export class AlertService {
     return copy as IAlert[];
   }
 
-  addAlert(alertObj: IAlert, autoClose: boolean = true) {
+  private addAlert(alertObj: IAlert, autoClose: boolean = true) {
+    if (!alertObj) {
+      console.warn(`No alert arg given...`);
+      return;
+    }
     this.alertsList.push(alertObj);
     this.newAlert.next({ alertObj, autoClose });
   }
 
-  removeAlert(alertObj: IAlert) {
-    const index = this.alertsList.findIndex((a) => {
-      const match = (
-        a.type === alertObj.type &&
-        a.message === alertObj.message
-      );
-      return match;
-    });
+  removeAlert(removeAlert: IAlert) {
+    if (!removeAlert) {
+      console.warn(`No alert arg given...`);
+      return;
+    }
+    const index = this.alertsList.findIndex((alert: IAlert) => alert.timestamp === removeAlert.timestamp);
     const resultFound = index > -1;
     if (resultFound) {
       this.alertsList.splice(index, 1);
     }
   }
 
-  showSuccessMessage(message: string) {
+  showSuccessMessage(message?: string) {
+    if (!message) {
+      console.warn(`No message arg given...`);
+      return;
+    }
     this.addAlert({
+      timestamp: Date.now(),
       type: this.AlertTypes.SUCCESS,
       message,
     }, true);
   }
 
-  showErrorMessage(message: string) {
+  showErrorMessage(message?: string) {
+    if (!message) {
+      console.warn(`No message arg given...`);
+      return;
+    }
     this.addAlert({
+      timestamp: Date.now(),
       type: this.AlertTypes.DANGER,
       message,
     }, true);
   }
 
-  showWarningMessage(message: string) {
+  showWarningMessage(message?: string) {
+    if (!message) {
+      console.warn(`No message arg given...`);
+      return;
+    }
     this.addAlert({
+      timestamp: Date.now(),
       type: this.AlertTypes.WARNING,
       message,
     }, true);
   }
 
-  handleResponseSuccessGeneric(response: { message: string }) {
+  handleResponseSuccessGeneric(response?: { message: string }) {
+    if (!response || !response.message) {
+      return;
+    }
     this.addAlert({
+      timestamp: Date.now(),
       type: this.AlertTypes.SUCCESS,
       message: response.message
     }, true);
   }
 
   handleResponseErrorGeneric(error: HttpErrorResponse) {
+    if (!error || !error.error.message) {
+      return;
+    }
     this.addAlert({
+      timestamp: Date.now(),
       type: this.AlertTypes.DANGER,
       message: error.error.message
     }, true);

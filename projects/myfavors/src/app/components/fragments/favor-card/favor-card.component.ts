@@ -91,7 +91,7 @@ export class FavorCardComponent implements OnInit {
 
   startEventListener() {
     if (this.favor) {
-      const helperAssignedListener = this.socketEventsService.listenCustom(
+      const helperAssignedListener = this.socketEventsService.listenSocketCustom(
         MYFAVORS_EVENT_TYPES.FAVOR_HELPER_ASSIGNED,
         (event: any) => {
           if (event.data.id === this.favor.id) {
@@ -104,7 +104,7 @@ export class FavorCardComponent implements OnInit {
         }
       );
 
-      const helperUnassignedListener = this.socketEventsService.listenCustom(
+      const helperUnassignedListener = this.socketEventsService.listenSocketCustom(
         MYFAVORS_EVENT_TYPES.FAVOR_HELPER_UNASSIGNED,
         (event: any) => {
           if (event.data.id === this.favor.id) {
@@ -117,7 +117,7 @@ export class FavorCardComponent implements OnInit {
         }
       );
 
-      const markedStartedListener = this.socketEventsService.listenCustom(
+      const markedStartedListener = this.socketEventsService.listenSocketCustom(
         MYFAVORS_EVENT_TYPES.FAVOR_STARTED,
         (event: any) => {
           if (event.data.id === this.favor.id) {
@@ -130,7 +130,7 @@ export class FavorCardComponent implements OnInit {
         }
       );
 
-      const markedCanceledListener = this.socketEventsService.listenCustom(
+      const markedCanceledListener = this.socketEventsService.listenSocketCustom(
         MYFAVORS_EVENT_TYPES.FAVOR_CANCELED,
         (event: any) => {
           if (event.data.id === this.favor.id) {
@@ -143,7 +143,7 @@ export class FavorCardComponent implements OnInit {
         }
       );
 
-      const trackingUpdateListener = this.socketEventsService.listenCustom(
+      const trackingUpdateListener = this.socketEventsService.listenSocketCustom(
         MYFAVORS_EVENT_TYPES.FAVOR_NEW_UPDATE,
         (event: any) => {
           if (event.data.favor_id === this.favor.id) {
@@ -158,7 +158,7 @@ export class FavorCardComponent implements OnInit {
         }
       );
 
-      const favorFulfilledListener = this.socketEventsService.listenCustom(
+      const favorFulfilledListener = this.socketEventsService.listenSocketCustom(
         MYFAVORS_EVENT_TYPES.FAVOR_FULFILLED,
         (event: any) => {
           if (event.data.id === this.favor.id) {
@@ -172,7 +172,7 @@ export class FavorCardComponent implements OnInit {
         }
       );
 
-      const helperPaidListener = this.socketEventsService.listenCustom(
+      const helperPaidListener = this.socketEventsService.listenSocketCustom(
         MYFAVORS_EVENT_TYPES.FAVOR_HELPER_PAID,
         (event: any) => {
           if (event.data.id === this.favor.id) {
@@ -205,7 +205,7 @@ export class FavorCardComponent implements OnInit {
         const favorRoom = `${MYFAVORS_EVENT_TYPES.TO_FAVOR}:${this.favor.id}`;
         this.socketEventsService.joinRoom(favorRoom);
 
-        const favorMessageListener = this.socketEventsService.listenCustom(favorRoom,
+        const favorMessageListener = this.socketEventsService.listenSocketCustom(favorRoom,
           (event: any) => {
             console.log(event);
             this.handleToFavorEvents(event);
@@ -355,10 +355,7 @@ export class FavorCardComponent implements OnInit {
       favor_id: this.favor.id
     }).subscribe({
       next: (response: any) => {
-        this.alertService.addAlert({
-          type: this.alertService.AlertTypes.SUCCESS,
-          message: response.message
-        }, true);
+        this.alertService.showSuccessMessage(response.message);
         // this.favor.favor_messages.unshift(response.data);
         this.messageForm.setValue({ body: '' });
         this.loading = false;
@@ -441,25 +438,25 @@ export class FavorCardComponent implements OnInit {
                   helper.payment_client_secret = null;
                   
                   // wait a second to check if the server processed the payment.succeeded webhook
-                  // setTimeout(() => {
-                  //   this.favorsService.markFavorAsFulfilled(
-                  //     this.you!.id,
-                  //     this.favor.id,
-                  //   ).subscribe({
-                  //     next: (response: any) => {
-                  //       this.alertService.handleResponseSuccessGeneric(response);
-                  //       this.loading = false;
-                  //       this.favor = response.data;
-                  //     },
-                  //     error: (error: HttpErrorResponse) => {
-                  //       this.loading = false;
-                  //       // this.alertService.handleResponseErrorGeneric(error);
-                  //     },
-                  //     complete: () => {
-                  //       this.loading = false;
-                  //     }
-                  //   });
-                  // }, 1000);
+                  setTimeout(() => {
+                    this.favorsService.markFavorAsFulfilled(
+                      this.you!.id,
+                      this.favor.id,
+                    ).subscribe({
+                      next: (response) => {
+                        this.alertService.handleResponseSuccessGeneric({ message: response.message! });
+                        this.loading = false;
+                        this.favor = response.data;
+                      },
+                      error: (error: HttpErrorResponse) => {
+                        this.loading = false;
+                        // this.alertService.handleResponseErrorGeneric(error);
+                      },
+                      complete: () => {
+                        this.loading = false;
+                      }
+                    });
+                  }, 1000);
                 }
               }
 

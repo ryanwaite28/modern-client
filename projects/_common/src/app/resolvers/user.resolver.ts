@@ -4,7 +4,7 @@ import { map } from "rxjs/operators";
 import { ResolveType } from "../guards/_guard";
 import { GetSessionResponse } from "../interfaces/responses.interface";
 import { IUser } from "../interfaces/user.interface";
-import { UserService } from "../services/user.service";
+import { UsersService } from "../services/users.service";
 import { UserStoreService } from "../stores/user-store.service";
 
 @Injectable({
@@ -14,7 +14,7 @@ export class UserResolver implements Resolve<IUser | null> {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService,
+    private userService: UsersService,
     private userStore: UserStoreService,
   ) {}
 

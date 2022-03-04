@@ -7,7 +7,7 @@ import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
 import { SocketEventsService } from 'projects/_common/src/app/services/socket-events.service';
 import { UnseenService } from 'projects/_common/src/app/services/unseen.service';
-import { UserService } from 'projects/_common/src/app/services/user.service';
+import { UsersService } from 'projects/_common/src/app/services/users.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
 import { Subscription } from 'rxjs';
 
@@ -44,7 +44,7 @@ export class CommonMessagesFragmentComponent implements OnInit, OnDestroy {
 
   constructor(
     private userStore: UserStoreService,
-    private userService: UserService,
+    private userService: UsersService,
     private alertService: AlertService,
     private socketEventsService: SocketEventsService,
     private route: ActivatedRoute,
@@ -61,7 +61,7 @@ export class CommonMessagesFragmentComponent implements OnInit, OnDestroy {
       this.currentParams = params;
     });
 
-    this.newMessageSub = this.socketEventsService.listen(COMMON_EVENT_TYPES.NEW_MESSAGE)
+    this.newMessageSub = this.socketEventsService.listenToObservableEventStream(COMMON_EVENT_TYPES.NEW_MESSAGE)
       .subscribe((event: any) => {
         this.handleMessageEvent(event);
       });
@@ -168,7 +168,7 @@ export class CommonMessagesFragmentComponent implements OnInit, OnDestroy {
     const NEW_TO_ROOM = `${COMMON_EVENT_TYPES.TO_MESSAGING_ROOM}:${this.currentMessagingSelected.id}`;
     console.log({ NEW_TO_ROOM });
 
-    this.socketCurrentMessagingEmitter = this.socketEventsService.listenCustom(NEW_TO_ROOM, (event) => {
+    this.socketCurrentMessagingEmitter = this.socketEventsService.listenSocketCustom(NEW_TO_ROOM, (event) => {
       console.log(event);
       this.handleToRoomEvents(event);
     });

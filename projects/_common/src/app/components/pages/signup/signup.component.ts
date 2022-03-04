@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertService } from '../../../services/alert.service';
-import { UserService } from '../../../services/user.service';
+import { UsersService } from '../../../services/users.service';
 import { genderOptions } from '../../../_misc/vault';
 
 @Component({
@@ -47,7 +47,7 @@ export class CommonUserSignupComponent implements OnInit {
   errorMessage: string | any;
 
   constructor(
-    private userService: UserService,
+    private userService: UsersService,
     private alertService: AlertService,
     private router: Router
   ) { }

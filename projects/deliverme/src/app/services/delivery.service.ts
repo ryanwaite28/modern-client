@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { MODERN_APPS, USER_RECORDS } from 'projects/_common/src/app/enums/all.enums';
 import { IModelRating, ServiceMethodResults } from 'projects/_common/src/app/interfaces/_common.interface';
 import { ClientService } from 'projects/_common/src/app/services/client.service';
-import { UserService } from 'projects/_common/src/app/services/user.service';
+import { UsersService } from 'projects/_common/src/app/services/users.service';
 import { IDelivery } from '../interfaces/deliverme.interface';
 
 @Injectable({
@@ -11,7 +11,7 @@ import { IDelivery } from '../interfaces/deliverme.interface';
 })
 export class DeliveryService {
   constructor(
-    private userService: UserService,
+    private userService: UsersService,
     private clientService: ClientService,
   ) {}
 
@@ -119,25 +119,25 @@ export class DeliveryService {
   addDeliveredPicture<T = any>(you_id: number, delivery_id: number, data: FormData) {
     return this.clientService.sendRequest<T>(`/deliverme/users/${you_id}/add-delivered-picture/${delivery_id}`, `POST`, data);
   }
-
-  payCarrier<T = any>(you_id: number, delivery_id: number) {
-    return this.clientService.sendRequest<T>(`/deliverme/users/${you_id}/pay-carrier/${delivery_id}`, `POST`);
-  }
-
+  
   getUserDelivermeSettings<T = any>(you_id: number) {
     return this.clientService.sendRequest<T>(`/deliverme/users/${you_id}/settings`, `GET`);
   }
-
+  
   updateUserDelivermeSettings<T = any>(you_id: number, data: any) {
     return this.clientService.sendRequest<T>(`/deliverme/users/${you_id}/settings`, `POST`, data);
   }
-
+  
   searchDeliveries(data: any) {
     return this.clientService.sendRequest<IDelivery[]>(`/deliverme/deliveries/search`, `POST`, data);
   }
-
+  
   sendDeliveryMessage<T = any>(data: any) {
     return this.clientService.sendRequest<T>(`/deliverme/deliveries/${data.delivery_id}/message`, `POST`, data);
+  }
+  
+  payCarrier<T = any>(you_id: number, delivery_id: number) {
+    return this.clientService.sendRequest<T>(`/deliverme/deliveries/${delivery_id}/pay-carrier`, `POST`);
   }
 
   createPaymentIntent<T = any>(delivery_id: number) {

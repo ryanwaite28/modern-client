@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 import { getRouteParamKey } from '../_misc/chamber';
 import { CanActivateReturn } from './_guard';
 import { IUser } from '../interfaces/user.interface';
-import { UserService } from '../services/user.service';
+import { UsersService } from '../services/users.service';
 import { UserStoreService } from '../stores/user-store.service';
 
 
@@ -19,7 +19,7 @@ import { UserStoreService } from '../stores/user-store.service';
 })
 export class UserAuthGuard implements CanActivate, CanActivateChild {
   constructor(
-    private userService: UserService,
+    private userService: UsersService,
     private router: Router,
     private userStore: UserStoreService,
   ) {}

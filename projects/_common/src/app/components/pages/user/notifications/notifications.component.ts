@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { INotification } from 'projects/_common/src/app/interfaces/notification.interface';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
 import { UnseenService } from 'projects/_common/src/app/services/unseen.service';
-import { UserService } from 'projects/_common/src/app/services/user.service';
+import { UsersService } from 'projects/_common/src/app/services/users.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
 import { take } from 'rxjs/operators';
 
@@ -22,7 +22,7 @@ export class CommonUserNotificationsFragmentComponent implements OnInit {
   
   constructor(
     private userStore: UserStoreService,
-    private userService: UserService,
+    private userService: UsersService,
     private router: Router,
     private route: ActivatedRoute,
     private unseenService: UnseenService,

@@ -15,7 +15,7 @@ import { CommonNavbarPartialComponent } from './components/navbar-partial/navbar
 import { CommonNavbarComponent } from './components/navbar/navbar.component';
 import { CommonFooterComponent } from './components/footer/footer.component';
 import { ClientService } from './services/client.service';
-import { UserService } from './services/user.service';
+import { UsersService } from './services/users.service';
 import { CommonWelcomeComponent } from './components/pages/welcome/welcome.component';
 import { CommonUserSigninComponent } from './components/pages/signin/signin.component';
 import { CommonUserSignupComponent } from './components/pages/signup/signup.component';
@@ -106,8 +106,10 @@ import { StripeAmountFormatterPipe } from './pipes/stripe-amount-formatter.pipe'
   providers: [
     HttpClientModule,
     ClientService,
-    UserService,
+    UsersService,
     AlertService,
+
+    StripeAmountFormatterPipe,
   ],
   bootstrap: [CommonAppComponent]
 })

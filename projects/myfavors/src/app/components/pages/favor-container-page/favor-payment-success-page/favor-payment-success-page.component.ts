@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, Data } from '@angular/router';
 import { FavorsService } from 'projects/myfavors/src/app/services/favors.service';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
-import { UserService } from 'projects/_common/src/app/services/user.service';
+import { UsersService } from 'projects/_common/src/app/services/users.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
 import { of } from 'rxjs';
 import { flatMap, map } from 'rxjs/operators';
@@ -19,7 +19,7 @@ export class FavorPaymentSuccessPageComponent implements OnInit {
 
   constructor(
     private userStore: UserStoreService,
-    private userService: UserService,
+    private userService: UsersService,
     private router: Router,
     private route: ActivatedRoute,
     private favorsService: FavorsService

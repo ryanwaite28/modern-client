@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Params, Router, ActivatedRoute } from '@angular/router';
 import { IUserField } from '../../../interfaces/user-field.interface';
 import { IUser } from '../../../interfaces/user.interface';
-import { UserService } from '../../../services/user.service';
+import { UsersService } from '../../../services/users.service';
 import { UserStoreService } from '../../../stores/user-store.service';
 
 @Component({
@@ -26,7 +26,7 @@ export class CommonUserPageComponent implements OnInit {
 
   constructor(
     private userStore: UserStoreService,
-    private userService: UserService,
+    private userService: UsersService,
     private router: Router,
     private route: ActivatedRoute,
   ) { }
