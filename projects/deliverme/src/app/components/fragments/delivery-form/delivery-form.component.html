@@ -198,7 +198,6 @@
             Delivery payout: {{ chargeFeeData ? '$' + (chargeFeeData.total | stripeAmountFormatter) : '' }}<br/>
             Application fee: {{ chargeFeeData ? '$' + (chargeFeeData.app_fee | stripeAmountFormatter) : '' }}<br/>
             Processing fee: {{ chargeFeeData ? '$' + (chargeFeeData.stripe_processing_fee | stripeAmountFormatter) : '' }}<br/>
-            Refund amount: {{ chargeFeeData ? '$' + ((chargeFeeData.final_total  - chargeFeeData.app_fee) | stripeAmountFormatter) : '' }}<br/>
             <span class="font-bold">Final total</span>: {{ chargeFeeData ? '$' + (chargeFeeData.final_total | stripeAmountFormatter) : '' }}<br/>
           </p>
 
