@@ -5,6 +5,7 @@ import { CommonAppComponent } from './app.component';
 import { CommonAboutComponent } from './components/pages/about/about.component';
 import { CommonAppsComponent } from './components/pages/apps/apps.component';
 import { CommonContactComponent } from './components/pages/contact/contact.component';
+import { PasswordResetPageComponent } from './components/pages/password-reset-page/password-reset-page.component';
 import { CommonUserSigninComponent } from './components/pages/signin/signin.component';
 import { CommonUserSignupComponent } from './components/pages/signup/signup.component';
 import { CommonConversationsComponent } from './components/pages/user/conversations/conversations.component';
@@ -21,6 +22,8 @@ import { SignedInGuard } from './guards/signed-in.guard';
 import { SignedOutGuard } from './guards/signed-out.guard';
 import { UserResolver } from './resolvers/user.resolver';
 
+
+
 const routes: Routes = [
   {
     path: 'modern', component: CommonAppComponent,
@@ -33,6 +36,7 @@ const routes: Routes = [
       { path: 'contact', pathMatch: 'full', component: CommonContactComponent },
       { path: 'apps', pathMatch: 'full', component: CommonAppsComponent },
       { path: 'verify-email/:uuid', pathMatch: 'full', component: CommonVerifyEmailComponent },
+      { path: 'password-reset', pathMatch: 'full', component: PasswordResetPageComponent, canActivate: [SignedOutGuard] },
       
       { path: 'settings', component: CommonUserSettingsFragmentComponent, canActivate: [SignedInGuard] },
 

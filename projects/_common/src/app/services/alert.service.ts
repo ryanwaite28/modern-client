@@ -83,8 +83,11 @@ export class AlertService {
     }, true);
   }
 
-  handleResponseSuccessGeneric(response?: { message: string }) {
-    if (!response || !response.message) {
+  handleResponseSuccessGeneric(response?: { message?: string }) {
+    if (!response) {
+      return;
+    }
+    if (!response.message) {
       return;
     }
     this.addAlert({

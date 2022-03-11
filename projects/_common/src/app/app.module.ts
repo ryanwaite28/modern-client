@@ -40,6 +40,7 @@ import { CommonVerifyEmailComponent } from './components/pages/verify-email/veri
 import { CommonUserVerifyStripeAccountFragmentComponent } from './components/pages/user/verify-stripe-account-fragment/verify-stripe-account-fragment.component';
 import { UserCardComponent } from './components/fragments/user-card/user-card.component';
 import { StripeAmountFormatterPipe } from './pipes/stripe-amount-formatter.pipe';
+import { PasswordResetPageComponent } from './components/pages/password-reset-page/password-reset-page.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +70,7 @@ import { StripeAmountFormatterPipe } from './pipes/stripe-amount-formatter.pipe'
     CommonUserVerifyStripeAccountFragmentComponent,
     UserCardComponent,
     StripeAmountFormatterPipe,
+    PasswordResetPageComponent,
   ],
   imports: [
     BrowserModule,

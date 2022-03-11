@@ -470,6 +470,24 @@ export class UsersService {
     );
   }
 
+  submit_reset_password_request(email: string) {
+    const endpoint = `/common/users/${email}/password-reset`;
+    return this.clientService.sendRequest<any>(endpoint, `POST`).pipe(
+      map((response) => {
+        return response;
+      })
+    );
+  }
+
+  submit_password_reset_code(code: string) {
+    const endpoint = `/common/users/password-reset/${code}`;
+    return this.clientService.sendRequest<any>(endpoint, `PUT`).pipe(
+      map((response) => {
+        return response;
+      })
+    );
+  }
+
   /** DELETE */
 
   delete_user_field(you_id: number, id: number) {
