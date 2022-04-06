@@ -166,4 +166,32 @@ export class DeliveryService {
       writer_ratings_info: IModelRating | null,
     }>(`/deliverme/users/${user_id}/stats`, `GET`, null);
   }
+
+  request_carrier_location<T = any>(delivery_id: number) {
+    return this.clientService.sendRequest<T>(`/deliverme/deliveries/${delivery_id}/request-carrier-location`, `POST`);
+  }
+
+  accept_request_carrier_location<T = any>(delivery_id: number) {
+    return this.clientService.sendRequest<T>(`/deliverme/deliveries/${delivery_id}/accept-request-carrier-location`, `POST`);
+  }
+
+  decline_request_carrier_location<T = any>(delivery_id: number) {
+    return this.clientService.sendRequest<T>(`/deliverme/deliveries/${delivery_id}/decline-request-carrier-location`, `POST`);
+  }
+
+  carrier_share_location<T = any>(delivery_id: number) {
+    return this.clientService.sendRequest<T>(`/deliverme/deliveries/${delivery_id}/carrier-share-location`, `POST`);
+  }
+
+  carrier_unshare_location<T = any>(delivery_id: number) {
+    return this.clientService.sendRequest<T>(`/deliverme/deliveries/${delivery_id}/carrier-unshare-location`, `POST`);
+  }
+
+  carrier_update_location<T = any>(params: {
+    delivery_id: number,
+    carrier_latest_lat: number,
+    carrier_latest_lng: number,
+  }) {
+    return this.clientService.sendRequest<T>(`/deliverme/deliveries/${params.delivery_id}/carrier-update-location`, `POST`, params);
+  }
 }

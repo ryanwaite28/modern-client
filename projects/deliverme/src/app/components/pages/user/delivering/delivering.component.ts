@@ -4,6 +4,7 @@ import { FormControl } from '@angular/forms';
 import { DeliveryCardDisplayMode } from 'projects/deliverme/src/app/enums/deliverme.enum';
 import { DeliveryService } from 'projects/deliverme/src/app/services/delivery.service';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
+import { INavigatorGeoLocation } from 'projects/_common/src/app/interfaces/_all.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
@@ -114,10 +115,10 @@ export class DeliverMeUserDeliveringFragmentComponent implements OnInit, OnDestr
   findDelivery() {
     this.loading = true;
     this.googleMapsService.getCurrentLocation()
-      .pipe(flatMap((position: any, index: number) => {
+      .pipe(flatMap((position: INavigatorGeoLocation, index: number) => {
         return this.googleMapsService.getLocationViaCoordinates(
-          position.coords.latitude,
-          position.coords.longitude
+          position.lat,
+          position.lng,
         );
       }))
       .pipe(flatMap((data: any, index: number) => {

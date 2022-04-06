@@ -1,8 +1,9 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { COMMON_EVENT_TYPES } from 'projects/_common/src/app/enums/all.enums';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
+import { INavigatorGeoLocation } from 'projects/_common/src/app/interfaces/_all.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
 import { SocketEventsService } from 'projects/_common/src/app/services/socket-events.service';
@@ -10,7 +11,7 @@ import { StripeService } from 'projects/_common/src/app/services/stripe.service'
 import { UserStoreService } from 'projects/_common/src/app/stores/user-store.service';
 import { getUserFullName } from 'projects/_common/src/app/_misc/chamber';
 import { Subscription } from 'rxjs';
-import { flatMap } from 'rxjs/operators';
+import { finalize, flatMap } from 'rxjs/operators';
 import { DELIVERME_EVENT_TYPES, DeliveryCardDisplayMode } from '../../../enums/deliverme.enum';
 import { IDelivery } from '../../../interfaces/deliverme.interface';
 import { DeliveryService } from '../../../services/delivery.service';
@@ -20,7 +21,7 @@ import { DeliveryService } from '../../../services/delivery.service';
   templateUrl: './delivery-card.component.html',
   styleUrls: ['./delivery-card.component.scss']
 })
-export class DeliveryCardComponent implements OnInit {
+export class DeliveryCardComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('newDeliveryTrackingUpdateFormElm') newDeliveryTrackingUpdateFormElm: ElementRef<HTMLFormElement> | any;
   @ViewChild('paymentFormElm') paymentFormElm: ElementRef<HTMLFormElement> | any;
   
@@ -35,7 +36,10 @@ export class DeliveryCardComponent implements OnInit {
 
   isEditing: boolean = false;
   loading: boolean = false;
+
   showDetails: boolean = false;
+  showMessages: boolean = false;
+
   deliveryEventsListeners: any[] = [];
   payment_client_secret: any;
   DeliveryCardDisplayMode = DeliveryCardDisplayMode;
@@ -57,6 +61,10 @@ export class DeliveryCardComponent implements OnInit {
     ])
   });
 
+  google: any;
+  carrierRealTimeLocationMap: google.maps.Map | null = null;
+  carrierRealTimeLocationMarker: google.maps.Marker | null = null;
+
   get isDeliveryOwner(): boolean {
     const match = !!this.you && !!this.delivery && this.you.id === this.delivery.owner_id;
     return match;
@@ -64,6 +72,14 @@ export class DeliveryCardComponent implements OnInit {
 
   get isDeliveryCarrier(): boolean {
     const match = !!this.you && !!this.delivery && this.you.id === this.delivery.carrier_id;
+    return match;
+  }
+
+  get isDeliveryOwnerOrCarrier(): boolean {
+    const match = !!this.you && !!this.delivery && (
+      this.you.id === this.delivery.owner_id ||
+      this.you.id === this.delivery.carrier_id
+    );
     return match;
   }
 
@@ -79,12 +95,31 @@ export class DeliveryCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.messages_list_end = !!this.delivery && this.delivery.delivery_messages!.length < 5;
-    if (this.delivery && this.delivery.deliverme_delivery_tracking_updates) {
+    if (!this.delivery) {
+      console.warn(`delivery object not given...`, this);
+      return;
+    }
+
+    if (this.delivery.deliverme_delivery_tracking_updates) {
       for (const tracking_update of this.delivery.deliverme_delivery_tracking_updates) {
         this.getLocationForTrackingUpdate(tracking_update);
       }
     }
-    this.startEventListener();
+    if (!this.delivery.completed && this.isDeliveryOwnerOrCarrier) {
+      this.startEventListener();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.googleMapsService.isReady().subscribe({
+      next: (google) => {
+        this.google = google;
+        if (this.delivery.carrier_shared_location) {
+          this.initCarrierLocationMapAndMarker();
+          this.updateCarrierLocationMapAndMarker();
+        }
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -96,12 +131,28 @@ export class DeliveryCardComponent implements OnInit {
     this.socketEventsService.leaveRoom(deliveryRoom);
   }
 
+  initCarrierLocationMapAndMarker() {
+    const divId = 'delivery-' + this.delivery.id + '-carrier-location-map';
+    const map = this.google
+  }
+
+  updateCarrierLocationMapAndMarker() {
+
+  }
+
   startEventListener() {
     if (this.delivery) {
-      const carrierAssignedListener = this.socketEventsService.listenSocketCustom(
+      // const deliveryRoom = `${DELIVERME_EVENT_TYPES.TO_DELIVERY}:${this.delivery.id}`;
+      // console.log(`Joining ${deliveryRoom}...`);
+      // this.socketEventsService.joinRoom(deliveryRoom);
+
+
+
+      const carrierAssignedListener = this.socketEventsService.listenToObservableEventStream(
         DELIVERME_EVENT_TYPES.CARRIER_ASSIGNED,
-        (event: any) => {
-          if (event.data.delivery.id === this.delivery.id) {
+      ).subscribe({
+        next: (event: any) => {
+          if (event.data.delivery_id === this.delivery.id) {
             console.log(event);
             this.alertService.handleResponseSuccessGeneric({
               message: event.message
@@ -109,12 +160,13 @@ export class DeliveryCardComponent implements OnInit {
             this.delivery = event.data.delivery;
           }
         }
-      );
+      });
 
-      const carrierUnassignedListener = this.socketEventsService.listenSocketCustom(
+      const carrierUnassignedListener = this.socketEventsService.listenToObservableEventStream(
         DELIVERME_EVENT_TYPES.CARRIER_UNASSIGNED,
-        (event: any) => {
-          if (event.data.delivery.id === this.delivery.id) {
+      ).subscribe({
+        next: (event: any) => {
+          if (event.data.delivery_id === this.delivery.id) {
             console.log(event);
             this.alertService.handleResponseSuccessGeneric({
               message: event.message
@@ -122,12 +174,13 @@ export class DeliveryCardComponent implements OnInit {
             this.delivery = event.data.delivery;
           }
         }
-      );
+      });
 
-      const markedPickedListener = this.socketEventsService.listenSocketCustom(
+      const markedPickedListener = this.socketEventsService.listenToObservableEventStream(
         DELIVERME_EVENT_TYPES.CARRIER_MARKED_AS_PICKED_UP,
-        (event: any) => {
-          if (event.data.delivery.id === this.delivery.id) {
+      ).subscribe({
+        next: (event: any) => {
+          if (event.data.delivery_id === this.delivery.id) {
             console.log(event);
             this.alertService.handleResponseSuccessGeneric({
               message: event.message
@@ -135,12 +188,13 @@ export class DeliveryCardComponent implements OnInit {
             this.delivery = event.data.delivery;
           }
         }
-      );
+      });
 
-      const markedDroppedListener = this.socketEventsService.listenSocketCustom(
+      const markedDroppedListener = this.socketEventsService.listenToObservableEventStream(
         DELIVERME_EVENT_TYPES.CARRIER_MARKED_AS_DROPPED_OFF,
-        (event: any) => {
-          if (event.data.delivery.id === this.delivery.id) {
+      ).subscribe({
+        next: (event: any) => {
+          if (event.data.delivery_id === this.delivery.id) {
             console.log(event);
             this.alertService.handleResponseSuccessGeneric({
               message: event.message
@@ -148,11 +202,12 @@ export class DeliveryCardComponent implements OnInit {
             this.delivery = event.data.delivery;
           }
         }
-      );
+      });
 
-      const trackingUpdateListener = this.socketEventsService.listenSocketCustom(
+      const trackingUpdateListener = this.socketEventsService.listenToObservableEventStream(
         DELIVERME_EVENT_TYPES.DELIVERY_NEW_TRACKING_UPDATE,
-        (event: any) => {
+      ).subscribe({
+        next: (event: any) => {
           if (event.data.delivery_id === this.delivery.id) {
             console.log(event);
             this.alertService.handleResponseSuccessGeneric({
@@ -163,12 +218,13 @@ export class DeliveryCardComponent implements OnInit {
             this.getLocationForTrackingUpdate(tracking_update);
           }
         }
-      );
+      });
 
-      const deliveryCompletedListener = this.socketEventsService.listenSocketCustom(
+      const deliveryCompletedListener = this.socketEventsService.listenToObservableEventStream(
         DELIVERME_EVENT_TYPES.DELIVERY_COMPLETED,
-        (event: any) => {
-          if (event.data.delivery.id === this.delivery.id) {
+      ).subscribe({
+        next: (event: any) => {
+          if (event.data.delivery_id === this.delivery.id) {
             console.log(event);
             this.alertService.handleResponseSuccessGeneric({
               message: event.message
@@ -177,12 +233,13 @@ export class DeliveryCardComponent implements OnInit {
             this.deliveryCompleted.emit();
           }
         }
-      );
+      });
 
-      const deliveryReturnedListener = this.socketEventsService.listenSocketCustom(
+      const deliveryReturnedListener = this.socketEventsService.listenToObservableEventStream(
         DELIVERME_EVENT_TYPES.DELIVERY_RETURNED,
-        (event: any) => {
-          if (event.data.delivery.id === this.delivery.id) {
+      ).subscribe({
+        next: (event: any) => {
+          if (event.data.delivery_id === this.delivery.id) {
             console.log(event);
             this.alertService.handleResponseSuccessGeneric({
               message: event.message
@@ -191,7 +248,114 @@ export class DeliveryCardComponent implements OnInit {
             this.deliveryReturned.emit();
           }
         }
-      );
+      });
+
+      const newDeliveryMessageListener = this.socketEventsService.listenToObservableEventStream(
+        DELIVERME_EVENT_TYPES.DELIVERY_NEW_MESSAGE,
+      ).subscribe({
+        next: (event: any) => {
+          if (event.data.delivery_id === this.delivery.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
+            this.delivery.delivery_messages!.push(event.data);
+          }
+        }
+      });
+
+
+
+      const carrierLocationRequested_listener = this.socketEventsService.listenToObservableEventStream(
+        DELIVERME_EVENT_TYPES.CARRIER_LOCATION_REQUESTED,
+      ).subscribe({
+        next: (event: any) => {
+          if (event.data.delivery_id === this.delivery.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
+            this.delivery.carrier_location_requested = true;
+            !!event.data && this.delivery.delivery_carrier_track_location_requests?.push(event.data);
+          }
+        }
+      })
+
+      const carrierLocationRequestAccepted_listener = this.socketEventsService.listenToObservableEventStream(
+        DELIVERME_EVENT_TYPES.CARRIER_LOCATION_REQUEST_ACCEPTED,
+      ).subscribe({
+        next: (event: any) => {
+          if (event.data.delivery_id === this.delivery.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
+            this.delivery.carrier_shared_location = true;
+            this.delivery.carrier_location_request_completed = true;
+          }
+        }
+      });
+
+      const carrierLocationRequestDeclined_listener = this.socketEventsService.listenToObservableEventStream(
+        DELIVERME_EVENT_TYPES.CARRIER_LOCATION_REQUEST_DECLINED,
+      ).subscribe({
+        next: (event: any) => {
+          if (event.data.delivery_id === this.delivery.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
+            this.delivery.carrier_shared_location = false;
+            this.delivery.carrier_location_request_completed = true;
+          }
+        }
+      });
+
+      const carrierLocationShared_listener = this.socketEventsService.listenToObservableEventStream(
+        DELIVERME_EVENT_TYPES.CARRIER_LOCATION_SHARED,
+      ).subscribe({
+        next: (event: any) => {
+          if (event.data.delivery_id === this.delivery.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
+            this.delivery.carrier_shared_location = true;
+            this.delivery.carrier_location_request_completed = true;
+          }
+        }
+      });
+
+      const carrierLocationUnshared_listener = this.socketEventsService.listenToObservableEventStream(
+        DELIVERME_EVENT_TYPES.CARRIER_LOCATION_UNSHARED,
+      ).subscribe({
+        next: (event: any) => {
+          if (event.data.delivery_id === this.delivery.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
+            this.delivery.carrier_shared_location = false;
+            this.delivery.carrier_location_request_completed = true;
+          }
+        }
+      });
+
+      const carrierLocationUpdated_listener = this.socketEventsService.listenToObservableEventStream(
+        DELIVERME_EVENT_TYPES.CARRIER_LOCATION_UPDATED,
+      ).subscribe({
+        next: (event: any) => {
+          if (event.data.delivery_id === this.delivery.id) {
+            console.log(event);
+            this.alertService.handleResponseSuccessGeneric({
+              message: event.message
+            });
+            this.delivery.carrier_latest_lat = event.data.new_tracking_location_update.lat;
+            this.delivery.carrier_latest_lng = event.data.new_tracking_location_update.lng;
+          }
+        }
+      });
+
 
       this.deliveryEventsListeners = [
         carrierAssignedListener,
@@ -201,43 +365,17 @@ export class DeliveryCardComponent implements OnInit {
         markedDroppedListener,
         deliveryCompletedListener,
         deliveryReturnedListener,
+        newDeliveryMessageListener,
+
+        carrierLocationRequested_listener,
+        carrierLocationRequestAccepted_listener,
+        carrierLocationRequestDeclined_listener,
+        carrierLocationShared_listener,
+        carrierLocationUnshared_listener,
+        carrierLocationUpdated_listener,
       ];
 
-      if (
-        !this.delivery.completed &&
-        (
-          this.you!.id === this.delivery.owner_id ||
-          this.you!.id === this.delivery.carrier_id
-        )
-      ) {
-        const deliveryRoom = `${DELIVERME_EVENT_TYPES.TO_DELIVERY}:${this.delivery.id}`;
-        console.log(`Joining ${deliveryRoom}`);
-        this.socketEventsService.joinRoom(deliveryRoom);
-
-        const deliveryMessageListener = this.socketEventsService.listenSocketCustom(deliveryRoom,
-          (event: any) => {
-            console.log(event);
-            this.handleToDeliveryEvents(event);
-          }
-        );
-
-        this.deliveryEventsListeners.push(deliveryMessageListener);
-      }
-
       // console.log(`deliveryEventsListeners`, this.deliveryEventsListeners);
-    }
-  }
-
-  handleToDeliveryEvents(event: any) {
-    switch (event.event) {
-      case DELIVERME_EVENT_TYPES.DELIVERY_NEW_MESSAGE: {
-        this.alertService.handleResponseSuccessGeneric({
-          message: event.message
-        });
-        if (event.data.delivery_id === this.delivery.id) {
-          this.delivery.delivery_messages!.push(event.data);
-        }
-      }
     }
   }
 
@@ -260,11 +398,11 @@ export class DeliveryCardComponent implements OnInit {
   ) {
     this.loading = true;
     this.googleMapsService.getCurrentLocation().subscribe({
-      next: (position: any) => {
+      next: (location) => {
         const formData = new FormData(newDeliveryTrackingUpdateFormElm);
 
-        const carrier_lat = position.coords.latitude;
-        const carrier_lng = position.coords.longitude;
+        const carrier_lat = location.lat;
+        const carrier_lng = location.lng;
         const payload = {
           ...this.newDeliveryTrackingUpdateForm.value,
           carrier_lat,
@@ -370,8 +508,10 @@ export class DeliveryCardComponent implements OnInit {
     }).subscribe({
       next: (response: any) => {
         this.alertService.showSuccessMessage(response.message);
-        // this.delivery.delivery_messages.unshift(response.data);
+        this.delivery.delivery_messages?.unshift(response.data);
         this.messageForm.setValue({ body: '' });
+        this.messageForm.markAsPristine();
+        this.messageForm.markAsUntouched();
         this.loading = false;
       }
     });
@@ -399,6 +539,127 @@ export class DeliveryCardComponent implements OnInit {
     });
   }
 
+  request_carrier_location() {
+    this.loading = true;
+    this.deliveryService.request_carrier_location(this.delivery.id)
+    .pipe(
+      finalize(() => { this.loading = false; })
+    )
+    .subscribe({
+      error: (error: HttpErrorResponse) => {
+        this.alertService.handleResponseErrorGeneric(error);
+      },
+      next: (response) => {
+        this.alertService.handleResponseSuccessGeneric(response);
+        this.delivery.carrier_location_requested = true;
+        !!response.data && this.delivery.delivery_carrier_track_location_requests?.push(response.data);
+      },
+    });
+  }
+
+  accept_request_carrier_location() {
+    this.loading = true;
+    this.deliveryService.accept_request_carrier_location(this.delivery.id)
+    .pipe(
+      finalize(() => { this.loading = false; })
+    )
+    .subscribe({
+      error: (error: HttpErrorResponse) => {
+        this.alertService.handleResponseErrorGeneric(error);
+      },
+      next: (response) => {
+        this.alertService.handleResponseSuccessGeneric(response);
+        this.delivery.carrier_location_requested = true;
+        !!response.data && this.delivery.delivery_carrier_track_location_requests?.push(response.data);
+      },
+    });
+  }
+
+  decline_request_carrier_location() {
+    this.loading = true;
+    this.deliveryService.decline_request_carrier_location(this.delivery.id)
+    .pipe(
+      finalize(() => { this.loading = false; })
+    )
+    .subscribe({
+      error: (error: HttpErrorResponse) => {
+        this.alertService.handleResponseErrorGeneric(error);
+      },
+      next: (response) => {
+        this.alertService.handleResponseSuccessGeneric(response);
+        this.delivery.carrier_location_requested = true;
+        !!response.data && this.delivery.delivery_carrier_track_location_requests?.push(response.data);
+      },
+    });
+  }
+
+  carrier_share_location() {
+    this.loading = true;
+    this.deliveryService.carrier_share_location(this.delivery.id)
+    .pipe(
+      finalize(() => { this.loading = false; })
+    )
+    .subscribe({
+      error: (error: HttpErrorResponse) => {
+        this.alertService.handleResponseErrorGeneric(error);
+      },
+      next: (response) => {
+        this.alertService.handleResponseSuccessGeneric(response);
+        this.delivery.carrier_shared_location = true;
+      },
+    });
+  }
+
+  carrier_unshare_location() {
+    this.loading = true;
+    this.deliveryService.carrier_unshare_location(this.delivery.id)
+    .pipe(
+      finalize(() => { this.loading = false; })
+    )
+    .subscribe({
+      error: (error: HttpErrorResponse) => {
+        this.alertService.handleResponseErrorGeneric(error);
+      },
+      next: (response) => {
+        this.alertService.handleResponseSuccessGeneric(response);
+        this.delivery.carrier_shared_location = false;
+      },
+    });
+  }
+
+  carrier_update_location() {
+    this.loading = true;
+
+    this.googleMapsService.getCurrentLocation()
+    .pipe(
+      flatMap((location: INavigatorGeoLocation, index: number) => {
+        return this.deliveryService.carrier_update_location({
+          delivery_id: this.delivery.id,
+          carrier_latest_lat: location.lat,
+          carrier_latest_lng: location.lng,
+        })
+      }),
+      finalize(() => {
+        this.loading = false;
+      })
+    )
+    .subscribe({
+      error: (error: HttpErrorResponse) => {
+        this.alertService.handleResponseErrorGeneric(error);
+      },
+      next: (response) => {
+        this.alertService.handleResponseSuccessGeneric(response);
+        this.delivery.delivery_carrier_track_location_updates?.push(response.data);
+        this.delivery.carrier_latest_lat = response.data.lat;
+        this.delivery.carrier_latest_lng = response.data.lng;
+      },
+    });
+  }
+
+  /**
+   * @deprecated
+   * @returns {undefined}
+   */
   oldpayCarrier() {
     // https://stripe.com/docs/connect/collect-then-transfer-guide
 

@@ -161,6 +161,12 @@ export interface IPostCommentReplyReaction extends ICommonModel {
   owner?:              IUser;
 }
 
+export interface INavigatorGeoLocation {
+  position: any,
+  lat:  number,
+  lng: number,
+}
+
 // export interface IPostComment extends ICommentModel {
 //   post_id:             number;
 // }

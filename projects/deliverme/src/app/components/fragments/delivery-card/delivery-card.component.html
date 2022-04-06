@@ -231,6 +231,78 @@
           ></deliverme-delivery-form>
         </div>
       </div> -->
+
+      <div class="uk-card-footer" *ngIf="showDetails">
+        <p class="uk-text-large">
+          Carrier's Real-Time Location
+        </p>
+
+        <!-- owner -->
+        <ng-container *ngIf="!delivery.carrier_location_request_completed && !delivery.carrier_shared_location && !delivery.carrier_location_requested && isDeliveryOwner">
+          <button
+            type="button"
+            class="uk-button uk-button-small uk-button-secondary"
+            (click)="request_carrier_location()"
+            [disabled]="loading"
+          >
+            Request to track carrier's location
+          </button>
+        </ng-container>
+        <ng-container *ngIf="!delivery.carrier_location_request_completed && !delivery.carrier_shared_location && delivery.carrier_location_requested && isDeliveryOwner">
+          <button
+            type="button"
+            class="uk-button uk-button-small uk-button-secondary"
+            [disabled]="true"
+          >
+            Tracking Requested
+          </button>
+        </ng-container>
+
+
+
+        <!-- carrier -->
+        <ng-container *ngIf="!delivery.carrier_location_request_completed && !delivery.carrier_shared_location && !delivery.carrier_location_requested && isDeliveryCarrier">
+          <button
+            type="button"
+            class="uk-button uk-button-small uk-button-secondary"
+            (click)="carrier_share_location()"
+            [disabled]="loading"
+          >
+            Share Real-Time Location
+          </button>
+        </ng-container>
+        <ng-container *ngIf="delivery.carrier_location_request_completed && delivery.carrier_shared_location && isDeliveryCarrier">
+          <button
+            type="button"
+            class="uk-button uk-button-small uk-button-secondary"
+            (click)="carrier_share_location()"
+            [disabled]="loading"
+          >
+            Unshare Real-Time Location
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="!delivery.carrier_location_request_completed && !delivery.carrier_shared_location && delivery.carrier_location_requested && isDeliveryCarrier">
+          <span class="font-bold">{{ delivery.owner!.displayname }}</span> has requested to track your location.
+          <button
+            type="button"
+            class="uk-button uk-button-small uk-button-secondary"
+            (click)="accept_request_carrier_location()"
+            [disabled]="loading"
+          >
+            Accept Request
+          </button>
+
+          <button
+            type="button"
+            class="uk-button uk-button-small uk-button-secondary"
+            (click)="decline_request_carrier_location()"
+            [disabled]="loading"
+          >
+            Decline Request
+          </button>
+        </ng-container>
+      </div>
       
       <div class="uk-card-footer" *ngIf="showDetails && (isDeliveryOwner || isDeliveryCarrier)">
         <p class="uk-text-large">
@@ -293,72 +365,94 @@
         </div>
       </div>
     
-      <div class="uk-card-footer" *ngIf="showDetails && (isDeliveryOwner || isDeliveryCarrier)">
-        <p class="uk-text-large">Messages</p>
+      <div class="uk-card-footer" *ngIf="showDetails && (isDeliveryOwnerOrCarrier)">
+        <div class="">
+          <p class="uk-text-large">
+            Messages
+          </p>
+
+          <button
+            type="button"
+            class="uk-button uk-button-small uk-button-secondary inline-block mb-3"
+            (click)="showMessages = !showMessages"
+          >
+            {{ showMessages ? 'Hide Messages' : 'Show Messages' }}
+          </button>
+        </div>
     
-        <div>
-          <!-- <div class="messages-item transition" *ngIf="!messages_list_end">
-            <button
-              (click)="getMessages()"
-              title="Load more"
-              class="uk-button uk-button-small uk-button-primary"
-              [disabled]="loading"
-            >
-              <i class="fas fa-sync"></i>
-              Load More
-            </button>
-          </div> -->
-    
-          <div class="messages-item transition" *ngFor="let m of delivery.delivery_messages">
-            <div class="messages-item-inner">
-              <div class="user-icon-container-{{ m.user!.id === you!.id ? 'right' : 'left' }}">
-                <img
-                  class="user-icon-circle"
-                  [src]="(m.user!.icon_link) || './assets/img/anon.png'"
-                />
-              </div>
-              <div class="message-text-{{ m.user!.id === you!.id ? 'right' : 'left' }}">
-                <p>
-                  <a [routerLink]="['/', 'modern', 'users', m.user!.id, 'home']">
-                   {{ m.user!.firstname + ' ' + m.user!.lastname }}
-                  </a>
-                  <br/>
-                  <span class="lead" [innerHTML]="m.body"></span>
-                  <br/>
-                  <small class="text-grey">
-                    <em>{{ m.created_at | date : 'MMM d, y (h:mm a)' }}</em>
-                  </small>
-                </p>
+        <div *ngIf="showMessages">
+          <div>
+            <!-- <div class="messages-item transition" *ngIf="!messages_list_end">
+              <button
+                (click)="getMessages()"
+                title="Load more"
+                class="uk-button uk-button-small uk-button-primary"
+                [disabled]="loading"
+              >
+                <i class="fas fa-sync"></i>
+                Load More
+              </button>
+            </div> -->
+      
+            <div class="messages-item transition" *ngFor="let m of delivery.delivery_messages">
+              <div class="messages-item-inner">
+                <div class="user-icon-container-{{ m.user!.id === you!.id ? 'right' : 'left' }}">
+                  <img
+                    class="user-icon-circle"
+                    [src]="(m.user!.icon_link) || './assets/img/anon.png'"
+                  />
+                </div>
+                <div class="message-text-{{ m.user!.id === you!.id ? 'right' : 'left' }}">
+                  <p>
+                    <a [routerLink]="['/', 'modern', 'users', m.user!.id, 'home']">
+                     {{ m.user!.firstname + ' ' + m.user!.lastname }}
+                    </a>
+                    <br/>
+                    <span class="lead" [innerHTML]="m.body"></span>
+                    <br/>
+                    <small class="text-grey">
+                      <em>{{ m.created_at | date : 'MMM d, y (h:mm a)' }}</em>
+                    </small>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
+      
+          <form *ngIf="!delivery.completed && delivery.carrier" class="well" [formGroup]="messageForm" (ngSubmit)="sendDeliveryMessage()">
+            <div class="uk-margin">
+              <span class="label-info">
+                Body ({{ messageForm.value.body.length }}/{{ MSG_MAX_LENGTH }})
+              </span>
+              <textarea
+                type="text"
+                class="uk-textarea"
+                placeholder="Enter message..."
+                rows="3"
+                formControlName="body"
+              ></textarea>
+            </div>
+            <div>
+              <button
+                type="submit"
+                title="Message this user"
+                class="uk-button uk-button-small uk-button-secondary"
+                [disabled]="loading || messageForm.invalid"
+              >
+                <i class="fas fa-paper-plane"></i>
+                Submit
+              </button>
+            </div>
+          </form>
+
+          <button
+            type="button"
+            class="uk-button uk-button-small uk-button-secondary inline-block mt-3"
+            (click)="showMessages = !showMessages"
+          >
+            {{ showMessages ? 'Hide Messages' : 'Show Messages' }}
+          </button>
         </div>
-    
-        <form *ngIf="!delivery.completed && delivery.carrier" class="well" [formGroup]="messageForm" (ngSubmit)="sendDeliveryMessage()">
-          <div class="uk-margin">
-            <span class="label-info">
-              Body ({{ messageForm.value.body.length }}/{{ MSG_MAX_LENGTH }})
-            </span>
-            <textarea
-              type="text"
-              class="uk-textarea"
-              placeholder="Enter message..."
-              rows="3"
-              formControlName="body"
-            ></textarea>
-          </div>
-          <div>
-            <button
-              type="submit"
-              title="Message this user"
-              class="uk-button uk-button-small uk-button-secondary"
-              [disabled]="loading || messageForm.invalid"
-            >
-              <i class="fas fa-paper-plane"></i>
-              Submit
-            </button>
-          </div>
-        </form>
       </div>
     
       <div class="uk-card-footer" *ngIf="showDetails && !!delivery.datetime_delivered && !!you && delivery.owner_id === you.id && !delivery.completed">

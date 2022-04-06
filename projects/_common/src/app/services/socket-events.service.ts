@@ -8,9 +8,11 @@ import { ConversationsService } from './conversations.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UsersService } from './users.service';
 import {
-  user_notification_events
+  user_conversation_events,
+  user_delivery_events
 } from '../_misc/vault';
 import { COMMON_EVENT_TYPES } from '../enums/all.enums';
+import { DELIVERME_EVENT_TYPES } from 'projects/deliverme/src/app/enums/deliverme.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -23,8 +25,10 @@ export class SocketEventsService {
   private reconnect_event: any;
   private socket_id_event: any;
   private user_event: any;
-  private user_events: any[] = [];
   private disconnect_event: any;
+  
+  private user_conversation_events: any[] = [];
+  private user_delivery_events: any[] = [];
 
   private previous_socket_id?: string;
   private current_socket_id?: string;
@@ -37,17 +41,21 @@ export class SocketEventsService {
   // user's conversations
   private youConversationsSocketListeners: any = {};
 
-  EVENT_TYPES = COMMON_EVENT_TYPES;
-
   constructor(
     private clientService: ClientService,
     private userStore: UserStoreService,
     private usersService: UsersService,
     private conversationsService: ConversationsService,
   ) {
-    Object.keys(COMMON_EVENT_TYPES).forEach((key) => {
-      this.streamsMap[key] = new Subject<any>();
-    });
+    const event_types: string[] = [
+      ...(Object.keys(COMMON_EVENT_TYPES)),
+      ...(Object.keys(DELIVERME_EVENT_TYPES)),
+    ];
+
+    for (const event_type of event_types) {
+      this.streamsMap[event_type] = new Subject<any>();
+    }
+
     console.log(this);
 
     this.userStoreSubscription = this.userStore.getChangesObs().subscribe((you) => {
@@ -92,12 +100,12 @@ export class SocketEventsService {
       this.current_socket_id = undefined;
       console.log(`socket disconnected`, event, this);
     });
-    const user_event = socket.on(`FOR-USER:${this.you!.id}`, (event: any) => {
-      this.handleEvent(event);
-    });
+
+
+
     
-    const user_events = user_notification_events.map((event_type: COMMON_EVENT_TYPES) => {
-      return socket.on(event_type, (event: any) => {
+    this.user_conversation_events = user_conversation_events.map((event_type) => {
+      const listener = socket.on(event_type, (event: any) => {
         console.log(`${event_type}`, { event });
         const subjectStream = this.streamsMap[event_type];
         if (!subjectStream) {
@@ -105,18 +113,37 @@ export class SocketEventsService {
         }
         subjectStream.next(event);
       });
+      return listener;
     });
-          
+
+    this.user_delivery_events = user_delivery_events.map((event_type) => {
+      const listener = socket.on(event_type, (event: any) => {
+        console.log(`${event_type}`, { event });
+        const subjectStream = this.streamsMap[event_type];
+        if (!subjectStream) {
+          throw new ReferenceError(`Could not emit event to stream: ${event_type}`);
+        }
+        subjectStream.next(event);
+      });
+      return listener;
+    });
+
+
+
     // this.socket_id_event = socket_id_event;
     this.connect_event = connect_event;
     // this.reconnect_event = reconnect_event;
-    this.user_event = user_event;
-    this.user_events = user_events;
+    // this.user_event = user_event;
     this.disconnect_event = disconnect_event;
     
     this.listenToConversations();
   }
         
+  /**
+   * @deprecated
+   * @param event 
+   */
+  /*
   private handleEvent(event: any) {
     console.log({ event });
     const subjectStream = this.streamsMap[event.event];
@@ -124,6 +151,7 @@ export class SocketEventsService {
       subjectStream.next(event);
     }
   }
+  */
   
   private stopListener() {
     this.connect_event?.disconnect();
@@ -131,8 +159,11 @@ export class SocketEventsService {
     this.socket_id_event?.disconnect();
     this.connect_event?.disconnect();
     this.user_event?.disconnect();
-    this.user_events?.forEach(e => e.disconnect());
     this.disconnect_event?.disconnect();
+
+    this.user_conversation_events?.forEach(e => e.disconnect());
+    this.user_delivery_events?.forEach(e => e.disconnect());
+
     this.youConversationsSocketListeners = {};
   }
 
@@ -148,7 +179,7 @@ export class SocketEventsService {
     this.socket.emit(COMMON_EVENT_TYPES.SOCKET_LEAVE_ROOM, { room });
   }
 
-  listenToObservableEventStream<T>(event_type: COMMON_EVENT_TYPES) {
+  listenToObservableEventStream<T>(event_type: string) {
     const subjectStream = this.streamsMap[event_type];
     if (!subjectStream) {
       throw new ReferenceError(`Unknown key for event stream: ${event_type}`);

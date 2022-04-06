@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnInit, 
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { COMMON_EVENT_TYPES } from 'projects/_common/src/app/enums/all.enums';
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
+import { INavigatorGeoLocation } from 'projects/_common/src/app/interfaces/_all.interface';
 import { AlertService } from 'projects/_common/src/app/services/alert.service';
 import { GoogleMapsService } from 'projects/_common/src/app/services/google-maps.service';
 import { SocketEventsService } from 'projects/_common/src/app/services/socket-events.service';
@@ -246,11 +247,11 @@ export class FavorCardComponent implements OnInit {
   ) {
     this.loading = true;
     this.googleMapsService.getCurrentLocation().subscribe({
-      next: (position: any) => {
+      next: (position: INavigatorGeoLocation) => {
         const formData = new FormData(newFavorUpdateFormElm);
 
-        const helper_lat = position.coords.latitude;
-        const helper_lng = position.coords.longitude;
+        const helper_lat = position.lat;
+        const helper_lng = position.lng;
         const payload = {
           ...this.newFavorUpdateForm.value,
           helper_lat,
