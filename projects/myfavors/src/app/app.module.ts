@@ -19,6 +19,8 @@ import { MyfavorsUserHomeComponent } from './components/pages/user/home/home.com
 import { MyfavorsUserSettingsFragmentComponent } from './components/pages/user/settings/settings.component';
 import { MyfavorsUserPageComponent } from './components/pages/user/user-page.component';
 import { MyfavorsWelcomeComponent } from './components/pages/welcome/welcome.component';
+import { FavorBrowseRecentComponent } from './components/pages/favor-browse-recent/favor-browse-recent.component';
+import { FavorBrowseMapComponent } from './components/pages/favor-browse-map/favor-browse-map.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +40,8 @@ import { MyfavorsWelcomeComponent } from './components/pages/welcome/welcome.com
     MyfavorsFavorPageComponent,
     FavorPaymentSuccessPageComponent,
     FavorPaymentCancelPageComponent,
+    FavorBrowseRecentComponent,
+    FavorBrowseMapComponent,
   ],
   imports: [
     BrowserModule,

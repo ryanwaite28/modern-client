@@ -8,8 +8,14 @@
 
 ng generate application common --prefix=common --routing=true --skip-install=true --skip-package-json=true --style=scss
 
-ng generate component components/pages/user-page/user-home-page --project=travellrs  
+ng generate component components/pages/user-page/user-home-page --project=travellrs
 
+
+
+
+export const ([a-zA-Z]+)s = <MyModelStatic> sequelize.define\('(.*)', \{
+
+\{(.*)INTEGER(.*)\},
 
 
 <!-- Phone -->

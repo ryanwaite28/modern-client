@@ -3,6 +3,7 @@ import { MODERN_APPS, USER_RECORDS } from 'projects/_common/src/app/enums/all.en
 import { IUser } from 'projects/_common/src/app/interfaces/user.interface';
 import { ClientService } from 'projects/_common/src/app/services/client.service';
 import { UserService } from 'projects/_common/src/app/services/user.service';
+import { IFavor } from '../interfaces/myfavors.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -173,4 +174,19 @@ export class FavorsService {
     return this.clientService.sendRequest<T>(`/myfavors/favors/${data.favor_id}/message`, `POST`, data);
   }
 
+  browseRecent(delivery_id?: number) {
+    const endpoint = delivery_id
+      ? `/myfavors/favors/browse-recent/${delivery_id}`
+      : `/myfavors/favors/browse-recent`;
+    return this.clientService.sendRequest<IFavor[]>(endpoint, `POST`, null);
+  }
+
+  browseMap(params: {
+    northEast: { lat: number, lng: number },
+    southWest: { lat: number, lng: number },
+  }) {
+    const { northEast, southWest } = params;
+    const endpoint = `/myfavors/favors/browse-map/swlat/${southWest.lat}/swlng/${southWest.lng}/nelat/${northEast.lat}/nelng/${northEast.lng}`;
+    return this.clientService.sendRequest<IFavor[]>(endpoint, `POST`, null);
+  }
 }

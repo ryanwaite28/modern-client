@@ -18,10 +18,12 @@ export class ClientService {
   constructor(
     public http: HttpClient
   ) {
-    const isProd = window.location.origin.includes('herokuapp');
+    const isProd: boolean = true;
+    // const isProd: boolean = window.location.origin.includes('herokuapp');
     this.isProd = isProd;
-    this.DOMAIN = this.isProd ? 'https://rmw-modern-server.herokuapp.com' : `http://localhost:6700`;
-    const apiDomain = this.DOMAIN + '/apps';
+    // this.DOMAIN = this.isProd ? 'https://rmw-modern-server.herokuapp.com' : `http://localhost:6700`;
+    this.DOMAIN = this.isProd ? 'https://rmw-modern-server-dev.herokuapp.com' : `http://localhost:6700`;
+    const apiDomain: string = this.DOMAIN + '/apps';
     this.API_PREFIX = apiDomain;
   }
 
